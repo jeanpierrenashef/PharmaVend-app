@@ -13,15 +13,18 @@ void main() {
             backgroundColor: WidgetStateProperty.resolveWith<Color>(
               (Set<WidgetState> states) {
                 if (states.contains(WidgetState.pressed)) {
-                  return Colors.blue.withValues(alpha: 0.8);
+                  return const Color.fromRGBO(32, 181, 115, 100)
+                      .withValues(alpha: 0.8);
                 }
                 if (states.contains(WidgetState.hovered)) {
-                  return Colors.blue.withValues(alpha: 0.6);
+                  return const Color.fromRGBO(32, 181, 115, 100)
+                      .withValues(alpha: 0.6);
                 }
                 if (states.contains(WidgetState.focused)) {
-                  return Colors.blue.withValues(alpha: 0.7);
+                  return const Color.fromRGBO(32, 181, 115, 100)
+                      .withValues(alpha: 0.7);
                 }
-                return Colors.blue;
+                return const Color.fromRGBO(32, 181, 115, 100);
               },
             ),
             foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
@@ -30,7 +33,7 @@ void main() {
             ),
             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0),
+                borderRadius: BorderRadius.circular(30.0),
               ),
             ),
           ),
@@ -40,8 +43,11 @@ void main() {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
             child: Text(
-              'Test',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              'Find a Machine',
+              style: TextStyle(
+                  fontFamily: "Inter",
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold),
             ),
           ),
         ),
