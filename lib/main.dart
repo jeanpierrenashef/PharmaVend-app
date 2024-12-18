@@ -19,8 +19,24 @@ class Home extends StatelessWidget {
           child: Column(children: [
             Image(
               image: AssetImage("assets/logo.png"),
-              height: 294.0,
-              width: 245.0,
+              height: 94.0,
+              width: 45.0,
+            ),
+            Text(
+              "PharmaVend",
+              style: TextStyle(
+                fontFamily: "Inter",
+                fontSize: 40,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              "Your 24/7 Lifesaver in a Box.",
+              style: TextStyle(
+                fontFamily: "Inter",
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+              ),
             ),
             ElevatedButton(
               style: ButtonStyle(
