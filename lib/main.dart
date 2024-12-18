@@ -12,9 +12,18 @@ class Home extends StatelessWidget {
     return Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text("Custom Button Example"),
-          centerTitle: true,
-        ),
+            backgroundColor: Colors.white,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                    onPressed: () => print("pressed on info"),
+                    icon: Image.asset("")),
+                IconButton(
+                    onPressed: () => print("pressed on menu"),
+                    icon: Image.asset(""))
+              ],
+            )),
         body: Center(
           child: Column(children: [
             Image(
