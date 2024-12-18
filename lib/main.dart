@@ -16,7 +16,7 @@ class Home extends StatelessWidget {
         ),
         body: Center(
           child: Column(children: [
-            Image(image: AssetImage("logo")),
+            Image(image: AssetImage("assets/logo.png")),
             ElevatedButton(
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.resolveWith<Color>(
