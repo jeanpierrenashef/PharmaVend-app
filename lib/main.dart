@@ -16,14 +16,6 @@ void main() {
                   return const Color.fromRGBO(32, 181, 115, 100)
                       .withValues(alpha: 0.8);
                 }
-                if (states.contains(WidgetState.hovered)) {
-                  return const Color.fromRGBO(32, 181, 115, 100)
-                      .withValues(alpha: 0.6);
-                }
-                if (states.contains(WidgetState.focused)) {
-                  return const Color.fromRGBO(32, 181, 115, 100)
-                      .withValues(alpha: 0.7);
-                }
                 return const Color.fromRGBO(32, 181, 115, 100);
               },
             ),
@@ -54,4 +46,13 @@ void main() {
       ),
     ),
   ));
+}
+
+class test extends StatelessWidget {
+  const test({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Placeholder();
+  }
 }
