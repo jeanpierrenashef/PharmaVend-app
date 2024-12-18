@@ -38,7 +38,11 @@ class Home extends StatelessWidget {
                 fontWeight: FontWeight.w500,
               ),
             ),
-            SizedBox(height: 50.0),
+            SizedBox(height: 20.0),
+            Image(
+              image: AssetImage("assets/map.png"),
+            ),
+            SizedBox(height: 20.0),
             ElevatedButton(
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.resolveWith<Color>(
