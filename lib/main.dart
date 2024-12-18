@@ -40,7 +40,7 @@ void main() {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
             child: Text(
-              'Custom Button',
+              'Test',
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ),
