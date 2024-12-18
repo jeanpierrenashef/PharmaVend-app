@@ -18,14 +18,10 @@ class Home extends StatelessWidget {
               children: [
                 IconButton(
                     onPressed: () => print("pressed on info"),
-                    icon: Image.asset(
-                      "assets/info.png",
-                      height: 30,
-                      width: 30,
-                    )),
+                    icon: Image.asset("")),
                 IconButton(
                     onPressed: () => print("pressed on menu"),
-                    icon: Image.asset("assets/menu.png", height: 30, width: 30))
+                    icon: Image.asset(""))
               ],
             )),
         body: Center(
