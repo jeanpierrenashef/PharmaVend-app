@@ -13,20 +13,20 @@ void main() {
             backgroundColor: WidgetStateProperty.resolveWith<Color>(
               (Set<WidgetState> states) {
                 if (states.contains(WidgetState.pressed)) {
-                  return Colors.blue.withOpacity(0.8); // When pressed
+                  return Colors.blue.withValues(alpha: 0.8); // When pressed
                 }
                 if (states.contains(WidgetState.hovered)) {
-                  return Colors.blue.withOpacity(0.6); // When hovered
+                  return Colors.blue.withValues(alpha: 0.6); // When hovered
                 }
                 if (states.contains(WidgetState.focused)) {
-                  return Colors.blue.withOpacity(0.7); // When focused
+                  return Colors.blue.withValues(alpha: 0.7); // When focused
                 }
                 return Colors.blue; // Default color
               },
             ),
             foregroundColor: WidgetStateProperty.all<Color>(Colors.white),
             overlayColor: WidgetStateProperty.all<Color>(
-              Colors.white.withOpacity(0.2), // Ripple effect color
+              Colors.white.withValues(alpha: 0.2), // Ripple effect color
             ),
             shape: WidgetStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
