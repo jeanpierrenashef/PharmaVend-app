@@ -26,26 +26,30 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: GoogleMap(
-      initialCameraPosition: CameraPosition(
-        target: _pGooglePlex,
-        zoom: 9,
-      ),
-      markers: {
-        Marker(
-            markerId: MarkerId("_currentLocation"),
-            icon: BitmapDescriptor.defaultMarker,
-            position: _pGooglePlex),
-        Marker(
-            markerId: MarkerId("_JbeilLocation"),
-            icon: BitmapDescriptor.defaultMarker,
-            position: _Jbeil),
-        Marker(
-            markerId: MarkerId("_HamraLocation"),
-            icon: BitmapDescriptor.defaultMarker,
-            position: _Hamra),
-      },
-    ));
+        body: _currentP == null
+            ? const Center(
+                child: Text("Loading..."),
+              )
+            : GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: _pGooglePlex,
+                  zoom: 9,
+                ),
+                markers: {
+                  Marker(
+                      markerId: MarkerId("_currentLocation"),
+                      icon: BitmapDescriptor.defaultMarker,
+                      position: _pGooglePlex),
+                  Marker(
+                      markerId: MarkerId("_JbeilLocation"),
+                      icon: BitmapDescriptor.defaultMarker,
+                      position: _Jbeil),
+                  Marker(
+                      markerId: MarkerId("_HamraLocation"),
+                      icon: BitmapDescriptor.defaultMarker,
+                      position: _Hamra),
+                },
+              ));
   }
 
   Future<void> getLocationUpdates() async {
