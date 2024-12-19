@@ -58,5 +58,14 @@ class _MapPageState extends State<MapPage> {
         return;
       }
     }
+    _locationController.onLocationChanged
+        .listen((LocationData currentLocation) {
+      if (currentLocation.latitude != null &&
+          currentLocation.longitude != null) {
+            setState((){
+              
+            })
+          }
+    });
   }
 }
