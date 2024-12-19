@@ -16,6 +16,8 @@ class _MapPageState extends State<MapPage> {
   static const LatLng _Jbeil = LatLng(34.115568, 35.674343);
   static const LatLng _Hamra = LatLng(33.896198, 35.477865);
 
+  LatLng? _currentP = null;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,10 +64,12 @@ class _MapPageState extends State<MapPage> {
         .listen((LocationData currentLocation) {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
-            setState((){
-              
-            })
-          }
+        setState(() {
+          _currentP =
+              LatLng(currentLocation.latitude!, currentLocation.longitude!);
+        });
+        print(_currentP);
+      }
     });
   }
 }
