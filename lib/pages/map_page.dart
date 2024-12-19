@@ -17,6 +17,11 @@ class _MapPageState extends State<MapPage> {
   static const LatLng _Hamra = LatLng(33.896198, 35.477865);
 
   LatLng? _currentP = null;
+  @override
+  void initState() {
+    super.initState();
+    getLocationUpdates();
+  }
 
   @override
   Widget build(BuildContext context) {
