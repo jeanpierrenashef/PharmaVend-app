@@ -101,4 +101,10 @@ class _MapPageState extends State<MapPage> {
       }
     });
   }
+
+  Future<List<LatLng>> getPolylinePoints() async {
+    List<LatLng> polylineCoordinates = [];
+    PolylinePoints polylinePoints = PolylinePoints();
+    PolylineRequest result = await polylinePoints.getRouteBetweenCoordinates();
+  }
 }
