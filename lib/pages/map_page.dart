@@ -59,11 +59,11 @@ class _MapPageState extends State<MapPage> {
               ));
   }
 
-  Future<void> cameraToPosition(LatLng pos) async {
+  Future<void> _cameraToPosition(LatLng pos) async {
     final GoogleMapController controller = await _mapController.future;
     CameraPosition _newCameraPosition = CameraPosition(
       target: pos,
-      zoom: 9,
+      zoom: 13,
     );
     await controller.animateCamera(
       CameraUpdate.newCameraPosition(_newCameraPosition),
@@ -94,8 +94,9 @@ class _MapPageState extends State<MapPage> {
         setState(() {
           _currentP =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
+          _cameraToPosition(_currentP!);
         });
-        print(_currentP);
+        //print(_currentP);
       }
     });
   }
