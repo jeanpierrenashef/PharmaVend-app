@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
@@ -12,7 +14,10 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   Location _locationController = new Location();
 
-  static const LatLng _pGooglePlex = LatLng(33.833905, 35.591587);
+  final Completer<GoogleMapController> _mapController =
+      Completer<GoogleMapController>();
+
+  //static const LatLng _pGooglePlex = LatLng(33.833905, 35.591587);
   static const LatLng _Jbeil = LatLng(34.115568, 35.674343);
   static const LatLng _Hamra = LatLng(33.896198, 35.477865);
 
@@ -32,14 +37,14 @@ class _MapPageState extends State<MapPage> {
               )
             : GoogleMap(
                 initialCameraPosition: CameraPosition(
-                  target: _pGooglePlex,
+                  target: _Hamra,
                   zoom: 9,
                 ),
                 markers: {
                   Marker(
-                      markerId: MarkerId("_currentLocation"),
+                      markerId: MarkerId("_sourceLocation"),
                       icon: BitmapDescriptor.defaultMarker,
-                      position: _pGooglePlex),
+                      position: _currentP!),
                   Marker(
                       markerId: MarkerId("_JbeilLocation"),
                       icon: BitmapDescriptor.defaultMarker,
