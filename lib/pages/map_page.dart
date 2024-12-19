@@ -59,6 +59,11 @@ class _MapPageState extends State<MapPage> {
               ));
   }
 
+  Future<void> cameraToPosition(LatLng pos) async {
+    final GoogleMapController controller = await _mapController.future;
+    CameraPosition _newCameraPosition = CameraPosition(target: pos, zoom: 9);
+  }
+
   Future<void> getLocationUpdates() async {
     bool _serviceEnabled;
     PermissionStatus _permissionGranted;
