@@ -133,6 +133,8 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> _updatePolyline() async {
     if (_currentP == null) return;
+    final closest = await fetchClosestDestination();
+    LatLng closestDestination = closest["destination"];
     PolylineResult result = await _polylinePoints.getRouteBetweenCoordinates(
       googleApiKey: googleMapsApiKey,
       request: PolylineRequest(
