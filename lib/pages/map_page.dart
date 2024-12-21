@@ -79,30 +79,44 @@ class _MapPageState extends State<MapPage> {
                   ),
                 ),
                 Flexible(
-                  flex: 1,
-                  child: Container(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    child: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Additional Information",
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 8),
-                          ElevatedButton(
-                            onPressed: () {
-                              print("Button Pressed!");
-                            },
-                            child: Text("Click Me"),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        Container(
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            height: 70,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: const [
+                                        Text(
+                                          "Closest machine",
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        SizedBox(height: 4),
+                                        Text(
+                                          "Jbeil, Blat LAU V12",
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                )
+                              ],
+                            ))
+                      ],
+                    )),
               ],
             ),
     );
