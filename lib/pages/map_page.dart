@@ -112,15 +112,21 @@ class _MapPageState extends State<MapPage> {
     }
 
     _locationController.onLocationChanged
-        .listen((LocationData currentLocation) {
+        .listen((LocationData currentLocation) async {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
         setState(() {
           _currentP =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
         });
-        _cameraToPosition(_currentP!);
-        _updatePolyline();
+        final closest = await fetchClosestDestination();
+        if (closest.isNotEmpty) {
+          print("Closest Destination: ${closest['destination']}");
+          print("Distance: ${closest['distance']}");
+          print("ETA: ${closest['duration']}");
+          _cameraToPosition(_currentP!);
+          _updatePolyline();
+        }
       }
     });
   }
