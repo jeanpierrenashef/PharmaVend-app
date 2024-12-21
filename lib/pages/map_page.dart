@@ -28,6 +28,7 @@ class _MapPageState extends State<MapPage> {
   List<LatLng> _polylineCoordinates = [];
   late PolylinePoints _polylinePoints;
   final googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+  String _selectedMode = "driving";
   @override
   void initState() {
     super.initState();
@@ -147,11 +148,12 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<Map<String, dynamic>> fetchClosestDestination() async {
+    final String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
     final String origin = "${_currentP!.latitude},${_currentP!.longitude}";
     final String destinations =
         "${_Jbeil.latitude},${_Jbeil.longitude}|${_Hamra.latitude},${_Hamra.longitude}";
 
     final String url =
-        'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destinations&key=$googleMapsApiKey';
+        'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destinations&key=$apiKey&mode=$_selectedMode';
   }
 }
