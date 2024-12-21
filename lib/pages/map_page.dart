@@ -171,7 +171,7 @@ class _MapPageState extends State<MapPage> {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print("Distance Matrix Response: $data");
+        //print("Distance Matrix Response: $data");
 
         List elements = data['rows'][0]['elements'];
         int closestIndex = 0;
