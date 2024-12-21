@@ -428,28 +428,6 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
-  Future<void> fetchAndUpdateClosestDestination() async {
-    if (!_userSelected) {
-      final closest = await fetchClosestDestination();
-      if (closest.isNotEmpty) {
-        setState(() {
-          _selectedMachine = _machines.firstWhere(
-            (machine) => machine['name'] == closest['name'],
-          );
-          _distance = closest['distance'];
-          _eta = closest['duration'];
-        });
-
-        await _updatePolyline(
-          LatLng(_selectedMachine!['latitude'], _selectedMachine!['longitude']),
-        );
-        await _cameraToPosition(
-          LatLng(_selectedMachine!['latitude'], _selectedMachine!['longitude']),
-        );
-      }
-    }
-  }
-
   Future<void> _updatePolyline(LatLng destination) async {
     if (_currentP == null) return;
 
@@ -521,6 +499,28 @@ class _MapPageState extends State<MapPage> {
     } catch (e) {
       print("Error fetching Distance Matrix: $e");
       return {};
+    }
+  }
+
+  Future<void> fetchAndUpdateClosestDestination() async {
+    if (!_userSelected) {
+      final closest = await fetchClosestDestination();
+      if (closest.isNotEmpty) {
+        setState(() {
+          _selectedMachine = _machines.firstWhere(
+            (machine) => machine['name'] == closest['name'],
+          );
+          _distance = closest['distance'];
+          _eta = closest['duration'];
+        });
+
+        await _updatePolyline(
+          LatLng(_selectedMachine!['latitude'], _selectedMachine!['longitude']),
+        );
+        await _cameraToPosition(
+          LatLng(_selectedMachine!['latitude'], _selectedMachine!['longitude']),
+        );
+      }
     }
   }
 }
