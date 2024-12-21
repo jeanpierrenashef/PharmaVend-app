@@ -155,22 +155,33 @@ class _MapPageState extends State<MapPage> {
 
     final String url =
         'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destinations&key=$apiKey&mode=$_selectedMode';
-  try {
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      print("Distance Matrix Response: $data");
-    
-    List elements = data['rows'][0]['elements'];
-      int closestIndex = 0;
-      int shortestDistance = elements[0]['distance']['value'];
-      for (int i = 1; i < elements.length; i++) {
-        if (elements[i]['distance']['value'] < shortestDistance) {
-          closestIndex = i;
-          shortestDistance = elements[i]['distance']['value'];
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        print("Distance Matrix Response: $data");
+
+        List elements = data['rows'][0]['elements'];
+        int closestIndex = 0;
+        int shortestDistance = elements[0]['distance']['value'];
+        for (int i = 1; i < elements.length; i++) {
+          if (elements[i]['distance']['value'] < shortestDistance) {
+            closestIndex = i;
+            shortestDistance = elements[i]['distance']['value'];
+          }
         }
-        }
+        return {
+          "destination": closestIndex == 0 ? _Jbeil : _Hamra,
+          "distance": elements[closestIndex]['distance']['text'],
+          "duration": elements[closestIndex]['duration']['text'],
+        };
+      } else {
+        print("Failed to fetch distance: ${response.statusCode}");
+        return {};
       }
-  }catch{}
+    } catch (e) {
+      print("Error fetching Distance Matrix: $e");
+      return {};
+    }
   }
 }
