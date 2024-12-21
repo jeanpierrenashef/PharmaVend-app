@@ -18,8 +18,10 @@ class _MapPageState extends State<MapPage> {
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
 
-  static const LatLng _Jbeil = LatLng(34.115568, 35.674343);
-  static const LatLng _Hamra = LatLng(33.896198, 35.477865);
+  static const LatLng _Jbeil =
+      LatLng(34.115568, 35.674343); //grabbed from the db
+  static const LatLng _Hamra =
+      LatLng(33.896198, 35.477865); //grabbed from the db
 
   LatLng? _currentP;
   List<LatLng> _polylineCoordinates = [];
@@ -43,7 +45,8 @@ class _MapPageState extends State<MapPage> {
               onMapCreated: (GoogleMapController controller) =>
                   _mapController.complete(controller),
               initialCameraPosition: CameraPosition(
-                target: _Hamra,
+                target:
+                    _Hamra, //here target should be automatically the closest
                 zoom: 9,
               ),
               myLocationEnabled:
