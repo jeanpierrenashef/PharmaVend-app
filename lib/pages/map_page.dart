@@ -76,7 +76,7 @@ class _MapPageState extends State<MapPage> {
           : Column(
               children: [
                 Flexible(
-                  flex: 3,
+                  flex: 5,
                   child: GoogleMap(
                     onMapCreated: (GoogleMapController controller) =>
                         _mapController.complete(controller),
@@ -110,7 +110,7 @@ class _MapPageState extends State<MapPage> {
                   ),
                 ),
                 Flexible(
-                  flex: 1,
+                  flex: 2,
                   child: Column(
                     children: [
                       // Upper Container for Closest or Selected Machine
@@ -247,8 +247,6 @@ class _MapPageState extends State<MapPage> {
                                 .toList();
 
                             final otherMachine = filteredMachines[index];
-
-                            // Fetch data for machines dynamically
                             if (!_machineDistances
                                 .containsKey(otherMachine['name'])) {
                               fetchMachineData(otherMachine);
