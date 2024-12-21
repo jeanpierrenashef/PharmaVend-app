@@ -27,7 +27,7 @@ class _MapPageState extends State<MapPage> {
   LatLng? _currentP;
   List<LatLng> _polylineCoordinates = [];
   late PolylinePoints _polylinePoints;
-
+  final googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
   @override
   void initState() {
     super.initState();
@@ -126,7 +126,6 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> _updatePolyline() async {
     if (_currentP == null) return;
-    final googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
     PolylineResult result = await _polylinePoints.getRouteBetweenCoordinates(
       googleApiKey: googleMapsApiKey,
       request: PolylineRequest(
@@ -145,5 +144,14 @@ class _MapPageState extends State<MapPage> {
     } else {
       print("Error retrieving polyline: ${result.errorMessage}");
     }
+  }
+
+  Future<Map<String, dynamic>> fetchClosestDestination() async {
+    final String origin = "${_currentP!.latitude},${_currentP!.longitude}";
+    final String destinations =
+        "${_Jbeil.latitude},${_Jbeil.longitude}|${_Hamra.latitude},${_Hamra.longitude}";
+
+    final String url =
+        'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destinations&key=$googleMapsApiKey';
   }
 }
