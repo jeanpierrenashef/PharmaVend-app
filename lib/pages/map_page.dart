@@ -43,43 +43,67 @@ class _MapPageState extends State<MapPage> {
           ? const Center(
               child: Text("Loading..."),
             )
-          : GoogleMap(
-              onMapCreated: (GoogleMapController controller) =>
-                  _mapController.complete(controller),
-              initialCameraPosition: CameraPosition(
-                target:
-                    _Hamra, //here target should be automatically the closest
-                zoom: 9,
-              ),
-              myLocationEnabled:
-                  true, // Enables the blue circle for user location
-              myLocationButtonEnabled:
-                  true, // Adds the location button on the map
-              markers: {
-                // Marker(
-                //   markerId: MarkerId("_sourceLocation"),
-                //   icon: BitmapDescriptor.defaultMarker,
-                //   position: _currentP!,
-                // ),
-                Marker(
-                  markerId: MarkerId("_JbeilLocation"),
-                  icon: BitmapDescriptor.defaultMarker,
-                  position: _Jbeil,
+          : Column(
+              children: [
+                Flexible(
+                  flex: 3,
+                  child: GoogleMap(
+                    onMapCreated: (GoogleMapController controller) =>
+                        _mapController.complete(controller),
+                    initialCameraPosition: CameraPosition(
+                      target: _Hamra,
+                      zoom: 9,
+                    ),
+                    myLocationEnabled: true,
+                    myLocationButtonEnabled: true,
+                    markers: {
+                      Marker(
+                        markerId: MarkerId("_JbeilLocation"),
+                        icon: BitmapDescriptor.defaultMarker,
+                        position: _Jbeil,
+                      ),
+                      Marker(
+                        markerId: MarkerId("_HamraLocation"),
+                        icon: BitmapDescriptor.defaultMarker,
+                        position: _Hamra,
+                      ),
+                    },
+                    polylines: {
+                      Polyline(
+                        polylineId: const PolylineId("route"),
+                        points: _polylineCoordinates,
+                        color: Colors.blue,
+                        width: 5,
+                      ),
+                    },
+                  ),
                 ),
-                Marker(
-                  markerId: MarkerId("_HamraLocation"),
-                  icon: BitmapDescriptor.defaultMarker,
-                  position: _Hamra,
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    color: Colors.grey[200],
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Additional Information",
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 8),
+                          ElevatedButton(
+                            onPressed: () {
+                              print("Button Pressed!");
+                            },
+                            child: Text("Click Me"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              },
-              polylines: {
-                Polyline(
-                  polylineId: const PolylineId("route"),
-                  points: _polylineCoordinates,
-                  color: Colors.blue,
-                  width: 5,
-                ),
-              },
+              ],
             ),
     );
   }
