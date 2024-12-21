@@ -120,7 +120,7 @@ class _MapPageState extends State<MapPage> {
                             horizontal: 16,
                             vertical: 5,
                           ),
-                          height: 100,
+                          height: 90,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -230,23 +230,24 @@ class _MapPageState extends State<MapPage> {
                             ],
                           ),
                         ),
-                        const SizedBox(height: 1),
+                        //const SizedBox(height: 5),
                         Expanded(
                           child: ListView.builder(
-                            itemCount: _machines.length - 1,
+                            itemCount: _machines
+                                .where((machine) =>
+                                    machine['name'] != _closestMachineName)
+                                .length,
                             itemBuilder: (context, index) {
-                              final otherMachine = _machines.firstWhere(
-                                  (machine) =>
-                                      machine['name'] != _closestMachineName,
-                                  orElse: () => {});
+                              final filteredMachines = _machines
+                                  .where((machine) =>
+                                      machine['name'] != _closestMachineName)
+                                  .toList();
 
-                              if (otherMachine.isEmpty) {
-                                return const SizedBox.shrink();
-                              }
+                              final otherMachine = filteredMachines[index];
 
                               return Container(
                                 margin: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 1),
+                                    horizontal: 16, vertical: 5),
                                 padding: const EdgeInsets.all(16),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8),
@@ -276,8 +277,9 @@ class _MapPageState extends State<MapPage> {
                                                 "Selected machine: ${otherMachine['name']}");
                                           },
                                           style: ElevatedButton.styleFrom(
-                                            backgroundColor: Color.fromRGBO(
-                                                32, 181, 115, 100),
+                                            backgroundColor:
+                                                const Color.fromRGBO(
+                                                    32, 181, 115, 1),
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 16, vertical: 8),
                                           ),
