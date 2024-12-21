@@ -94,23 +94,17 @@ class _MapPageState extends State<MapPage> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: const [
-                                        Text(
-                                          "Closest machine",
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          "Jbeil, Blat LAU V12",
-                                          style: TextStyle(fontSize: 14),
-                                        ),
-                                      ],
-                                    )
+                                    Text(
+                                      "Closest machine",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(height: 4),
+                                    Text(
+                                      "Hamra, V12",
+                                      style: TextStyle(fontSize: 14),
+                                    ),
                                   ],
                                 )
                               ],
