@@ -293,10 +293,38 @@ class _MapPageState extends State<MapPage> {
                                   ),
                                   const SizedBox(height: 8),
                                   Row(
+                                    children: const [
+                                      Text(
+                                        "Default:",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      SizedBox(width: 4),
+                                      Icon(Icons.directions_car,
+                                          size: 16, color: Colors.grey),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "Car",
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text("Dynamic values here"),
+                                      Text(
+                                        "Distance: 12 km",
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
+                                      Text(
+                                        "Time: 15 mins",
+                                        style: const TextStyle(fontSize: 14),
+                                      ),
                                     ],
                                   ),
                                 ],
@@ -354,36 +382,14 @@ class _MapPageState extends State<MapPage> {
             const Duration(seconds: 5)) {
           lastUpdate = DateTime.now();
 
-          await fetchAndUpdateClosestDestination();
           if (_selectedMachine != null) {
-            await _cameraToPosition(LatLng(
-                _selectedMachine!['latitude'], _selectedMachine!['longitude']));
+            await fetchThisDestination(_selectedMachine!);
+          } else {
+            await fetchAndUpdateClosestDestination();
           }
         }
       }
     });
-  }
-
-  Future<void> fetchAndUpdateClosestDestination() async {
-    if (!_userSelected) {
-      final closest = await fetchClosestDestination();
-      if (closest.isNotEmpty) {
-        setState(() {
-          _selectedMachine = _machines.firstWhere(
-            (machine) => machine['name'] == closest['name'],
-          );
-          _distance = closest['distance'];
-          _eta = closest['duration'];
-        });
-
-        await _updatePolyline(
-          LatLng(_selectedMachine!['latitude'], _selectedMachine!['longitude']),
-        );
-        await _cameraToPosition(
-          LatLng(_selectedMachine!['latitude'], _selectedMachine!['longitude']),
-        );
-      }
-    }
   }
 
   Future<void> fetchThisDestination(
@@ -419,6 +425,28 @@ class _MapPageState extends State<MapPage> {
       }
     } catch (e) {
       print("Error fetching this destination: $e");
+    }
+  }
+
+  Future<void> fetchAndUpdateClosestDestination() async {
+    if (!_userSelected) {
+      final closest = await fetchClosestDestination();
+      if (closest.isNotEmpty) {
+        setState(() {
+          _selectedMachine = _machines.firstWhere(
+            (machine) => machine['name'] == closest['name'],
+          );
+          _distance = closest['distance'];
+          _eta = closest['duration'];
+        });
+
+        await _updatePolyline(
+          LatLng(_selectedMachine!['latitude'], _selectedMachine!['longitude']),
+        );
+        await _cameraToPosition(
+          LatLng(_selectedMachine!['latitude'], _selectedMachine!['longitude']),
+        );
+      }
     }
   }
 
