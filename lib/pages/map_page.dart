@@ -40,21 +40,18 @@ class _MapPageState extends State<MapPage> {
   String _selectedMode = "driving";
   String _distance = "-";
   String _eta = "-";
+  String _closestMachineName = "";
 
   @override
   void initState() {
     super.initState();
     _polylinePoints = PolylinePoints();
     getLocationUpdates();
-
-    fetchClosestDestination().then((closest) {
-      if (closest.isNotEmpty) {
-        setState(() {
-          _distance = closest['distance'];
-          _eta = closest['duration'];
-        });
+    Future.delayed(const Duration(seconds: 2), () async {
+      if (_currentP != null) {
+        await fetchAndUpdateClosestDestination();
       } else {
-        print("Error fetching initial closest destination.");
+        print("Current position (_currentP) is still null after delay.");
       }
     });
   }
@@ -134,7 +131,9 @@ class _MapPageState extends State<MapPage> {
                                   ),
                                   SizedBox(height: 2),
                                   Text(
-                                    "Hamra, V12", //to be fixed soon
+                                    _closestMachineName.isNotEmpty
+                                        ? _closestMachineName
+                                        : "Loading...",
                                     style: TextStyle(fontSize: 14),
                                   ),
                                 ],
@@ -370,6 +369,17 @@ class _MapPageState extends State<MapPage> {
     } catch (e) {
       print("Error fetching Distance Matrix: $e");
       return {};
+    }
+  }
+
+  Future<void> fetchAndUpdateClosestDestination() async {
+    final closest = await fetchClosestDestination();
+    if (closest.isNotEmpty) {
+      setState(() {
+        _closestMachineName = closest['name'];
+        _distance = closest['distance'];
+        _eta = closest['duration'];
+      });
     }
   }
 }
