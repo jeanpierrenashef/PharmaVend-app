@@ -86,7 +86,7 @@ class _MapPageState extends State<MapPage> {
                           color: const Color.fromARGB(255, 255, 255, 255),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 8),
-                          height: 70,
+                          height: 100,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -113,30 +113,73 @@ class _MapPageState extends State<MapPage> {
                                 children: [
                                   Row(
                                     children: [
-                                      const Icon(Icons.directions_car,
-                                          size: 24),
+                                      Icon(
+                                        _selectedMode == "driving"
+                                            ? Icons.directions_car
+                                            : _selectedMode == "walking"
+                                                ? Icons.directions_walk
+                                                : Icons.directions_bike,
+                                        size: 24,
+                                      ),
                                       DropdownButton<String>(
-                                        value: "Car",
-                                        underline:
-                                            const SizedBox(), // Hides the underline
+                                        value:
+                                            _selectedMode, // This must match one of the DropdownMenuItem values
+                                        underline: const SizedBox(),
                                         items: const [
                                           DropdownMenuItem(
-                                            value: "Car",
-                                            child: Text("Car"),
+                                            value: "driving",
+                                            child: Text("Driving"),
                                           ),
                                           DropdownMenuItem(
-                                            value: "Walking",
+                                            value: "walking",
                                             child: Text("Walking"),
                                           ),
                                           DropdownMenuItem(
-                                            value: "Bicycle",
-                                            child: Text("Bicycle"),
+                                            value: "bicycling",
+                                            child: Text("Bicycling"),
                                           ),
                                         ],
                                         onChanged: (value) {
-                                          print("Selected Mode: $value");
+                                          setState(() {
+                                            _selectedMode =
+                                                value!; // Update the selected mode
+                                          });
                                         },
-                                      )
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Text(
+                                        "Distance",
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "12 km",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: const [
+                                      Text(
+                                        "ETA",
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        "10 mins",
+                                        style: TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ],
                                   )
                                 ],
