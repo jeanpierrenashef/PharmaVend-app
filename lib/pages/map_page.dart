@@ -81,7 +81,7 @@ class _MapPageState extends State<MapPage> {
                 Flexible(
                   flex: 1,
                   child: Container(
-                    color: Colors.grey[200],
+                    color: const Color.fromARGB(255, 255, 255, 255),
                     child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
