@@ -84,18 +84,18 @@ class _MapPageState extends State<MapPage> {
                     ),
                     myLocationEnabled: true,
                     myLocationButtonEnabled: true,
-                    markers: {
-                      Marker(
-                        markerId: MarkerId("_JbeilLocation"),
-                        icon: BitmapDescriptor.defaultMarker,
-                        position: _Jbeil,
-                      ),
-                      Marker(
-                        markerId: MarkerId("_HamraLocation"),
-                        icon: BitmapDescriptor.defaultMarker,
-                        position: _Hamra,
-                      ),
-                    },
+                    markers: _machines
+                        .map(
+                          (machine) => Marker(
+                            markerId: MarkerId(machine['name']),
+                            icon: BitmapDescriptor.defaultMarker,
+                            position: LatLng(
+                              machine['latitude'],
+                              machine['longitude'],
+                            ),
+                          ),
+                        )
+                        .toSet(),
                     polylines: {
                       Polyline(
                         polylineId: const PolylineId("route"),
