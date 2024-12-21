@@ -301,7 +301,28 @@ class _MapPageState extends State<MapPage> {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: const [
+                                      Text(
+                                        "Default:",
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey,
+                                        ),
+                                      ),
+                                      SizedBox(width: 4),
+                                      Icon(Icons.directions_car,
+                                          size: 16, color: Colors.grey),
+                                      SizedBox(width: 4),
+                                      Text(
+                                        "Car",
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
