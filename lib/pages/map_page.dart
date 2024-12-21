@@ -27,8 +27,12 @@ class _MapPageState extends State<MapPage> {
   LatLng? _currentP;
   List<LatLng> _polylineCoordinates = [];
   late PolylinePoints _polylinePoints;
+
   final googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
   String _selectedMode = "driving";
+  String _distance = "12 km";
+  String _eta = "10 mins";
+
   @override
   void initState() {
     super.initState();
@@ -122,8 +126,7 @@ class _MapPageState extends State<MapPage> {
                                         size: 24,
                                       ),
                                       DropdownButton<String>(
-                                        value:
-                                            _selectedMode, // This must match one of the DropdownMenuItem values
+                                        value: _selectedMode,
                                         underline: const SizedBox(),
                                         items: const [
                                           DropdownMenuItem(
@@ -141,8 +144,7 @@ class _MapPageState extends State<MapPage> {
                                         ],
                                         onChanged: (value) {
                                           setState(() {
-                                            _selectedMode =
-                                                value!; // Update the selected mode
+                                            _selectedMode = value!;
                                           });
                                         },
                                       ),
