@@ -160,7 +160,17 @@ class _MapPageState extends State<MapPage> {
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
       print("Distance Matrix Response: $data");
-    }
+    
+    List elements = data['rows'][0]['elements'];
+      int closestIndex = 0;
+      int shortestDistance = elements[0]['distance']['value'];
+      for (int i = 1; i < elements.length; i++) {
+        if (elements[i]['distance']['value'] < shortestDistance) {
+          closestIndex = i;
+          shortestDistance = elements[i]['distance']['value'];
+        }
+        }
+      }
   }catch{}
   }
 }
