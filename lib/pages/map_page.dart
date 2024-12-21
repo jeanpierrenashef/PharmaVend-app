@@ -30,6 +30,11 @@ class _MapPageState extends State<MapPage> {
       "latitude": 33.896198,
       "longitude": 35.477865,
     },
+    {
+      "name": "Rachaiya, V39",
+      "latitude": 33.498073,
+      "longitude": 35.840486,
+    },
   ];
 
   LatLng? _currentP;
@@ -224,7 +229,108 @@ class _MapPageState extends State<MapPage> {
                               )
                             ],
                           ),
-                        )
+                        ),
+                        const SizedBox(height: 1),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: _machines.length - 1,
+                            itemBuilder: (context, index) {
+                              final otherMachine = _machines.firstWhere(
+                                  (machine) =>
+                                      machine['name'] != _closestMachineName,
+                                  orElse: () => {});
+
+                              if (otherMachine.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 1),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    width: 1,
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          otherMachine['name'],
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            print(
+                                                "Selected machine: ${otherMachine['name']}");
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Color.fromRGBO(
+                                                32, 181, 115, 100),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 8),
+                                          ),
+                                          child: const Text(
+                                            "Select",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      children: const [
+                                        Text(
+                                          "Default:",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        SizedBox(width: 4),
+                                        Icon(Icons.directions_car,
+                                            size: 16, color: Colors.grey),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          "Car",
+                                          style: TextStyle(
+                                              fontSize: 12, color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Distance: 12 km",
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                        Text(
+                                          "Time: 15 mins",
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
                       ],
                     )),
               ],
