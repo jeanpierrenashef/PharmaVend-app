@@ -31,10 +31,6 @@ class _MapPageState extends State<MapPage> {
       "longitude": 35.477865,
     },
   ];
-  // static const LatLng _Jbeil =
-  //     LatLng(34.115568, 35.674343); //grabbed from the db
-  // static const LatLng _Hamra =
-  //     LatLng(33.896198, 35.477865); //grabbed from the db
 
   LatLng? _currentP;
   List<LatLng> _polylineCoordinates = [];
@@ -327,12 +323,20 @@ class _MapPageState extends State<MapPage> {
 
   Future<Map<String, dynamic>> fetchClosestDestination() async {
     final String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+    if (_currentP == null || _machines.isEmpty) {
+      print("Current position or machines data is missing.");
+      return {};
+    }
+
     final String origin = "${_currentP!.latitude},${_currentP!.longitude}";
-    final String destinations =
-        "${_Jbeil.latitude},${_Jbeil.longitude}|${_Hamra.latitude},${_Hamra.longitude}";
+
+    final String destinations = _machines
+        .map((machine) => "${machine['latitude']},${machine['longitude']}")
+        .join('|');
 
     final String url =
         'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destinations&key=$apiKey&mode=$_selectedMode';
+
     try {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
@@ -342,14 +346,20 @@ class _MapPageState extends State<MapPage> {
         List elements = data['rows'][0]['elements'];
         int closestIndex = 0;
         int shortestDistance = elements[0]['distance']['value'];
+
+        // Find the closest destination
         for (int i = 1; i < elements.length; i++) {
           if (elements[i]['distance']['value'] < shortestDistance) {
             closestIndex = i;
             shortestDistance = elements[i]['distance']['value'];
           }
         }
+
         return {
-          "destination": closestIndex == 0 ? _Jbeil : _Hamra,
+          "destination": LatLng(
+            _machines[closestIndex]['latitude'],
+            _machines[closestIndex]['longitude'],
+          ),
           "distance": elements[closestIndex]['distance']['text'],
           "duration": elements[closestIndex]['duration']['text'],
         };
