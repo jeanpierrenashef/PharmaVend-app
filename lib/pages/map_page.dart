@@ -142,9 +142,15 @@ class _MapPageState extends State<MapPage> {
                                             child: Text("Bicycling"),
                                           ),
                                         ],
-                                        onChanged: (value) {
+                                        onChanged: (value) async {
                                           setState(() {
                                             _selectedMode = value!;
+                                          });
+                                          final closest =
+                                              await fetchClosestDestination();
+                                          setState(() {
+                                            _distance = closest['distance'];
+                                            _eta = closest['duration'];
                                           });
                                         },
                                       ),
