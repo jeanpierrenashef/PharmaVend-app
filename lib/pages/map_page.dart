@@ -158,16 +158,16 @@ class _MapPageState extends State<MapPage> {
                                   ),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text(
+                                    children: [
+                                      const Text(
                                         "Distance",
                                         style: TextStyle(
                                             fontSize: 12, color: Colors.grey),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text(
-                                        "12 km",
-                                        style: TextStyle(
+                                        _distance, // Dynamically updated distance
+                                        style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -175,21 +175,21 @@ class _MapPageState extends State<MapPage> {
                                   ),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    children: const [
-                                      Text(
+                                    children: [
+                                      const Text(
                                         "ETA",
                                         style: TextStyle(
                                             fontSize: 12, color: Colors.grey),
                                       ),
-                                      SizedBox(height: 4),
+                                      const SizedBox(height: 4),
                                       Text(
-                                        "10 mins",
-                                        style: TextStyle(
+                                        _eta, // Dynamically updated ETA
+                                        style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ],
-                                  )
+                                  ),
                                 ],
                               )
                             ],
