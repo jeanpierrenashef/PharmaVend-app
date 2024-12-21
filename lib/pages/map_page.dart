@@ -347,7 +347,6 @@ class _MapPageState extends State<MapPage> {
         int closestIndex = 0;
         int shortestDistance = elements[0]['distance']['value'];
 
-        // Find the closest destination
         for (int i = 1; i < elements.length; i++) {
           if (elements[i]['distance']['value'] < shortestDistance) {
             closestIndex = i;
@@ -362,6 +361,7 @@ class _MapPageState extends State<MapPage> {
           ),
           "distance": elements[closestIndex]['distance']['text'],
           "duration": elements[closestIndex]['duration']['text'],
+          "name": _machines[closestIndex]['name']
         };
       } else {
         print("Failed to fetch distance: ${response.statusCode}");
