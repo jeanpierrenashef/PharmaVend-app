@@ -19,10 +19,22 @@ class _MapPageState extends State<MapPage> {
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
 
-  static const LatLng _Jbeil =
-      LatLng(34.115568, 35.674343); //grabbed from the db
-  static const LatLng _Hamra =
-      LatLng(33.896198, 35.477865); //grabbed from the db
+  final List<Map<String, dynamic>> _machines = [
+    {
+      "name": "Jbeil, V1",
+      "latitude": 34.115568,
+      "longitude": 35.674343,
+    },
+    {
+      "name": "Hamra, V12",
+      "latitude": 33.896198,
+      "longitude": 35.477865,
+    },
+  ];
+  // static const LatLng _Jbeil =
+  //     LatLng(34.115568, 35.674343); //grabbed from the db
+  // static const LatLng _Hamra =
+  //     LatLng(33.896198, 35.477865); //grabbed from the db
 
   LatLng? _currentP;
   List<LatLng> _polylineCoordinates = [];
@@ -32,7 +44,6 @@ class _MapPageState extends State<MapPage> {
   String _selectedMode = "driving";
   String _distance = "-";
   String _eta = "-";
-  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -67,7 +78,8 @@ class _MapPageState extends State<MapPage> {
                     onMapCreated: (GoogleMapController controller) =>
                         _mapController.complete(controller),
                     initialCameraPosition: CameraPosition(
-                      target: _Hamra,
+                      target: LatLng(
+                          _machines[1]['latitude'], _machines[1]['longitude']),
                       zoom: 9,
                     ),
                     myLocationEnabled: true,
@@ -99,9 +111,17 @@ class _MapPageState extends State<MapPage> {
                     child: Column(
                       children: [
                         Container(
-                          color: const Color.fromARGB(255, 255, 255, 255),
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                          ),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            horizontal: 16,
+                            vertical: 5,
+                          ),
                           height: 100,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -254,14 +274,12 @@ class _MapPageState extends State<MapPage> {
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
         });
 
-        // Update only every 5 seconds
         if (DateTime.now().difference(lastUpdate) >
             const Duration(seconds: 5)) {
           lastUpdate = DateTime.now();
 
           final closest = await fetchClosestDestination();
           if (closest.isNotEmpty) {
-            // Update `_distance` and `_eta` directly after fetch
             setState(() {
               _distance = closest['distance'];
               _eta = closest['duration'];
@@ -271,7 +289,6 @@ class _MapPageState extends State<MapPage> {
             print("Distance: $_distance");
             print("ETA: $_eta");
 
-            // Update polyline and camera
             _cameraToPosition(_currentP!);
             _updatePolyline();
           }
