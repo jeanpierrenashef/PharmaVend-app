@@ -30,14 +30,25 @@ class _MapPageState extends State<MapPage> {
 
   final googleMapsApiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
   String _selectedMode = "driving";
-  String _distance = "12 km";
-  String _eta = "10 mins";
+  String _distance = "-";
+  String _eta = "-";
 
   @override
   void initState() {
     super.initState();
     _polylinePoints = PolylinePoints();
     getLocationUpdates();
+
+    fetchClosestDestination().then((closest) {
+      if (closest.isNotEmpty) {
+        setState(() {
+          _distance = closest['distance'];
+          _eta = closest['duration'];
+        });
+      } else {
+        print("Error fetching initial closest destination.");
+      }
+    });
   }
 
   @override
@@ -104,7 +115,7 @@ class _MapPageState extends State<MapPage> {
                                         fontSize: 16,
                                         fontWeight: FontWeight.bold),
                                   ),
-                                  SizedBox(height: 4),
+                                  SizedBox(height: 2),
                                   Text(
                                     "Hamra, V12", //to be fixed soon
                                     style: TextStyle(fontSize: 14),
@@ -166,7 +177,7 @@ class _MapPageState extends State<MapPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        _distance, // Dynamically updated distance
+                                        _distance,
                                         style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold),
@@ -183,7 +194,7 @@ class _MapPageState extends State<MapPage> {
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        _eta, // Dynamically updated ETA
+                                        _eta,
                                         style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold),
