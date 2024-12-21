@@ -48,6 +48,10 @@ class _MapPageState extends State<MapPage> {
   Map<String, dynamic>? _selectedMachine;
   bool _userSelected = false;
 
+  // State to store unique distances and ETAs
+  Map<String, String> _machineDistances = {};
+  Map<String, String> _machineETAs = {};
+
   @override
   void initState() {
     super.initState();
@@ -244,6 +248,12 @@ class _MapPageState extends State<MapPage> {
 
                             final otherMachine = filteredMachines[index];
 
+                            // Fetch data for machines dynamically
+                            if (!_machineDistances
+                                .containsKey(otherMachine['name'])) {
+                              fetchMachineData(otherMachine);
+                            }
+
                             return Container(
                               margin: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 5),
@@ -293,36 +303,15 @@ class _MapPageState extends State<MapPage> {
                                   ),
                                   const SizedBox(height: 8),
                                   Row(
-                                    children: const [
-                                      Text(
-                                        "Default:",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      SizedBox(width: 4),
-                                      Icon(Icons.directions_car,
-                                          size: 16, color: Colors.grey),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        "Car",
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.grey),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        "Distance: 12 km",
+                                        "Distance: ${_machineDistances[otherMachine['name']] ?? 'Fetching...'}",
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                       Text(
-                                        "Time: 15 mins",
+                                        "ETA: ${_machineETAs[otherMachine['name']] ?? 'Fetching...'}",
                                         style: const TextStyle(fontSize: 14),
                                       ),
                                     ],
@@ -350,6 +339,32 @@ class _MapPageState extends State<MapPage> {
     await controller.animateCamera(
       CameraUpdate.newCameraPosition(newCameraPosition),
     );
+  }
+
+  Future<void> fetchMachineData(Map<String, dynamic> machine) async {
+    if (_currentP == null) return;
+
+    final String origin = "${_currentP!.latitude},${_currentP!.longitude}";
+    final String destination = "${machine['latitude']},${machine['longitude']}";
+
+    final String url =
+        'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destination&key=$googleMapsApiKey&mode=$_selectedMode';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final distance = data['rows'][0]['elements'][0]['distance']['text'];
+        final duration = data['rows'][0]['elements'][0]['duration']['text'];
+
+        setState(() {
+          _machineDistances[machine['name']] = distance;
+          _machineETAs[machine['name']] = duration;
+        });
+      }
+    } catch (e) {
+      print("Error fetching machine data: $e");
+    }
   }
 
   Future<void> getLocationUpdates() async {
