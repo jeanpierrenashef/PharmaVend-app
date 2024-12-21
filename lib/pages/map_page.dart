@@ -155,5 +155,12 @@ class _MapPageState extends State<MapPage> {
 
     final String url =
         'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destinations&key=$apiKey&mode=$_selectedMode';
+  try {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      print("Distance Matrix Response: $data");
+    }
+  }catch{}
   }
 }
