@@ -139,8 +139,12 @@ class _MapPageState extends State<MapPage> {
       googleApiKey: googleMapsApiKey,
       request: PolylineRequest(
         origin: PointLatLng(_currentP!.latitude, _currentP!.longitude),
-        destination: PointLatLng(_Hamra.latitude, _Hamra.longitude),
-        mode: TravelMode.driving,
+        destination: PointLatLng(
+          closestDestination.latitude,
+          closestDestination.longitude,
+        ),
+        mode: TravelMode.values
+            .firstWhere((m) => m.toString().split('.').last == _selectedMode),
       ),
     );
 
