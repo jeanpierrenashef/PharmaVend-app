@@ -32,6 +32,7 @@ class _MapPageState extends State<MapPage> {
   String _selectedMode = "driving";
   String _distance = "-";
   String _eta = "-";
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -157,12 +158,15 @@ class _MapPageState extends State<MapPage> {
                                           setState(() {
                                             _selectedMode = value!;
                                           });
+
                                           final closest =
                                               await fetchClosestDestination();
-                                          setState(() {
-                                            _distance = closest['distance'];
-                                            _eta = closest['duration'];
-                                          });
+                                          if (closest.isNotEmpty) {
+                                            setState(() {
+                                              _distance = closest['distance'];
+                                              _eta = closest['duration'];
+                                            });
+                                          }
                                         },
                                       ),
                                     ],
@@ -237,8 +241,9 @@ class _MapPageState extends State<MapPage> {
     permissionGranted = await _locationController.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await _locationController.requestPermission();
-      if (permissionGranted != PermissionStatus.granted) return;
     }
+
+    DateTime lastUpdate = DateTime.now();
 
     _locationController.onLocationChanged
         .listen((LocationData currentLocation) async {
@@ -248,13 +253,28 @@ class _MapPageState extends State<MapPage> {
           _currentP =
               LatLng(currentLocation.latitude!, currentLocation.longitude!);
         });
-        final closest = await fetchClosestDestination();
-        if (closest.isNotEmpty) {
-          print("Closest Destination: ${closest['destination']}");
-          print("Distance: ${closest['distance']}");
-          print("ETA: ${closest['duration']}");
-          _cameraToPosition(_currentP!);
-          _updatePolyline();
+
+        // Update only every 5 seconds
+        if (DateTime.now().difference(lastUpdate) >
+            const Duration(seconds: 5)) {
+          lastUpdate = DateTime.now();
+
+          final closest = await fetchClosestDestination();
+          if (closest.isNotEmpty) {
+            // Update `_distance` and `_eta` directly after fetch
+            setState(() {
+              _distance = closest['distance'];
+              _eta = closest['duration'];
+            });
+
+            print("Closest Destination: ${closest['destination']}");
+            print("Distance: $_distance");
+            print("ETA: $_eta");
+
+            // Update polyline and camera
+            _cameraToPosition(_currentP!);
+            _updatePolyline();
+          }
         }
       }
     });
