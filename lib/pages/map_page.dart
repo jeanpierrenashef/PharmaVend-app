@@ -83,32 +83,67 @@ class _MapPageState extends State<MapPage> {
                     child: Column(
                       children: [
                         Container(
-                            color: const Color.fromARGB(255, 255, 255, 255),
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                            height: 70,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Text(
-                                      "Closest machine",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(height: 4),
-                                    Text(
-                                      "Hamra, V12",
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ],
-                                )
-                              ],
-                            ))
+                          color: const Color.fromARGB(255, 255, 255, 255),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
+                          height: 70,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Closest machine",
+                                    style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    "Hamra, V12", //to be fixed soon
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Icon(Icons.directions_car,
+                                          size: 24),
+                                      DropdownButton<String>(
+                                        value: "Car",
+                                        underline:
+                                            const SizedBox(), // Hides the underline
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: "Car",
+                                            child: Text("Car"),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: "Walking",
+                                            child: Text("Walking"),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: "Bicycle",
+                                            child: Text("Bicycle"),
+                                          ),
+                                        ],
+                                        onChanged: (value) {
+                                          print("Selected Mode: $value");
+                                        },
+                                      )
+                                    ],
+                                  )
+                                ],
+                              )
+                            ],
+                          ),
+                        )
                       ],
                     )),
               ],
