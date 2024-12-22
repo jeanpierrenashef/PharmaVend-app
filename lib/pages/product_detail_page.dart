@@ -101,7 +101,17 @@ class ProductDetailPage extends StatelessWidget {
                       Center(
                         child: ElevatedButton(
                           onPressed: () {
-                            // Handle Add to Cart
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: const Text("Added to cart"),
+                                duration: const Duration(seconds: 1),
+                                behavior: SnackBarBehavior.floating,
+                                margin: const EdgeInsets.only(bottom: 100),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
