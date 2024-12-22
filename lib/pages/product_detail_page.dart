@@ -105,10 +105,21 @@ class ProductDetailPage extends StatelessWidget {
                             StoreProvider.of<AppState>(context)
                                 .dispatch(AddToCartAction(productId));
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("Added to cart!"),
+                              SnackBar(
+                                content: Center(
+                                  child: Text(
+                                    "Added to cart!",
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                                backgroundColor: Colors.grey,
                                 duration: Duration(seconds: 1),
                                 behavior: SnackBarBehavior.floating,
+                                margin: const EdgeInsets.only(
+                                    bottom: 100, left: 86, right: 86),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
                               ),
                             );
                             // Navigator.push(
