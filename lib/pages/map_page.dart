@@ -413,7 +413,7 @@ class _MapPageState extends State<MapPage> {
         });
 
         if (DateTime.now().difference(lastUpdate) >
-            const Duration(seconds: 5)) {
+            const Duration(seconds: 50)) {
           lastUpdate = DateTime.now();
 
           if (_selectedMachine != null) {
