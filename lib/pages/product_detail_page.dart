@@ -103,20 +103,12 @@ class ProductDetailPage extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             StoreProvider.of<AppState>(context)
-                                .dispatch(AddToCartAction(product.id));
+                                .dispatch(AddToCartAction(productId));
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Center(
-                                  child: Text("Added to cart"),
-                                ),
-                                backgroundColor: Colors.grey,
-                                duration: const Duration(seconds: 1),
+                              const SnackBar(
+                                content: Text("Added to cart!"),
+                                duration: Duration(seconds: 1),
                                 behavior: SnackBarBehavior.floating,
-                                margin: const EdgeInsets.only(
-                                    bottom: 100, left: 66, right: 66),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
                               ),
                             );
                           },

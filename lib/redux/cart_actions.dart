@@ -9,5 +9,3 @@ class RemoveFromCartAction {
 
   RemoveFromCartAction(this.productId);
 }
-
-class ClearCartAction {}
