@@ -1,72 +1,77 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/models/product.dart';
+import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/redux/reducer.dart';
+import 'package:redux/redux.dart';
 
 class ProductPage extends StatelessWidget {
-  final List<Product> products = [
-    Product(
-      id: '1',
-      name: 'Panadol (12 tablets)',
-      description: 'Pain reliever and fever reducer',
-      category: 'First Aid',
-      price: 5.0,
-      image:
-          'https://www.linkpicture.com/q/panadol.png', // Replace with actual image link
-    ),
-    Product(
-      id: '2',
-      name: 'Surgical gloves (1 pair)',
-      description: 'Sterile gloves for medical use',
-      category: 'First Aid',
-      price: 2.0,
-      image:
-          'https://www.linkpicture.com/q/gloves.png', // Replace with actual image link
-    ),
-    Product(
-      id: '3',
-      name: 'Band-Aids (30 sizes)',
-      description: 'Flexible fabric bandages',
-      category: 'First Aid',
-      price: 3.0,
-      image:
-          'https://www.linkpicture.com/q/bandaids.png', // Replace with actual image link
-    ),
-    Product(
-      id: '4',
-      name: 'Elastic Band-Aids (10 rolls)',
-      description: 'Elastic bandages for injuries',
-      category: 'First Aid',
-      price: 8.0,
-      image:
-          'https://www.linkpicture.com/q/elastic_bandaid.png', // Replace with actual image link
-    ),
-    Product(
-      id: '5',
-      name: 'Betadine (Antiseptic)',
-      description: 'Antiseptic liquid',
-      category: 'First Aid',
-      price: 7.0,
-      image:
-          'https://www.linkpicture.com/q/betadine.png', // Replace with actual image link
-    ),
-    Product(
-      id: '6',
-      name: 'Face Mask (Pack of 50)',
-      description: 'Disposable masks',
-      category: 'Face Masks',
-      price: 15.0,
-      image:
-          'https://www.linkpicture.com/q/mask.png', // Replace with actual image link
-    ),
-    Product(
-      id: '7',
-      name: 'N95 Mask',
-      description: 'High filtration mask',
-      category: 'Face Masks',
-      price: 20.0,
-      image:
-          'https://www.linkpicture.com/q/n95.png', // Replace with actual image link
-    ),
-  ];
+  final Store<AppState> _store = Store<AppState>(loadProductsReducer,
+      initialState: AppState(products: [
+        Product(
+          id: '1',
+          name: 'Panadol (12 tablets)',
+          description: 'Pain reliever and fever reducer',
+          category: 'First Aid',
+          price: 5.0,
+          image:
+              'https://www.linkpicture.com/q/panadol.png', // Replace with actual image link
+        ),
+        Product(
+          id: '2',
+          name: 'Surgical gloves (1 pair)',
+          description: 'Sterile gloves for medical use',
+          category: 'First Aid',
+          price: 2.0,
+          image:
+              'https://www.linkpicture.com/q/gloves.png', // Replace with actual image link
+        ),
+        Product(
+          id: '3',
+          name: 'Band-Aids (30 sizes)',
+          description: 'Flexible fabric bandages',
+          category: 'First Aid',
+          price: 3.0,
+          image:
+              'https://www.linkpicture.com/q/bandaids.png', // Replace with actual image link
+        ),
+        Product(
+          id: '4',
+          name: 'Elastic Band-Aids (10 rolls)',
+          description: 'Elastic bandages for injuries',
+          category: 'First Aid',
+          price: 8.0,
+          image:
+              'https://www.linkpicture.com/q/elastic_bandaid.png', // Replace with actual image link
+        ),
+        Product(
+          id: '5',
+          name: 'Betadine (Antiseptic)',
+          description: 'Antiseptic liquid',
+          category: 'First Aid',
+          price: 7.0,
+          image:
+              'https://www.linkpicture.com/q/betadine.png', // Replace with actual image link
+        ),
+        Product(
+          id: '6',
+          name: 'Face Mask (Pack of 50)',
+          description: 'Disposable masks',
+          category: 'Face Masks',
+          price: 15.0,
+          image:
+              'https://www.linkpicture.com/q/mask.png', // Replace with actual image link
+        ),
+        Product(
+          id: '7',
+          name: 'N95 Mask',
+          description: 'High filtration mask',
+          category: 'Face Masks',
+          price: 20.0,
+          image:
+              'https://www.linkpicture.com/q/n95.png', // Replace with actual image link
+        ),
+      ]));
+  final List<Product> products = [];
 
   @override
   Widget build(BuildContext context) {
