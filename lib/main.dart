@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/models/product.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_application/pages/map_page.dart';
@@ -59,27 +60,8 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: AppBar(
-            backgroundColor: Colors.white,
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                    onPressed: () => print("pressed on info"),
-                    icon: Image.asset(
-                      "assets/info.png",
-                      height: 30,
-                      width: 30,
-                    )),
-                IconButton(
-                    onPressed: () => print("pressed on menu"),
-                    icon: Image.asset(
-                      "assets/menu.png",
-                      height: 30,
-                      width: 30,
-                    ))
-              ],
-            )),
+        appBar:
+            AppBar(backgroundColor: Colors.white, title: const CustomAppBar()),
         body: Center(
           child: Column(children: [
             Image(
