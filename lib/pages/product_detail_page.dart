@@ -116,7 +116,7 @@ class ProductDetailPage extends StatelessWidget {
                                 duration: Duration(seconds: 1),
                                 behavior: SnackBarBehavior.floating,
                                 margin: const EdgeInsets.only(
-                                    bottom: 100, left: 86, right: 86),
+                                    bottom: 120, left: 86, right: 86),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -141,7 +141,7 @@ class ProductDetailPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 1),
+                      const SizedBox(height: 40),
                     ],
                   ),
                 );

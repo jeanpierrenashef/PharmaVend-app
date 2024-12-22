@@ -64,9 +64,15 @@ class CartPage extends StatelessWidget {
 
                     return Card(
                       margin: const EdgeInsets.symmetric(vertical: 8.0),
-                      elevation: 2,
-                      child: Padding(
+                      child: Container(
                         padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          border: Border.all(
+                            color: Colors.white,
+                            width: 2.0,
+                          ),
+                        ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
@@ -183,6 +189,7 @@ class CartPage extends StatelessWidget {
                         ),
                       ),
                     ),
+                    const SizedBox(height: 6),
                   ],
                 );
               },
