@@ -75,7 +75,11 @@ class ProductPage extends StatelessWidget {
                             final product = categoryProducts[index];
                             return GestureDetector(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetailPage(product: product)))
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => ProductDetailPage(
+                                            productId: product.id)));
                               },
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
