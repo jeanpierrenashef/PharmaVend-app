@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_application/models/product.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_application/pages/map_page.dart';
-
 import 'package:flutter_application/pages/products_page.dart';
+
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/redux/reducer.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
+import 'pages/products_page.dart';
+import 'redux/app_state.dart';
 import 'package:redux/redux.dart';
+import 'redux/reducer.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
-  final Store<AppState> store = Store<AppState>(loadProductsReducer,
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  final Store<AppState> _store = Store<AppState>(loadProductsReducer,
       initialState: AppState(products: [
         Product(
           id: '1',
@@ -26,61 +33,16 @@ void main() async {
           id: '2',
           name: 'Surgical gloves (1 pair)',
           description: 'Sterile gloves for medical use',
-          category: 'First Aid',
+          category: 'Skin Care',
           price: 2.0,
           image: 'https://www.linkpicture.com/q/gloves.png',
         ),
-        Product(
-          id: '3',
-          name: 'Band-Aids (30 sizes)',
-          description: 'Flexible fabric bandages',
-          category: 'First Aid',
-          price: 3.0,
-          image: 'https://www.linkpicture.com/q/bandaids.png',
-        ),
-        Product(
-          id: '4',
-          name: 'Elastic Band-Aids (10 rolls)',
-          description: 'Elastic bandages for injuries',
-          category: 'First Aid',
-          price: 8.0,
-          image: 'https://www.linkpicture.com/q/elastic_bandaid.png',
-        ),
-        Product(
-          id: '5',
-          name: 'Betadine (Antiseptic)',
-          description: 'Antiseptic liquid',
-          category: 'First Aid',
-          price: 7.0,
-          image: 'https://www.linkpicture.com/q/betadine.png',
-        ),
-        Product(
-          id: '6',
-          name: 'Face Mask (Pack of 50)',
-          description: 'Disposable masks',
-          category: 'Face Masks',
-          price: 15.0,
-          image: 'https://www.linkpicture.com/q/mask.png',
-        ),
-        Product(
-          id: '7',
-          name: 'N95 Mask',
-          description: 'High filtration mask',
-          category: 'Face Masks',
-          price: 20.0,
-          image: 'https://www.linkpicture.com/q/n95.png',
-        ),
       ]));
-  runApp(MyApp(store: store));
-}
-
-class MyApp extends StatelessWidget {
-  final Store<AppState> store;
-  const MyApp({super.key, required this.store});
+  //const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return StoreProvider<AppState>(
-      store: store,
+    return StoreProvider(
+      store: _store,
       child: MaterialApp(
         title: "Demo",
         theme: ThemeData(
