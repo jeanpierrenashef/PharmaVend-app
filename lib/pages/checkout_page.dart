@@ -59,7 +59,11 @@ class CheckoutPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8)),
                 child: Row(
                   children: [
-                    Image.asset("assets/machine.png"),
+                    Image.asset(
+                      "assets/machine.png",
+                      height: 40,
+                      width: 40,
+                    ),
                     const SizedBox(
                       width: 8,
                     ),
@@ -82,6 +86,20 @@ class CheckoutPage extends StatelessWidget {
                   )),
               const SizedBox(
                 height: 8,
+              ),
+              RadioListTile(
+                value: "Card Payment",
+                groupValue: "Card Payment",
+                onChanged: (value) {},
+                title: const Text("Card Payment"),
+                secondary: Icon(Icons.credit_card, color: Colors.black),
+              ),
+              RadioListTile(
+                value: "Wish Money",
+                groupValue: "Card Payment",
+                onChanged: (value) {},
+                title: const Text("Wish Money"),
+                secondary: Icon(Icons.wallet, color: Colors.black),
               ),
             ],
           )),
