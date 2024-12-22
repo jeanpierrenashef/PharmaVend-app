@@ -49,8 +49,8 @@ class _MapPageState extends State<MapPage> {
   bool _userSelected = false;
 
   // State to store unique distances and ETAs
-  Map<String, String> _machineDistances = {};
-  Map<String, String> _machineETAs = {};
+  final Map<String, String> _machineDistances = {};
+  final Map<String, String> _machineETAs = {};
 
   @override
   void initState() {
