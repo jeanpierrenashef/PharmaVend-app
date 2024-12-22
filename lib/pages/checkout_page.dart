@@ -87,20 +87,109 @@ class CheckoutPage extends StatelessWidget {
               const SizedBox(
                 height: 8,
               ),
-              RadioListTile(
-                value: "Card Payment",
-                groupValue: "Card Payment",
-                onChanged: (value) {},
-                title: const Text("Card Payment"),
-                secondary: Icon(Icons.credit_card, color: Colors.black),
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(8)),
+                child: RadioListTile(
+                  value: "Card Payment",
+                  groupValue: "Card Payment",
+                  onChanged: (value) {},
+                  title: const Text("Card Payment"),
+                  secondary: Icon(Icons.credit_card, color: Colors.black),
+                ),
               ),
-              RadioListTile(
-                value: "Wish Money",
-                groupValue: "Card Payment",
-                onChanged: (value) {},
-                title: const Text("Wish Money"),
-                secondary: Icon(Icons.wallet, color: Colors.black),
+              const SizedBox(
+                height: 2,
               ),
+              Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(8)),
+                child: RadioListTile(
+                  value: "Wish Money",
+                  groupValue: "Card Payment",
+                  onChanged: (value) {},
+                  title: const Text("Wish Money"),
+                  secondary: Image.asset(
+                    "assets/whish.png",
+                    height: 16,
+                    width: 41,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                "Promo code",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Add Promo code here",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
+                    ),
+                    child: const Text(
+                      "Add",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const Text(
+                "Order Summary",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Subtotal (incl. VAT)"),
+                  Text("${total.toStringAsFixed(2)} USD"),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [
+                  Text("Discount"),
+                  Text("0.00 USD"),
+                ],
+              ),
+              const Divider(thickness: 1),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Total",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    "${total.toStringAsFixed(2)} USD",
+                    style: const TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
             ],
           )),
     );
