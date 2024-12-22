@@ -103,10 +103,14 @@ class ProductDetailPage extends StatelessWidget {
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: const Text("Added to cart"),
+                                content: Center(
+                                  child: Text("Added to cart"),
+                                ),
+                                backgroundColor: Colors.grey,
                                 duration: const Duration(seconds: 1),
                                 behavior: SnackBarBehavior.floating,
-                                margin: const EdgeInsets.only(bottom: 100),
+                                margin: const EdgeInsets.only(
+                                    bottom: 100, left: 66, right: 66),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
