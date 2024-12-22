@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application/models/product.dart';
-import 'package:flutter_application/pages/cart_page.dart';
-import 'package:flutter_application/pages/map_page.dart';
-import 'package:flutter_application/pages/products_page.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -16,113 +12,37 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> navItems = [
+      {"icon": "assets/home.png", "index": 0},
+      {"icon": "assets/map.png", "index": 1},
+      {"icon": "assets/history.png", "index": 2},
+      {"icon": "assets/cart.png", "index": 3},
+      {"icon": "assets/dispense.png", "index": 4},
+    ];
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
       color: Colors.white,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          GestureDetector(
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ProductPage()),
-              )
-            },
+        children: navItems.map((item) {
+          final isSelected = selectedIndex == item['index'];
+          return GestureDetector(
+            onTap: () => onItemTapped(item['index']),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Image.asset(
-                  "assets/home.png",
+                  item['icon'],
                   height: 30,
                   width: 30,
-                  color: selectedIndex == 0 ? Colors.black : Colors.grey,
+                  color: isSelected ? Colors.black : Colors.grey,
                 ),
                 const SizedBox(height: 4),
               ],
             ),
-          ),
-          GestureDetector(
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MapPage()),
-              )
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  "assets/map.png",
-                  height: 30,
-                  width: 30,
-                  color: selectedIndex == 1 ? Colors.black : Colors.grey,
-                ),
-                const SizedBox(height: 4),
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MapPage()),
-              )
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  "assets/history.png",
-                  height: 30,
-                  width: 30,
-                  color: selectedIndex == 2 ? Colors.black : Colors.grey,
-                ),
-                const SizedBox(height: 4),
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CartPage()),
-              )
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  "assets/cart.png",
-                  height: 30,
-                  width: 30,
-                  color: selectedIndex == 3 ? Colors.black : Colors.grey,
-                ),
-                const SizedBox(height: 4),
-              ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () => {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const MapPage()),
-              )
-            },
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  "assets/dispense.png",
-                  height: 30,
-                  width: 30,
-                  color: selectedIndex == 4 ? Colors.black : Colors.grey,
-                ),
-                const SizedBox(height: 4),
-              ],
-            ),
-          ),
-        ],
+          );
+        }).toList(),
       ),
     );
   }
