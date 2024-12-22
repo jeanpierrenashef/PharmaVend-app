@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/models/product.dart';
+import 'package:flutter_application/redux/root_reducer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 
 import 'package:flutter_application/redux/app_state.dart';
-import 'package:flutter_application/redux/load_products_reducer.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 import 'package:redux/redux.dart';
@@ -17,7 +17,7 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final Store<AppState> _store = Store<AppState>(loadProductsReducer,
+  final Store<AppState> _store = Store<AppState>(rootReducer,
       initialState: AppState(products: [
         Product(
           id: '1',
@@ -35,7 +35,7 @@ class MyApp extends StatelessWidget {
           price: 2.0,
           image: 'https://www.linkpicture.com/q/gloves.png',
         ),
-      ]));
+      ], cart: []));
 
   @override
   Widget build(BuildContext context) {

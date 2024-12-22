@@ -1,15 +1,13 @@
-import 'package:flutter_application/models/product.dart';
-
 class AddToCartAction {
-  final Product product;
+  final String productId;
 
-  AddToCartAction(this.product);
+  AddToCartAction(this.productId);
 }
 
 class RemoveFromCartAction {
-  final Product product;
+  final String productId;
 
-  RemoveFromCartAction(this.product);
+  RemoveFromCartAction(this.productId);
 }
 
 class ClearCartAction {}

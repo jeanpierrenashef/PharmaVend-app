@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/redux/cart_actions.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class ProductDetailPage extends StatelessWidget {
@@ -101,6 +102,8 @@ class ProductDetailPage extends StatelessWidget {
                       Center(
                         child: ElevatedButton(
                           onPressed: () {
+                            StoreProvider.of<AppState>(context)
+                                .dispatch(AddToCartAction(product.id));
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Center(
