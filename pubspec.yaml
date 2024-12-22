@@ -67,9 +67,15 @@ flutter:
   assets:
     - .env
     - assets/logo.png
-    - assets/map.png
+    - assets/maps.png
     - assets/info.png
     - assets/menu.png
+    - assets/home.png
+    - assets/map.png
+    - assets/dispense.png
+    - assets/history.png
+    - assets/cart.png
+
   #- images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

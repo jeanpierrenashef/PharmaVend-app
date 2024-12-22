@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
+import 'package:flutter_application/custom/nav_bar.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/redux/cart_actions.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -186,6 +187,17 @@ class CartPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        selectedIndex: 0,
+        onItemTapped: (index) {
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => CartPage()),
+            );
+          }
+        },
       ),
     );
   }
