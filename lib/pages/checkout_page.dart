@@ -17,7 +17,7 @@ class CheckoutPage extends StatelessWidget {
       body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
@@ -29,12 +29,14 @@ class CheckoutPage extends StatelessWidget {
                         Icons.arrow_back,
                         color: Colors.black,
                       )),
-                  const Center(
-                    child: Text(
-                      "Checkout",
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        "Checkout",
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ),

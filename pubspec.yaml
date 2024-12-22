@@ -75,6 +75,7 @@ flutter:
     - assets/dispense.png
     - assets/history.png
     - assets/cart.png
+    - assets/machine.png
 
   #- images/a_dot_ham.jpeg
 
