@@ -45,7 +45,42 @@ class CheckoutPage extends StatelessWidget {
               const Text(
                 "Vending Machine",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              )
+              ),
+              const SizedBox(
+                height: 8.0,
+              ),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(8)),
+                child: Row(
+                  children: [
+                    Image.asset("assets/machine.png"),
+                    const SizedBox(
+                      width: 8,
+                    ),
+                    const Text(
+                      "Hamra V12",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              const SizedBox(
+                height: 24,
+              ),
+              const Text("Payment Method",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  )),
+              const SizedBox(
+                height: 8,
+              ),
             ],
           )),
     );
