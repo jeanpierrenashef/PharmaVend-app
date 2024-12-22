@@ -6,7 +6,7 @@ import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 
 import 'package:flutter_application/redux/app_state.dart';
-import 'package:flutter_application/redux/reducer.dart';
+import 'package:flutter_application/redux/load_products_reducer.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 import 'package:redux/redux.dart';
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
           image: 'https://www.linkpicture.com/q/gloves.png',
         ),
       ]));
-  //const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return StoreProvider(
