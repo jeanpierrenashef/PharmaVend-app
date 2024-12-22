@@ -8,10 +8,7 @@ import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/redux/reducer.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
-import 'pages/products_page.dart';
-import 'redux/app_state.dart';
 import 'package:redux/redux.dart';
-import 'redux/reducer.dart';
 
 void main() async {
   await dotenv.load(fileName: ".env");
