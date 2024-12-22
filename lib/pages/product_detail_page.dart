@@ -122,12 +122,6 @@ class ProductDetailPage extends StatelessWidget {
                                 ),
                               ),
                             );
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => CartPage(),
-                            //   ),
-                            // );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:
@@ -147,7 +141,7 @@ class ProductDetailPage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 1),
                     ],
                   ),
                 );

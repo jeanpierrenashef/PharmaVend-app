@@ -22,7 +22,10 @@ class CustomBottomNavBar extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      color: Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: Colors.grey.shade400, width: 1)),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: navItems.map((item) {
