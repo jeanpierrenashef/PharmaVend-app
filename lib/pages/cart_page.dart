@@ -1,0 +1,192 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_application/custom/app_bar.dart';
+import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/redux/cart_actions.dart';
+import 'package:flutter_redux/flutter_redux.dart';
+
+class CartPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const CustomAppBar(),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        automaticallyImplyLeading: false,
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Center(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Text(
+                "Hamra V12",
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            child: Text(
+              "Your Cart",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Expanded(
+            child: StoreConnector<AppState, List<CartItem>>(
+              converter: (store) => store.state.cart,
+              builder: (context, cartItems) {
+                if (cartItems.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      "Your cart is empty.",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  padding: const EdgeInsets.all(16.0),
+                  itemCount: cartItems.length,
+                  itemBuilder: (context, index) {
+                    final cartItem = cartItems[index];
+                    final product = cartItem.product;
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 8.0),
+                      elevation: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // Product Image
+                            // Image.network(
+                            //   product.image,
+                            //   width: 60,
+                            //   height: 60,
+                            //   fit: BoxFit.cover,
+                            // ),
+                            const SizedBox(width: 16),
+                            // Product Details
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    product.name,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${cartItem.quantity} x ${product.price.toStringAsFixed(2)} USD (price)",
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    StoreProvider.of<AppState>(context)
+                                        .dispatch(
+                                      RemoveFromCartAction(product.id),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    Icons.remove_circle_outline,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  "${cartItem.quantity}",
+                                  style: const TextStyle(fontSize: 16),
+                                ),
+                                const SizedBox(width: 4),
+                                IconButton(
+                                  onPressed: () {
+                                    StoreProvider.of<AppState>(context)
+                                        .dispatch(
+                                      AddToCartAction(product.id),
+                                    );
+                                  },
+                                  icon: const Icon(
+                                    Icons.add_circle_outline,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+          // Total Price and Checkout Button
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12),
+            child: StoreConnector<AppState, double>(
+              converter: (store) {
+                return store.state.cart.fold(
+                  0.0,
+                  (total, cartItem) =>
+                      total + cartItem.product.price * cartItem.quantity,
+                );
+              },
+              builder: (context, total) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      "Total: ${total.toStringAsFixed(2)} USD",
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.right,
+                    ),
+                    const SizedBox(height: 8),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Handle checkout action
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                      child: const Text(
+                        'Proceed to Checkout',
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

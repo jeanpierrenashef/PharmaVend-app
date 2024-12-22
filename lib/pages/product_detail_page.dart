@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/models/product.dart';
+import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/redux/cart_actions.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -109,6 +110,12 @@ class ProductDetailPage extends StatelessWidget {
                                 content: Text("Added to cart!"),
                                 duration: Duration(seconds: 1),
                                 behavior: SnackBarBehavior.floating,
+                              ),
+                            );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => CartPage(),
                               ),
                             );
                           },

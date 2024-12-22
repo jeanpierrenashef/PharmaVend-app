@@ -87,7 +87,7 @@ class Home extends StatelessWidget {
             ),
             SizedBox(height: 20.0),
             Image(
-              image: AssetImage("assets/map.png"),
+              image: AssetImage("assets/maps.png"),
             ),
             SizedBox(height: 20.0),
             ElevatedButton(
