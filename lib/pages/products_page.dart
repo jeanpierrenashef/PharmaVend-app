@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/models/product.dart';
+import 'package:flutter_application/pages/product_detail_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -74,7 +75,7 @@ class ProductPage extends StatelessWidget {
                             final product = categoryProducts[index];
                             return GestureDetector(
                               onTap: () {
-                                // Handle product click (e.g., navigate to details)
+                                Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetailPage(product: product)))
                               },
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
