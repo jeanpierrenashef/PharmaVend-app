@@ -72,6 +72,19 @@ class SignupPage extends StatelessWidget {
                       ),
                       obscureText: true,
                     ),
+                    const SizedBox(height: 20),
+                    TextField(
+                      decoration: InputDecoration(
+                        hintText: "Confirm Password",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(18),
+                            borderSide: BorderSide.none),
+                        fillColor: Color.fromRGBO(32, 181, 115, 0.1),
+                        filled: true,
+                        prefixIcon: const Icon(Icons.password),
+                      ),
+                      obscureText: true,
+                    ),
                   ],
                 ),
               ],
