@@ -132,7 +132,9 @@ class LoginPage extends StatelessWidget {
           },
           child: const Text(
             "Sign Up",
-            style: TextStyle(color: Color.fromRGBO(32, 181, 115, 1)),
+            style: TextStyle(
+              color: Color.fromRGBO(32, 181, 115, 1),
+            ),
           ),
         )
       ],

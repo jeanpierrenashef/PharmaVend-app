@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/pages/cart_page.dart';
+import 'package:flutter_application/pages/products_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
@@ -69,284 +72,325 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _currentP == null
-          ? const Center(
-              child: Text("Loading..."),
-            )
-          : Column(
-              children: [
-                Flexible(
-                  flex: 5,
-                  child: GoogleMap(
-                    onMapCreated: (GoogleMapController controller) =>
-                        _mapController.complete(controller),
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                          _machines[1]['latitude'], _machines[1]['longitude']),
-                      zoom: 9,
-                    ),
-                    myLocationEnabled: true,
-                    myLocationButtonEnabled: true,
-                    markers: _machines
-                        .map(
-                          (machine) => Marker(
-                            markerId: MarkerId(machine['name']),
-                            icon: BitmapDescriptor.defaultMarker,
-                            position: LatLng(
-                              machine['latitude'],
-                              machine['longitude'],
-                            ),
-                          ),
-                        )
-                        .toSet(),
-                    polylines: {
-                      Polyline(
-                        polylineId: const PolylineId("route"),
-                        points: _polylineCoordinates,
-                        color: Colors.blue,
-                        width: 5,
+        body: _currentP == null
+            ? const Center(
+                child: Text("Loading..."),
+              )
+            : Column(
+                children: [
+                  Flexible(
+                    flex: 7,
+                    child: GoogleMap(
+                      onMapCreated: (GoogleMapController controller) =>
+                          _mapController.complete(controller),
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(_machines[1]['latitude'],
+                            _machines[1]['longitude']),
+                        zoom: 9,
                       ),
-                    },
-                  ),
-                ),
-                Flexible(
-                  flex: 2,
-                  child: Column(
-                    children: [
-                      // Upper Container for Closest or Selected Machine
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color.fromARGB(255, 255, 255, 255),
-                          border: Border.all(
-                            color: Colors.grey,
-                            width: 1.0,
-                          ),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 5,
-                        ),
-                        height: 90,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                const Text(
-                                  "Selected machine",
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  _selectedMachine != null
-                                      ? _selectedMachine!['name']
-                                      : "Loading...",
-                                  style: const TextStyle(fontSize: 14),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      _selectedMode == "driving"
-                                          ? Icons.directions_car
-                                          : _selectedMode == "walking"
-                                              ? Icons.directions_walk
-                                              : Icons.directions_bike,
-                                      size: 24,
-                                    ),
-                                    DropdownButton<String>(
-                                      value: _selectedMode,
-                                      underline: const SizedBox(),
-                                      items: const [
-                                        DropdownMenuItem(
-                                          value: "driving",
-                                          child: Text("Driving"),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: "walking",
-                                          child: Text("Walking"),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: "bicycling",
-                                          child: Text("Bicycling"),
-                                        ),
-                                      ],
-                                      onChanged: (value) async {
-                                        setState(() {
-                                          _selectedMode = value!;
-                                        });
-
-                                        if (_selectedMachine != null) {
-                                          await fetchThisDestination(
-                                              _selectedMachine!);
-                                        }
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      "Distance",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      _distance,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      "ETA",
-                                      style: TextStyle(
-                                          fontSize: 12, color: Colors.grey),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      _eta,
-                                      style: const TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            )
-                          ],
-                        ),
-                      ),
-                      // Lower Container for Other Machines
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: _machines
-                              .where((machine) =>
-                                  _selectedMachine == null ||
-                                  machine['name'] != _selectedMachine!['name'])
-                              .length,
-                          itemBuilder: (context, index) {
-                            final filteredMachines = _machines
-                                .where((machine) =>
-                                    _selectedMachine == null ||
-                                    machine['name'] !=
-                                        _selectedMachine!['name'])
-                                .toList();
-
-                            final otherMachine = filteredMachines[index];
-                            if (!_machineDistances
-                                .containsKey(otherMachine['name'])) {
-                              fetchMachineData(otherMachine);
-                            }
-
-                            return Container(
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 5),
-                              padding: const EdgeInsets.all(16),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: Colors.grey.shade300,
-                                  width: 1,
-                                ),
-                                color: Colors.white,
+                      myLocationEnabled: true,
+                      myLocationButtonEnabled: true,
+                      markers: _machines
+                          .map(
+                            (machine) => Marker(
+                              markerId: MarkerId(machine['name']),
+                              icon: BitmapDescriptor.defaultMarker,
+                              position: LatLng(
+                                machine['latitude'],
+                                machine['longitude'],
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                            ),
+                          )
+                          .toSet(),
+                      polylines: {
+                        Polyline(
+                          polylineId: const PolylineId("route"),
+                          points: _polylineCoordinates,
+                          color: Colors.blue,
+                          width: 5,
+                        ),
+                      },
+                    ),
+                  ),
+                  Flexible(
+                    flex: 3,
+                    child: Column(
+                      children: [
+                        // Upper Container for Closest or Selected Machine
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            border: Border.all(
+                              color: Colors.grey,
+                              width: 1.0,
+                            ),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 5,
+                          ),
+                          height: 90,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  const Text(
+                                    "Selected machine",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  Text(
+                                    _selectedMachine != null
+                                        ? _selectedMachine!['name']
+                                        : "Loading...",
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Text(
-                                        otherMachine['name'],
-                                        style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      Icon(
+                                        _selectedMode == "driving"
+                                            ? Icons.directions_car
+                                            : _selectedMode == "walking"
+                                                ? Icons.directions_walk
+                                                : Icons.directions_bike,
+                                        size: 24,
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () async {
+                                      DropdownButton<String>(
+                                        value: _selectedMode,
+                                        underline: const SizedBox(),
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: "driving",
+                                            child: Text("Driving"),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: "walking",
+                                            child: Text("Walking"),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: "bicycling",
+                                            child: Text("Bicycling"),
+                                          ),
+                                        ],
+                                        onChanged: (value) async {
                                           setState(() {
-                                            _userSelected = true;
+                                            _selectedMode = value!;
                                           });
-                                          await fetchThisDestination(
-                                              otherMachine);
+
+                                          if (_selectedMachine != null) {
+                                            await fetchThisDestination(
+                                                _selectedMachine!);
+                                          }
                                         },
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: const Color.fromRGBO(
-                                              32, 181, 115, 1),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 8),
-                                        ),
-                                        child: const Text(
-                                          "Select",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    children: const [
-                                      Text(
-                                        "Default:",
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      SizedBox(width: 4),
-                                      Icon(Icons.directions_car,
-                                          size: 16, color: Colors.grey),
-                                      SizedBox(width: 4),
-                                      Text(
-                                        "Car",
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Text(
+                                        "Distance",
                                         style: TextStyle(
                                             fontSize: 12, color: Colors.grey),
                                       ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        _distance,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ],
                                   ),
-                                  const SizedBox(height: 4),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        "Distance: ${_machineDistances[otherMachine['name']] ?? 'Fetching...'}",
-                                        style: const TextStyle(fontSize: 14),
+                                      const Text(
+                                        "ETA",
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey),
                                       ),
+                                      const SizedBox(height: 4),
                                       Text(
-                                        "ETA: ${_machineETAs[otherMachine['name']] ?? 'Fetching...'}",
-                                        style: const TextStyle(fontSize: 14),
+                                        _eta,
+                                        style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ],
                                   ),
                                 ],
-                              ),
-                            );
-                          },
+                              )
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                        // Lower Container for Other Machines
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: _machines
+                                .where((machine) =>
+                                    _selectedMachine == null ||
+                                    machine['name'] !=
+                                        _selectedMachine!['name'])
+                                .length,
+                            itemBuilder: (context, index) {
+                              final filteredMachines = _machines
+                                  .where((machine) =>
+                                      _selectedMachine == null ||
+                                      machine['name'] !=
+                                          _selectedMachine!['name'])
+                                  .toList();
+
+                              final otherMachine = filteredMachines[index];
+                              if (!_machineDistances
+                                  .containsKey(otherMachine['name'])) {
+                                fetchMachineData(otherMachine);
+                              }
+
+                              return Container(
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 5),
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.grey.shade300,
+                                    width: 1,
+                                  ),
+                                  color: Colors.white,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          otherMachine['name'],
+                                          style: const TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                          onPressed: () async {
+                                            setState(() {
+                                              _userSelected = true;
+                                            });
+                                            await fetchThisDestination(
+                                                otherMachine);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color.fromRGBO(
+                                                    32, 181, 115, 1),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 8),
+                                          ),
+                                          child: const Text(
+                                            "Select",
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      children: const [
+                                        Text(
+                                          "Default:",
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                        SizedBox(width: 4),
+                                        Icon(Icons.directions_car,
+                                            size: 16, color: Colors.grey),
+                                        SizedBox(width: 4),
+                                        Text(
+                                          "Car",
+                                          style: TextStyle(
+                                              fontSize: 12, color: Colors.grey),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Distance: ${_machineDistances[otherMachine['name']] ?? 'Fetching...'}",
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                        Text(
+                                          "ETA: ${_machineETAs[otherMachine['name']] ?? 'Fetching...'}",
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-    );
+                ],
+              ),
+        bottomNavigationBar: CustomBottomNavBar(
+          selectedIndex: 1,
+          onItemTapped: (index) {
+            switch (index) {
+              case 0:
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => ProductPage()),
+                );
+                break;
+              case 1:
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MapPage()),
+                );
+                break;
+              case 2:
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => CartPage()),
+                );
+                break;
+              case 3:
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => CartPage()),
+                );
+                break;
+              case 4:
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => CartPage()),
+                );
+                break;
+            }
+          },
+        ));
   }
 
   Future<void> _cameraToPosition(LatLng pos) async {
