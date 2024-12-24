@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/models/product.dart';
+import 'package:flutter_application/pages/login_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_application/pages/map_page.dart';
@@ -44,10 +45,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: "Demo",
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme:
+              ColorScheme.fromSeed(seedColor: Color.fromRGBO(32, 181, 115, 1)),
           useMaterial3: true,
         ),
-        home: ProductPage(),
+        home: LoginPage(),
       ),
     );
   }
