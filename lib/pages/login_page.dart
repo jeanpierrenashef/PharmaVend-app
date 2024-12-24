@@ -15,7 +15,6 @@ class LoginPage extends StatelessWidget {
             children: [
               _header(context),
               _inputField(context),
-              _signup(context),
             ],
           ),
         ),
@@ -75,21 +74,6 @@ class LoginPage extends StatelessWidget {
             style: TextStyle(fontSize: 20),
           ),
         )
-      ],
-    );
-  }
-
-  _signup(context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Dont have an account? "),
-        TextButton(
-            onPressed: () {},
-            child: const Text(
-              "Sign Up",
-              style: TextStyle(color: Color.fromRGBO(32, 181, 115, 1)),
-            ))
       ],
     );
   }
