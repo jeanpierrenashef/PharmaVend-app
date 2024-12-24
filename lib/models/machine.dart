@@ -1,12 +1,14 @@
 class Machine {
-  final String id;
+  final int id;
   final String location;
-  final String latitude;
+  final double latitude;
+  final double longitude;
   final String status;
 
   Machine(
       {required this.id,
       required this.location,
       required this.latitude,
+      required this.longitude,
       required this.status});
 }

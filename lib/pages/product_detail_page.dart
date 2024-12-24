@@ -6,7 +6,7 @@ import 'package:flutter_application/redux/cart_actions.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class ProductDetailPage extends StatelessWidget {
-  final String productId;
+  final int productId;
 
   const ProductDetailPage({Key? key, required this.productId})
       : super(key: key);

@@ -1,11 +1,11 @@
 class AddToCartAction {
-  final String productId;
+  final int productId;
 
   AddToCartAction(this.productId);
 }
 
 class RemoveFromCartAction {
-  final String productId;
+  final int productId;
 
   RemoveFromCartAction(this.productId);
 }

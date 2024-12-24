@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
+import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/pages/login_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
   final Store<AppState> _store = Store<AppState>(rootReducer,
       initialState: AppState(products: [
         Product(
-          id: '1',
+          id: 1,
           name: 'Panadol (12 tablets)',
           description: 'Pain reliever and fever reducer',
           category: 'First Aid',
@@ -28,13 +29,32 @@ class MyApp extends StatelessWidget {
           image: 'https://www.linkpicture.com/q/panadol.png',
         ),
         Product(
-          id: '2',
+          id: 2,
           name: 'Surgical gloves (1 pair)',
           description: 'Sterile gloves for medical use',
           category: 'Skin Care',
           price: 2.0,
           image: 'https://www.linkpicture.com/q/gloves.png',
         ),
+      ], machines: [
+        Machine(
+            id: 1,
+            location: "Jbeil, V1",
+            latitude: 34.115568,
+            longitude: 35.674343,
+            status: "active"),
+        Machine(
+            id: 2,
+            location: "Hamra, V12",
+            latitude: 33.896198,
+            longitude: 35.477865,
+            status: "active"),
+        Machine(
+            id: 3,
+            location: "Rachaiya, V39",
+            latitude: 33.498073,
+            longitude: 35.840486,
+            status: "active")
       ], cart: []));
 
   @override
