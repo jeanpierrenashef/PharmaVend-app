@@ -88,19 +88,22 @@ class SignupPage extends StatelessWidget {
                   ],
                 ),
                 Container(
-                    padding: const EdgeInsets.only(top: 3, left: 3),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        shape: const StadiumBorder(),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Color.fromRGBO(32, 181, 115, 1),
-                      ),
-                      child: const Text(
-                        "Sign up",
-                        style: TextStyle(fontSize: 20),
-                      ),
-                    )),
+                  padding: const EdgeInsets.only(top: 3, left: 3),
+                  child: ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      shape: const StadiumBorder(),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Color.fromRGBO(32, 181, 115, 1),
+                    ),
+                    child: const Text(
+                      "Sign up",
+                      style: TextStyle(fontSize: 20),
+                    ),
+                  ),
+                ),
+
+                ),
               ],
             ),
           ),
