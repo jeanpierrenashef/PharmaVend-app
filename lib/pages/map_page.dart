@@ -2,13 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
+import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:redux/redux.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -22,24 +26,6 @@ class _MapPageState extends State<MapPage> {
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
 
-  final List<Map<String, dynamic>> _machines = [
-    {
-      "name": "Jbeil, V1",
-      "latitude": 34.115568,
-      "longitude": 35.674343,
-    },
-    {
-      "name": "Hamra, V12",
-      "latitude": 33.896198,
-      "longitude": 35.477865,
-    },
-    {
-      "name": "Rachaiya, V39",
-      "latitude": 33.498073,
-      "longitude": 35.840486,
-    },
-  ];
-
   LatLng? _currentP;
   List<LatLng> _polylineCoordinates = [];
   late PolylinePoints _polylinePoints;
@@ -48,12 +34,12 @@ class _MapPageState extends State<MapPage> {
   String _selectedMode = "driving";
   String _distance = "-";
   String _eta = "-";
-  Map<String, dynamic>? _selectedMachine;
+  Machine? _selectedMachine;
   bool _userSelected = false;
 
   // State to store unique distances and ETAs
-  final Map<String, String> _machineDistances = {};
-  final Map<String, String> _machineETAs = {};
+  final Map<int, String> _machineDistances = {};
+  final Map<int, String> _machineETAs = {};
 
   @override
   void initState() {
@@ -71,344 +57,323 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: _currentP == null
-            ? const Center(
-                child: Text("Loading..."),
-              )
-            : Column(
-                children: [
-                  Flexible(
-                    flex: 7,
-                    child: GoogleMap(
-                      onMapCreated: (GoogleMapController controller) =>
-                          _mapController.complete(controller),
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(_machines[1]['latitude'],
-                            _machines[1]['longitude']),
-                        zoom: 9,
-                      ),
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: true,
-                      markers: _machines
-                          .map(
-                            (machine) => Marker(
-                              markerId: MarkerId(machine['name']),
-                              icon: BitmapDescriptor.defaultMarker,
-                              position: LatLng(
-                                machine['latitude'],
-                                machine['longitude'],
-                              ),
-                            ),
-                          )
-                          .toSet(),
-                      polylines: {
-                        Polyline(
-                          polylineId: const PolylineId("route"),
-                          points: _polylineCoordinates,
-                          color: Colors.blue,
-                          width: 5,
+    return StoreConnector<AppState, List<Machine>>(
+      converter: (store) => store.state.machines,
+      builder: (context, machines) {
+        return Scaffold(
+          body: _currentP == null
+              ? const Center(
+                  child: Text("Loading..."),
+                )
+              : Column(
+                  children: [
+                    Flexible(
+                      flex: 7,
+                      child: GoogleMap(
+                        onMapCreated: (GoogleMapController controller) =>
+                            _mapController.complete(controller),
+                        initialCameraPosition: CameraPosition(
+                          target: LatLng(
+                              machines[1].latitude, machines[1].longitude),
+                          zoom: 9,
                         ),
-                      },
-                    ),
-                  ),
-                  Flexible(
-                    flex: 3,
-                    child: Column(
-                      children: [
-                        // Upper Container for Closest or Selected Machine
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 255, 255, 255),
-                            border: Border.all(
-                              color: Colors.grey,
-                              width: 1.0,
-                            ),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 5,
-                          ),
-                          height: 90,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  const Text(
-                                    "Selected machine",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  Text(
-                                    _selectedMachine != null
-                                        ? _selectedMachine!['name']
-                                        : "Loading...",
-                                    style: const TextStyle(fontSize: 14),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceEvenly,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        _selectedMode == "driving"
-                                            ? Icons.directions_car
-                                            : _selectedMode == "walking"
-                                                ? Icons.directions_walk
-                                                : Icons.directions_bike,
-                                        size: 24,
-                                      ),
-                                      DropdownButton<String>(
-                                        value: _selectedMode,
-                                        underline: const SizedBox(),
-                                        items: const [
-                                          DropdownMenuItem(
-                                            value: "driving",
-                                            child: Text("Driving"),
-                                          ),
-                                          DropdownMenuItem(
-                                            value: "walking",
-                                            child: Text("Walking"),
-                                          ),
-                                          DropdownMenuItem(
-                                            value: "bicycling",
-                                            child: Text("Bicycling"),
-                                          ),
-                                        ],
-                                        onChanged: (value) async {
-                                          setState(() {
-                                            _selectedMode = value!;
-                                          });
-
-                                          if (_selectedMachine != null) {
-                                            await fetchThisDestination(
-                                                _selectedMachine!);
-                                          }
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text(
-                                        "Distance",
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.grey),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        _distance,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      const Text(
-                                        "ETA",
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.grey),
-                                      ),
-                                      const SizedBox(height: 4),
-                                      Text(
-                                        _eta,
-                                        style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                        ),
-                        // Lower Container for Other Machines
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: _machines
-                                .where((machine) =>
-                                    _selectedMachine == null ||
-                                    machine['name'] !=
-                                        _selectedMachine!['name'])
-                                .length,
-                            itemBuilder: (context, index) {
-                              final filteredMachines = _machines
-                                  .where((machine) =>
-                                      _selectedMachine == null ||
-                                      machine['name'] !=
-                                          _selectedMachine!['name'])
-                                  .toList();
-
-                              final otherMachine = filteredMachines[index];
-                              if (!_machineDistances
-                                  .containsKey(otherMachine['name'])) {
-                                fetchMachineData(otherMachine);
-                              }
-
-                              return Container(
-                                margin: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 5),
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: Colors.grey.shade300,
-                                    width: 1,
-                                  ),
-                                  color: Colors.white,
+                        myLocationEnabled: true,
+                        myLocationButtonEnabled: true,
+                        markers: machines
+                            .map(
+                              (machine) => Marker(
+                                markerId: MarkerId(machine.location),
+                                icon: BitmapDescriptor.defaultMarker,
+                                position: LatLng(
+                                  machine.latitude,
+                                  machine.longitude,
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              ),
+                            )
+                            .toSet(),
+                        polylines: {
+                          Polyline(
+                            polylineId: const PolylineId("route"),
+                            points: _polylineCoordinates,
+                            color: Colors.blue,
+                            width: 5,
+                          ),
+                        },
+                      ),
+                    ),
+                    Flexible(
+                      flex: 3,
+                      child: Column(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              border: Border.all(
+                                color: Colors.grey,
+                                width: 1.0,
+                              ),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 5,
+                            ),
+                            height: 90,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    const Text(
+                                      "Selected machine",
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(
+                                      _selectedMachine != null
+                                          ? _selectedMachine!.location
+                                          : "Loading...",
+                                      style: const TextStyle(fontSize: 14),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
                                   children: [
                                     Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Text(
-                                          otherMachine['name'],
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
+                                        Icon(
+                                          _selectedMode == "driving"
+                                              ? Icons.directions_car
+                                              : _selectedMode == "walking"
+                                                  ? Icons.directions_walk
+                                                  : Icons.directions_bike,
+                                          size: 24,
                                         ),
-                                        ElevatedButton(
-                                          onPressed: () async {
+                                        DropdownButton<String>(
+                                          value: _selectedMode,
+                                          underline: const SizedBox(),
+                                          items: const [
+                                            DropdownMenuItem(
+                                              value: "driving",
+                                              child: Text("Driving"),
+                                            ),
+                                            DropdownMenuItem(
+                                              value: "walking",
+                                              child: Text("Walking"),
+                                            ),
+                                            DropdownMenuItem(
+                                              value: "bicycling",
+                                              child: Text("Bicycling"),
+                                            ),
+                                          ],
+                                          onChanged: (value) async {
                                             setState(() {
-                                              _userSelected = true;
+                                              _selectedMode = value!;
                                             });
-                                            await fetchThisDestination(
-                                                otherMachine);
+
+                                            if (_selectedMachine != null) {
+                                              await fetchThisDestination(
+                                                  _selectedMachine!);
+                                            }
                                           },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color.fromRGBO(
-                                                    32, 181, 115, 1),
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 8),
-                                          ),
-                                          child: const Text(
-                                            "Select",
-                                            style:
-                                                TextStyle(color: Colors.white),
-                                          ),
                                         ),
                                       ],
                                     ),
-                                    const SizedBox(height: 4),
-                                    Row(
-                                      children: const [
-                                        Text(
-                                          "Default:",
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey,
-                                          ),
-                                        ),
-                                        SizedBox(width: 4),
-                                        Icon(Icons.directions_car,
-                                            size: 16, color: Colors.grey),
-                                        SizedBox(width: 4),
-                                        Text(
-                                          "Car",
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        const Text(
+                                          "Distance",
                                           style: TextStyle(
                                               fontSize: 12, color: Colors.grey),
                                         ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          _distance,
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                        ),
                                       ],
                                     ),
-                                    const SizedBox(height: 4),
-                                    Row(
+                                    Column(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.center,
                                       children: [
-                                        Text(
-                                          "Distance: ${_machineDistances[otherMachine['name']] ?? 'Fetching...'}",
-                                          style: const TextStyle(fontSize: 14),
+                                        const Text(
+                                          "ETA",
+                                          style: TextStyle(
+                                              fontSize: 12, color: Colors.grey),
                                         ),
+                                        const SizedBox(height: 4),
                                         Text(
-                                          "ETA: ${_machineETAs[otherMachine['name']] ?? 'Fetching...'}",
-                                          style: const TextStyle(fontSize: 14),
+                                          _eta,
+                                          style: const TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ],
                                     ),
                                   ],
-                                ),
-                              );
-                            },
+                                )
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: machines
+                                  .where((machine) =>
+                                      _selectedMachine == null ||
+                                      machine.location !=
+                                          _selectedMachine!.location)
+                                  .length,
+                              itemBuilder: (context, index) {
+                                final filteredMachines = machines
+                                    .where((machine) =>
+                                        _selectedMachine == null ||
+                                        machine.location !=
+                                            _selectedMachine!.location)
+                                    .toList();
+
+                                final otherMachine = filteredMachines[index];
+                                if (!_machineDistances
+                                    .containsKey(otherMachine.id)) {
+                                  fetchMachineData(otherMachine);
+                                }
+
+                                return Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 5),
+                                  padding: const EdgeInsets.all(16),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                      color: Colors.grey.shade300,
+                                      width: 1,
+                                    ),
+                                    color: Colors.white,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            otherMachine.location,
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          ElevatedButton(
+                                            onPressed: () async {
+                                              setState(() {
+                                                _userSelected = true;
+                                              });
+                                              await fetchThisDestination(
+                                                  otherMachine);
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  const Color.fromRGBO(
+                                                      32, 181, 115, 1),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 8),
+                                            ),
+                                            child: const Text(
+                                              "Select",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Distance: ${_machineDistances[otherMachine.id] ?? 'Fetching...'}",
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                          Text(
+                                            "ETA: ${_machineETAs[otherMachine.id] ?? 'Fetching...'}",
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-        bottomNavigationBar: CustomBottomNavBar(
-          selectedIndex: 1,
-          onItemTapped: (index) {
-            switch (index) {
-              case 0:
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProductPage()),
-                );
-                break;
-              case 1:
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MapPage()),
-                );
-                break;
-              case 2:
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => CartPage()),
-                );
-                break;
-              case 3:
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => CartPage()),
-                );
-                break;
-              case 4:
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => CartPage()),
-                );
-                break;
-            }
-          },
-        ));
-  }
-
-  Future<void> _cameraToPosition(LatLng pos) async {
-    final GoogleMapController controller = await _mapController.future;
-    CameraPosition newCameraPosition = CameraPosition(
-      target: pos,
-      zoom: 9,
-    );
-    await controller.animateCamera(
-      CameraUpdate.newCameraPosition(newCameraPosition),
+                  ],
+                ),
+          bottomNavigationBar: CustomBottomNavBar(
+            selectedIndex: 1,
+            onItemTapped: (index) {
+              switch (index) {
+                case 0:
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProductPage()),
+                  );
+                  break;
+                case 1:
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MapPage()),
+                  );
+                  break;
+                case 2:
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => CartPage()),
+                  );
+                  break;
+                case 3:
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => CartPage()),
+                  );
+                  break;
+                case 4:
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => CartPage()),
+                  );
+                  break;
+              }
+            },
+          ),
+        );
+      },
     );
   }
 
-  Future<void> fetchMachineData(Map<String, dynamic> machine) async {
+  Future<void> fetchMachineData(Machine machine) async {
     if (_currentP == null) return;
 
     final String origin = "${_currentP!.latitude},${_currentP!.longitude}";
-    final String destination = "${machine['latitude']},${machine['longitude']}";
+    final String destination = "${machine.latitude},${machine.longitude}";
 
     final String url =
         'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destination&key=$googleMapsApiKey&mode=$_selectedMode';
@@ -421,12 +386,149 @@ class _MapPageState extends State<MapPage> {
         final duration = data['rows'][0]['elements'][0]['duration']['text'];
 
         setState(() {
-          _machineDistances[machine['name']] = distance;
-          _machineETAs[machine['name']] = duration;
+          _machineDistances[machine.id] = distance;
+          _machineETAs[machine.id] = duration;
         });
       }
     } catch (e) {
       print("Error fetching machine data: $e");
+    }
+  }
+
+  Future<void> fetchThisDestination(Machine selectedMachine) async {
+    if (_currentP == null) return;
+
+    final String origin = "${_currentP!.latitude},${_currentP!.longitude}";
+    final String destination =
+        "${selectedMachine.latitude},${selectedMachine.longitude}";
+
+    final String url =
+        'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destination&key=$googleMapsApiKey&mode=$_selectedMode';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final distance = data['rows'][0]['elements'][0]['distance']['text'];
+        final duration = data['rows'][0]['elements'][0]['duration']['text'];
+
+        setState(() {
+          _selectedMachine = selectedMachine;
+          _distance = distance;
+          _eta = duration;
+        });
+
+        await _updatePolyline(
+          LatLng(selectedMachine.latitude, selectedMachine.longitude),
+        );
+        await _cameraToPosition(
+          LatLng(selectedMachine.latitude, selectedMachine.longitude),
+        );
+      }
+    } catch (e) {
+      print("Error fetching this destination: $e");
+    }
+  }
+
+  Future<void> _updatePolyline(LatLng destination) async {
+    if (_currentP == null) return;
+
+    final result = await _polylinePoints.getRouteBetweenCoordinates(
+        googleApiKey: googleMapsApiKey,
+        request: PolylineRequest(
+          origin: PointLatLng(_currentP!.latitude, _currentP!.longitude),
+          destination: PointLatLng(destination.latitude, destination.longitude),
+          mode: TravelMode.values
+              .firstWhere((m) => m.toString().split('.').last == _selectedMode),
+        ));
+
+    if (result.points.isNotEmpty) {
+      setState(() {
+        _polylineCoordinates = result.points
+            .map((point) => LatLng(point.latitude, point.longitude))
+            .toList();
+      });
+    } else {
+      print("Error retrieving polyline: ${result.errorMessage}");
+    }
+  }
+
+  Future<Map<String, dynamic>> fetchClosestDestination() async {
+    final String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+    if (_currentP == null) {
+      print("Current position is missing.");
+      return {};
+    }
+
+    final String origin = "${_currentP!.latitude},${_currentP!.longitude}";
+
+    final Store<AppState> store = StoreProvider.of<AppState>(context);
+    final List<Machine> machines = store.state.machines;
+
+    final String destinations = machines
+        .map((machine) => "${machine.latitude},${machine.longitude}")
+        .join('|');
+
+    final String url =
+        'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destinations&key=$apiKey&mode=$_selectedMode';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        List elements = data['rows'][0]['elements'];
+        int closestIndex = 0;
+        int shortestDistance = elements[0]['distance']['value'];
+
+        for (int i = 1; i < elements.length; i++) {
+          if (elements[i]['distance']['value'] < shortestDistance) {
+            closestIndex = i;
+            shortestDistance = elements[i]['distance']['value'];
+          }
+        }
+
+        return {
+          "destination": LatLng(
+            machines[closestIndex].latitude,
+            machines[closestIndex].longitude,
+          ),
+          "distance": elements[closestIndex]['distance']['text'],
+          "duration": elements[closestIndex]['duration']['text'],
+          "name": machines[closestIndex].location
+        };
+      } else {
+        print("Failed to fetch distance: ${response.statusCode}");
+        return {};
+      }
+    } catch (e) {
+      print("Error fetching Distance Matrix: $e");
+      return {};
+    }
+  }
+
+  Future<void> fetchAndUpdateClosestDestination() async {
+    if (!_userSelected) {
+      final closest = await fetchClosestDestination();
+      if (closest.isNotEmpty) {
+        final Store<AppState> store = StoreProvider.of<AppState>(context);
+        final List<Machine> machines = store.state.machines;
+
+        setState(() {
+          _selectedMachine = machines.firstWhere(
+            (machine) => machine.location == closest['name'],
+          );
+          _distance = closest['distance'];
+          _eta = closest['duration'];
+        });
+
+        await _updatePolyline(
+          LatLng(_selectedMachine!.latitude, _selectedMachine!.longitude),
+        );
+        await _cameraToPosition(
+          LatLng(_selectedMachine!.latitude, _selectedMachine!.longitude),
+        );
+      }
     }
   }
 
@@ -470,135 +572,14 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  Future<void> fetchThisDestination(
-      Map<String, dynamic> selectedMachine) async {
-    if (_currentP == null) return;
-
-    final String origin = "${_currentP!.latitude},${_currentP!.longitude}";
-    final String destination =
-        "${selectedMachine['latitude']},${selectedMachine['longitude']}";
-
-    final String url =
-        'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destination&key=$googleMapsApiKey&mode=$_selectedMode';
-
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final distance = data['rows'][0]['elements'][0]['distance']['text'];
-        final duration = data['rows'][0]['elements'][0]['duration']['text'];
-
-        setState(() {
-          _selectedMachine = selectedMachine;
-          _distance = distance;
-          _eta = duration;
-        });
-
-        await _updatePolyline(
-          LatLng(selectedMachine['latitude'], selectedMachine['longitude']),
-        );
-        await _cameraToPosition(
-          LatLng(selectedMachine['latitude'], selectedMachine['longitude']),
-        );
-      }
-    } catch (e) {
-      print("Error fetching this destination: $e");
-    }
-  }
-
-  Future<void> _updatePolyline(LatLng destination) async {
-    if (_currentP == null) return;
-
-    final result = await _polylinePoints.getRouteBetweenCoordinates(
-        googleApiKey: googleMapsApiKey,
-        request: PolylineRequest(
-          origin: PointLatLng(_currentP!.latitude, _currentP!.longitude),
-          destination: PointLatLng(destination.latitude, destination.longitude),
-          mode: TravelMode.values
-              .firstWhere((m) => m.toString().split('.').last == _selectedMode),
-        ));
-
-    if (result.points.isNotEmpty) {
-      setState(() {
-        _polylineCoordinates = result.points
-            .map((point) => LatLng(point.latitude, point.longitude))
-            .toList();
-      });
-    } else {
-      print("Error retrieving polyline: ${result.errorMessage}");
-    }
-  }
-
-  Future<Map<String, dynamic>> fetchClosestDestination() async {
-    final String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
-    if (_currentP == null || _machines.isEmpty) {
-      print("Current position or machines data is missing.");
-      return {};
-    }
-
-    final String origin = "${_currentP!.latitude},${_currentP!.longitude}";
-
-    final String destinations = _machines
-        .map((machine) => "${machine['latitude']},${machine['longitude']}")
-        .join('|');
-
-    final String url =
-        'https://maps.googleapis.com/maps/api/distancematrix/json?origins=$origin&destinations=$destinations&key=$apiKey&mode=$_selectedMode';
-
-    try {
-      final response = await http.get(Uri.parse(url));
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-        List elements = data['rows'][0]['elements'];
-        int closestIndex = 0;
-        int shortestDistance = elements[0]['distance']['value'];
-
-        for (int i = 1; i < elements.length; i++) {
-          if (elements[i]['distance']['value'] < shortestDistance) {
-            closestIndex = i;
-            shortestDistance = elements[i]['distance']['value'];
-          }
-        }
-
-        return {
-          "destination": LatLng(
-            _machines[closestIndex]['latitude'],
-            _machines[closestIndex]['longitude'],
-          ),
-          "distance": elements[closestIndex]['distance']['text'],
-          "duration": elements[closestIndex]['duration']['text'],
-          "name": _machines[closestIndex]['name']
-        };
-      } else {
-        print("Failed to fetch distance: ${response.statusCode}");
-        return {};
-      }
-    } catch (e) {
-      print("Error fetching Distance Matrix: $e");
-      return {};
-    }
-  }
-
-  Future<void> fetchAndUpdateClosestDestination() async {
-    if (!_userSelected) {
-      final closest = await fetchClosestDestination();
-      if (closest.isNotEmpty) {
-        setState(() {
-          _selectedMachine = _machines.firstWhere(
-            (machine) => machine['name'] == closest['name'],
-          );
-          _distance = closest['distance'];
-          _eta = closest['duration'];
-        });
-
-        await _updatePolyline(
-          LatLng(_selectedMachine!['latitude'], _selectedMachine!['longitude']),
-        );
-        await _cameraToPosition(
-          LatLng(_selectedMachine!['latitude'], _selectedMachine!['longitude']),
-        );
-      }
-    }
+  Future<void> _cameraToPosition(LatLng pos) async {
+    final GoogleMapController controller = await _mapController.future;
+    CameraPosition newCameraPosition = CameraPosition(
+      target: pos,
+      zoom: 9,
+    );
+    await controller.animateCamera(
+      CameraUpdate.newCameraPosition(newCameraPosition),
+    );
   }
 }
