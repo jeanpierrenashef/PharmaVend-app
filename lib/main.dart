@@ -5,7 +5,6 @@ import 'package:flutter_application/pages/login_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_application/pages/map_page.dart';
-import 'package:flutter_application/pages/products_page.dart';
 
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_redux/flutter_redux.dart';
