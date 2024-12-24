@@ -44,7 +44,7 @@ class SignupPage extends StatelessWidget {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(18),
                               borderSide: BorderSide.none),
-                          fillColor: Color.fromRGBO(32, 181, 115, 0.1),
+                          fillColor: Colors.purple.withOpacity(0.1),
                           filled: true,
                           prefixIcon: const Icon(Icons.person)),
                     ),
@@ -88,22 +88,32 @@ class SignupPage extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  padding: const EdgeInsets.only(top: 3, left: 3),
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      shape: const StadiumBorder(),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: Color.fromRGBO(32, 181, 115, 1),
-                    ),
-                    child: const Text(
-                      "Sign up",
-                      style: TextStyle(fontSize: 20),
-                    ),
-                  ),
-                ),
-
-                ),
+                    padding: const EdgeInsets.only(top: 3, left: 3),
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        shape: const StadiumBorder(),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        backgroundColor: Color.fromRGBO(32, 181, 115, 1),
+                      ),
+                      child: const Text(
+                        "Sign up",
+                        style: TextStyle(fontSize: 20),
+                      ),
+                    )),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text("Already have an account?"),
+                    TextButton(
+                        onPressed: () {},
+                        child: const Text(
+                          "Login",
+                          style:
+                              TextStyle(color: Color.fromRGBO(32, 181, 115, 1)),
+                        ))
+                  ],
+                )
               ],
             ),
           ),
