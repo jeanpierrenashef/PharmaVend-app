@@ -44,7 +44,7 @@ class SignupPage extends StatelessWidget {
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(18),
                               borderSide: BorderSide.none),
-                          fillColor: Colors.purple.withOpacity(0.1),
+                          fillColor: Color.fromRGBO(32, 181, 115, 0.1),
                           filled: true,
                           prefixIcon: const Icon(Icons.person)),
                     ),

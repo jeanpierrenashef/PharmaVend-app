@@ -13,6 +13,7 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              _preheader(context),
               _header(context),
               _inputField(context),
               _signup(context)
@@ -20,6 +21,38 @@ class LoginPage extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  _preheader(context) {
+    return const Row(
+      children: [
+        Image(
+          image: AssetImage("assets/logo.png"),
+          height: 94.0,
+          width: 45.0,
+        ),
+        Column(
+          children: [
+            Text(
+              "PharmaVend",
+              style: TextStyle(
+                fontFamily: "Inter",
+                fontSize: 40,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            Text(
+              "Your 24/7 Lifesaver in a Box.",
+              style: TextStyle(
+                fontFamily: "Inter",
+                fontSize: 24,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        )
+      ],
     );
   }
 
@@ -72,7 +105,7 @@ class LoginPage extends StatelessWidget {
           ),
           child: const Text(
             "Login",
-            style: TextStyle(fontSize: 20),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
         )
       ],
