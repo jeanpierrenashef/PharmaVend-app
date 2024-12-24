@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/pages/login_page.dart';
 
 class SignupPage extends StatelessWidget {
   const SignupPage({super.key});
@@ -90,7 +91,12 @@ class SignupPage extends StatelessWidget {
                 Container(
                     padding: const EdgeInsets.only(top: 3, left: 3),
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()));
+                      },
                       style: ElevatedButton.styleFrom(
                         shape: const StadiumBorder(),
                         padding: const EdgeInsets.symmetric(vertical: 16),
@@ -98,7 +104,7 @@ class SignupPage extends StatelessWidget {
                       ),
                       child: const Text(
                         "Sign up",
-                        style: TextStyle(fontSize: 20),
+                        style: TextStyle(fontSize: 20, color: Colors.white),
                       ),
                     )),
                 Row(
@@ -106,7 +112,12 @@ class SignupPage extends StatelessWidget {
                   children: <Widget>[
                     const Text("Already have an account?"),
                     TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginPage()));
+                        },
                         child: const Text(
                           "Login",
                           style:
