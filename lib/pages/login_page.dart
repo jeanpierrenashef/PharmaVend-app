@@ -13,7 +13,6 @@ class LoginPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _preheader(context),
               _header(context),
               _inputField(context),
               _signup(context)
@@ -24,48 +23,54 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  _preheader(context) {
-    return const Row(
-      children: [
-        Image(
-          image: AssetImage("assets/logo.png"),
-          height: 94.0,
-          width: 45.0,
-        ),
-        Column(
-          children: [
-            Text(
-              "PharmaVend",
-              style: TextStyle(
-                fontFamily: "Inter",
-                fontSize: 40,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            Text(
-              "Your 24/7 Lifesaver in a Box.",
-              style: TextStyle(
-                fontFamily: "Inter",
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        )
-      ],
-    );
-  }
-
   _header(context) {
-    return const Column(
-      children: [
-        Text(
-          "Welcome Back",
-          style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
-        ),
-        Text("Enter your credential to login"),
-      ],
-    );
+    return const Column(children: [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image(
+            image: AssetImage("assets/logo.png"),
+            height: 80.0,
+            width: 40.0,
+          ),
+          const SizedBox(width: 12),
+          Column(
+            children: [
+              Text(
+                "PharmaVend",
+                style: TextStyle(
+                  fontFamily: "Inter",
+                  fontSize: 36,
+                  fontWeight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              Text(
+                "Your 24/7 Lifesaver in a Box.",
+                style: TextStyle(
+                  fontFamily: "Inter",
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.right,
+              ),
+            ],
+          )
+        ],
+      ),
+      const SizedBox(
+        height: 48,
+      ),
+      Column(
+        children: [
+          Text(
+            "Welcome Back",
+            style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+          ),
+          Text("Enter your credential to login"),
+        ],
+      )
+    ]);
   }
 
   _inputField(context) {
