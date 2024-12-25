@@ -13,6 +13,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:redux/redux.dart';
+import 'package:flutter_application/services/machine_service.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -53,6 +54,8 @@ class _MapPageState extends State<MapPage> {
         print("Current position (_currentP) is still null after delay.");
       }
     });
+    StoreProvider.of<AppState>(context)
+        .dispatch((store) => MachineService.fetchMachines(store));
   }
 
   @override
