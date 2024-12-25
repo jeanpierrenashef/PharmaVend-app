@@ -19,10 +19,16 @@ class AppState {
       List<Machine>? machines,
       String? error}) {
     return AppState(
-        products: this.products,
-        cart: this.cart,
-        machines: this.machines,
-        error: this.error);
+      products: this.products,
+      cart: this.cart,
+      machines: machines ?? this.machines,
+      error: error ?? this.error,
+    );
+  }
+
+  @override
+  String toString() {
+    return 'AppState(machines: $machines, error: $error)';
   }
 }
 

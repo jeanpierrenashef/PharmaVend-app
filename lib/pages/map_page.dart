@@ -62,16 +62,31 @@ class _MapPageState extends State<MapPage> {
 
     if (!_isMachinesFetched) {
       final store = StoreProvider.of<AppState>(context);
-      MachineService.fetchMachines(store);
-      _isMachinesFetched = true;
+
+      MachineService.fetchMachines(store).then((_) {
+        final machines = store.state.machines;
+        if (machines.isNotEmpty) {
+          setState(() {
+            _isMachinesFetched = true;
+          });
+        }
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return StoreConnector<AppState, List<Machine>>(
-      converter: (store) => store.state.machines,
+      converter: (store) {
+        final machines = store.state.machines;
+        return machines;
+      },
       builder: (context, machines) {
+        if (!_isMachinesFetched || machines.isEmpty) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
         return Scaffold(
           body: _currentP == null
               ? const Center(
@@ -84,11 +99,14 @@ class _MapPageState extends State<MapPage> {
                       child: GoogleMap(
                         onMapCreated: (GoogleMapController controller) =>
                             _mapController.complete(controller),
-                        initialCameraPosition: CameraPosition(
-                          target: LatLng(
-                              machines[1].latitude, machines[1].longitude),
-                          zoom: 9,
-                        ),
+                        initialCameraPosition: machines.isNotEmpty
+                            ? CameraPosition(
+                                target: LatLng(machines[1].latitude,
+                                    machines[1].longitude),
+                                zoom: 9,
+                              )
+                            : const CameraPosition(
+                                target: LatLng(0, 0), zoom: 1),
                         myLocationEnabled: true,
                         myLocationButtonEnabled: true,
                         markers: machines
@@ -571,7 +589,7 @@ class _MapPageState extends State<MapPage> {
         });
 
         if (DateTime.now().difference(lastUpdate) >
-            const Duration(seconds: 50)) {
+            const Duration(seconds: 5)) {
           lastUpdate = DateTime.now();
 
           if (_selectedMachine != null) {

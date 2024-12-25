@@ -9,15 +9,17 @@ class Machine {
     return Machine(
       id: json['id'],
       location: json['location'],
-      latitude: json['latitude'],
-      longitude: json['longitude'],
+      latitude: double.parse(json['latitude']),
+      longitude: double.parse(json['longitude']),
       status: json['status'],
     );
   }
-  Machine(
-      {required this.id,
-      required this.location,
-      required this.latitude,
-      required this.longitude,
-      required this.status});
+
+  Machine({
+    required this.id,
+    required this.location,
+    required this.latitude,
+    required this.longitude,
+    required this.status,
+  });
 }

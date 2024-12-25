@@ -5,7 +5,8 @@ AppState loadMachinesReducer(AppState state, dynamic action) {
   if (action is loadMachinesAction) {
     return state.copyWith(error: null);
   } else if (action is loadMachinesSuccessAction) {
-    return state.copyWith(machines: action.machines, error: null);
+    final newState = state.copyWith(machines: action.machines);
+    return newState;
   } else if (action is loadMachinesFailureAction) {
     return state.copyWith(error: action.error);
   }

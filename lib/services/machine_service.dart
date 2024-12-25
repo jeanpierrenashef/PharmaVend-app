@@ -12,10 +12,13 @@ class MachineService {
 
     try {
       final response =
-          await http.get(Uri.parse("http://127.0.0.1:8000/api/map"));
+          await http.get(Uri.parse("http://172.20.10.2:8000/api/map"));
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
-        final machines = data.map((item) => Machine.fromJson(item)).toList();
+        final Map<String, dynamic> responseData = json.decode(response.body);
+        final List<dynamic> machineList = responseData['machines'];
+
+        final machines =
+            machineList.map((item) => Machine.fromJson(item)).toList();
         store.dispatch(loadMachinesSuccessAction(machines));
       } else {
         store.dispatch(loadMachinesFailureAction('Failed to load machines.'));

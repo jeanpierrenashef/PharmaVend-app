@@ -3,7 +3,6 @@ import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/pages/login_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
-import 'package:flutter_application/services/machine_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_application/pages/map_page.dart';
 
@@ -48,35 +47,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return StoreProvider(
       store: _store,
-      child: FutureBuilder(
-        future: MachineService.fetchMachines(_store),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const MaterialApp(
-              home: Scaffold(
-                body: Center(child: CircularProgressIndicator()),
-              ),
-            );
-          }
-
-          if (snapshot.hasError) {
-            return const MaterialApp(
-              home: Scaffold(
-                body: Center(child: Text("Failed to load data!")),
-              ),
-            );
-          }
-
-          return MaterialApp(
-            title: "Demo",
-            theme: ThemeData(
-              colorScheme: ColorScheme.fromSeed(
-                  seedColor: const Color.fromRGBO(32, 181, 115, 1)),
-              useMaterial3: true,
-            ),
-            home: LoginPage(),
-          );
-        },
+      child: MaterialApp(
+        title: "Demo",
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color.fromRGBO(32, 181, 115, 1)),
+          useMaterial3: true,
+        ),
+        home: LoginPage(),
       ),
     );
   }
