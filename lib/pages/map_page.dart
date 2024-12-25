@@ -54,8 +54,17 @@ class _MapPageState extends State<MapPage> {
         print("Current position (_currentP) is still null after delay.");
       }
     });
-    StoreProvider.of<AppState>(context)
-        .dispatch((store) => MachineService.fetchMachines(store));
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!_isMachinesFetched) {
+      final store = StoreProvider.of<AppState>(context);
+      MachineService.fetchMachines(store);
+      _isMachinesFetched = true;
+    }
   }
 
   @override
