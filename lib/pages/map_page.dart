@@ -37,8 +37,8 @@ class _MapPageState extends State<MapPage> {
   String _eta = "-";
   Machine? _selectedMachine;
   bool _userSelected = false;
+  bool _isMachinesFetched = false;
 
-  // State to store unique distances and ETAs
   final Map<int, String> _machineDistances = {};
   final Map<int, String> _machineETAs = {};
 

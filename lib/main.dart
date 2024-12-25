@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
-import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/pages/login_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
