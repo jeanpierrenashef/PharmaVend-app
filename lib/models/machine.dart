@@ -5,6 +5,15 @@ class Machine {
   final double longitude;
   final String status;
 
+  factory Machine.fromJson(Map<String, dynamic> json) {
+    return Machine(
+      id: json['id'],
+      location: json['location'],
+      latitude: json['latitude'],
+      longitude: json['longitude'],
+      status: json['status'],
+    );
+  }
   Machine(
       {required this.id,
       required this.location,
