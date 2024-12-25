@@ -4,6 +4,7 @@ import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/pages/login_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
+import 'package:flutter_application/services/machine_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_application/pages/map_page.dart';
 
@@ -18,8 +19,10 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  final Store<AppState> _store = Store<AppState>(rootReducer,
-      initialState: AppState(products: [
+  final Store<AppState> _store = Store<AppState>(
+    rootReducer,
+    initialState: AppState(
+      products: [
         Product(
           id: 1,
           name: 'Panadol (12 tablets)',
@@ -36,39 +39,45 @@ class MyApp extends StatelessWidget {
           price: 2.0,
           image: 'https://www.linkpicture.com/q/gloves.png',
         ),
-      ], machines: [
-        Machine(
-            id: 1,
-            location: "Jbeil, V1",
-            latitude: 34.115568,
-            longitude: 35.674343,
-            status: "active"),
-        Machine(
-            id: 2,
-            location: "Hamra, V12",
-            latitude: 33.896198,
-            longitude: 35.477865,
-            status: "active"),
-        Machine(
-            id: 3,
-            location: "Rachaiya, V39",
-            latitude: 33.498073,
-            longitude: 35.840486,
-            status: "active")
-      ], cart: []));
+      ],
+      machines: [],
+      cart: [],
+    ),
+  );
 
   @override
   Widget build(BuildContext context) {
     return StoreProvider(
       store: _store,
-      child: MaterialApp(
-        title: "Demo",
-        theme: ThemeData(
-          colorScheme:
-              ColorScheme.fromSeed(seedColor: Color.fromRGBO(32, 181, 115, 1)),
-          useMaterial3: true,
-        ),
-        home: LoginPage(),
+      child: FutureBuilder(
+        future: MachineService.fetchMachines(_store),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const MaterialApp(
+              home: Scaffold(
+                body: Center(child: CircularProgressIndicator()),
+              ),
+            );
+          }
+
+          if (snapshot.hasError) {
+            return const MaterialApp(
+              home: Scaffold(
+                body: Center(child: Text("Failed to load data!")),
+              ),
+            );
+          }
+
+          return MaterialApp(
+            title: "Demo",
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                  seedColor: const Color.fromRGBO(32, 181, 115, 1)),
+              useMaterial3: true,
+            ),
+            home: LoginPage(),
+          );
+        },
       ),
     );
   }
