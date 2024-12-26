@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
-import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/pages/login_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -22,24 +21,7 @@ class MyApp extends StatelessWidget {
   final Store<AppState> _store = Store<AppState>(
     rootReducer,
     initialState: AppState(
-      products: [
-        Product(
-          id: 1,
-          name: 'Panadol (12 tablets)',
-          description: 'Pain reliever and fever reducer',
-          category: 'First Aid',
-          price: 5.0,
-          image: 'https://www.linkpicture.com/q/panadol.png',
-        ),
-        Product(
-          id: 2,
-          name: 'Surgical gloves (1 pair)',
-          description: 'Sterile gloves for medical use',
-          category: 'Skin Care',
-          price: 2.0,
-          image: 'https://www.linkpicture.com/q/gloves.png',
-        ),
-      ],
+      products: [],
       machines: [],
       cart: [],
     ),

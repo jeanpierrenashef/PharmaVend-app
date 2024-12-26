@@ -27,6 +27,9 @@ class _ProductPageState extends State<ProductPage> {
 
     if (machineId != null) {
       final store = StoreProvider.of<AppState>(context);
+      while (store.state.machines.isEmpty) {
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
 
       if (store.state.machines.isEmpty) {
         print("Machines not loaded yet, waiting...");
@@ -42,7 +45,15 @@ class _ProductPageState extends State<ProductPage> {
       if (_selectedMachine != null) {
         print("Loaded Machine: ${_selectedMachine!.location}");
         await ProductService.fetchProductsByMachineId(
-            store, _selectedMachine!.id);
+                store, _selectedMachine!.id)
+            .then((_) {
+          final products = store.state.products;
+          print(
+              "Products fetched in ProductsPage: ${products.map((m) => m.name).toList()}");
+        });
+        while (store.state.products.isEmpty) {
+          await Future.delayed(const Duration(milliseconds: 100));
+        }
       } else {
         print("Machine with ID $machineId not found in AppState");
       }
