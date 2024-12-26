@@ -41,6 +41,7 @@ dependencies:
   flutter_dotenv: ^5.0.2
   flutter_redux: ^0.10.0
   shared_preferences: ^2.0.15
+  http: ^1.2.2
   
 
 dev_dependencies:
