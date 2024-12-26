@@ -8,9 +8,54 @@ import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/product_detail_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProductPage extends StatelessWidget {
+class ProductPage extends StatefulWidget {
   const ProductPage({super.key});
+
+  @override
+  State<ProductPage> createState() => _ProductPageState();
+}
+
+class _ProductPageState extends State<ProductPage> {
+  Machine? _selectedMachine;
+
+  Future<void> loadSelectedMachine() async {
+    print("loadSelectedMachine called");
+    final prefs = await SharedPreferences.getInstance();
+    final machineId = prefs.getInt('selectedMachineId');
+    print("Selected Machine ID from SharedPreferences: $machineId");
+
+    if (machineId != null) {
+      final store = StoreProvider.of<AppState>(context);
+
+      // Wait for the machines to be loaded into the store
+      if (store.state.machines.isEmpty) {
+        print("Machines not loaded yet, waiting...");
+        await Future.delayed(const Duration(milliseconds: 500));
+        await loadSelectedMachine(); // Retry
+        return;
+      }
+
+      print("Machines in AppState: ${store.state.machines}");
+      setState(() {
+        _selectedMachine = store.state.machines.firstWhere(
+          (machine) => machine.id == machineId,
+        );
+      });
+      if (_selectedMachine != null) {
+        print("Loaded Machine: ${_selectedMachine!.location}");
+      } else {
+        print("Machine with ID $machineId not found in AppState");
+      }
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadSelectedMachine();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,23 +71,12 @@ class ProductPage extends StatelessWidget {
           Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: StoreConnector<AppState, Machine?>(
-                converter: (store) {
-                  final machineId = localStorage.getItem('machineID');
-                  if (machineId == null) return null;
-                  return store.state.machines.firstWhere(
-                    (machine) => machine.id == int.parse(machineId),
-                  );
-                },
-                builder: (context, machine) {
-                  return Text(
-                    machine?.location ?? "Machine not found",
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  );
-                },
+              child: Text(
+                _selectedMachine?.location ?? "Machine not found",
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -138,7 +172,7 @@ class ProductPage extends StatelessWidget {
             case 0:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => ProductPage()),
+                MaterialPageRoute(builder: (context) => const ProductPage()),
               );
               break;
             case 1:

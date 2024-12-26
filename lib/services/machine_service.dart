@@ -12,7 +12,7 @@ class MachineService {
 
     try {
       final response =
-          await http.get(Uri.parse("http://172.20.10.2:8000/api/map"));
+          await http.get(Uri.parse("http://192.168.1.7:8000/api/map"));
       if (response.statusCode == 200) {
         final Map<String, dynamic> responseData = json.decode(response.body);
         final List<dynamic> machineList = responseData['machines'];

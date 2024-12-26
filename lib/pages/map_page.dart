@@ -14,9 +14,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_application/services/machine_service.dart';
-import 'package:localstorage/localstorage.dart';
-
-late final LocalStorage localStorage;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -26,9 +24,15 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  Future<void> saveMachineId(int machineId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('selectedMachineId', machineId);
+  }
+
   final Location _locationController = Location();
   final Completer<GoogleMapController> _mapController =
       Completer<GoogleMapController>();
+  StreamSubscription<LocationData>? _locationSubscription;
 
   LatLng? _currentP;
   List<LatLng> _polylineCoordinates = [];
@@ -60,6 +64,12 @@ class _MapPageState extends State<MapPage> {
   }
 
   @override
+  void dispose() {
+    _locationSubscription?.cancel();
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
 
@@ -68,6 +78,9 @@ class _MapPageState extends State<MapPage> {
 
       MachineService.fetchMachines(store).then((_) {
         final machines = store.state.machines;
+        print(
+            "Machines fetched in MapPage: ${machines.map((m) => m.location).toList()}");
+
         if (machines.isNotEmpty) {
           setState(() {
             _isMachinesFetched = true;
@@ -451,7 +464,7 @@ class _MapPageState extends State<MapPage> {
           _eta = duration;
         });
         //localStorage.setItem('machineID', _selectedMachine!.id.toString());
-        localStorage.setItem('machineID', "1");
+        await saveMachineId(selectedMachine.id);
 
         await _updatePolyline(
           LatLng(selectedMachine.latitude, selectedMachine.longitude),
@@ -556,7 +569,7 @@ class _MapPageState extends State<MapPage> {
           _distance = closest['distance'];
           _eta = closest['duration'];
         });
-        localStorage.setItem('machineID', _selectedMachine!.id.toString());
+        await saveMachineId(_selectedMachine!.id);
 
         await _updatePolyline(
           LatLng(_selectedMachine!.latitude, _selectedMachine!.longitude),
@@ -585,7 +598,7 @@ class _MapPageState extends State<MapPage> {
 
     DateTime lastUpdate = DateTime.now();
 
-    _locationController.onLocationChanged
+    _locationSubscription = _locationController.onLocationChanged
         .listen((LocationData currentLocation) async {
       if (currentLocation.latitude != null &&
           currentLocation.longitude != null) {
