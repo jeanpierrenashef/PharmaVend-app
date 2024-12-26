@@ -14,6 +14,7 @@ import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:redux/redux.dart';
 import 'package:flutter_application/services/machine_service.dart';
+import 'package:localstorage/localstorage.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -447,6 +448,7 @@ class _MapPageState extends State<MapPage> {
           _distance = distance;
           _eta = duration;
         });
+        localStorage.setItem('machineID', _selectedMachine!.id.toString());
 
         await _updatePolyline(
           LatLng(selectedMachine.latitude, selectedMachine.longitude),
@@ -551,7 +553,7 @@ class _MapPageState extends State<MapPage> {
           _distance = closest['distance'];
           _eta = closest['duration'];
         });
-
+        localStorage.setItem('machineID', _selectedMachine!.id.toString());
         await _updatePolyline(
           LatLng(_selectedMachine!.latitude, _selectedMachine!.longitude),
         );
