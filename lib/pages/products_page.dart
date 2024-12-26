@@ -7,6 +7,7 @@ import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/product_detail_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/services/product_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -40,6 +41,8 @@ class _ProductPageState extends State<ProductPage> {
       });
       if (_selectedMachine != null) {
         print("Loaded Machine: ${_selectedMachine!.location}");
+        await ProductService.fetchProductsByMachineId(
+            store, _selectedMachine!.id);
       } else {
         print("Machine with ID $machineId not found in AppState");
       }
