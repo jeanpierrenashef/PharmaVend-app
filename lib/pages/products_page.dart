@@ -21,23 +21,18 @@ class _ProductPageState extends State<ProductPage> {
   Machine? _selectedMachine;
 
   Future<void> loadSelectedMachine() async {
-    print("loadSelectedMachine called");
     final prefs = await SharedPreferences.getInstance();
     final machineId = prefs.getInt('selectedMachineId');
-    print("Selected Machine ID from SharedPreferences: $machineId");
 
     if (machineId != null) {
       final store = StoreProvider.of<AppState>(context);
 
-      // Wait for the machines to be loaded into the store
       if (store.state.machines.isEmpty) {
         print("Machines not loaded yet, waiting...");
         await Future.delayed(const Duration(milliseconds: 500));
-        await loadSelectedMachine(); // Retry
+        await loadSelectedMachine();
         return;
       }
-
-      print("Machines in AppState: ${store.state.machines}");
       setState(() {
         _selectedMachine = store.state.machines.firstWhere(
           (machine) => machine.id == machineId,
