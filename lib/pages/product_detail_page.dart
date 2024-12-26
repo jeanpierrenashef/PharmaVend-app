@@ -8,7 +8,8 @@ import 'package:flutter_redux/flutter_redux.dart';
 class ProductDetailPage extends StatelessWidget {
   final int productId;
 
-  const ProductDetailPage({super.key, required this.productId});
+  const ProductDetailPage({Key? key, required this.productId})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

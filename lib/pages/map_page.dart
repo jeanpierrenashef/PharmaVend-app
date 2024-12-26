@@ -27,6 +27,7 @@ class _MapPageState extends State<MapPage> {
   Future<void> saveMachineId(int machineId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selectedMachineId', machineId);
+    _userSelected = true;
   }
 
   final Location _locationController = Location();
@@ -85,8 +86,41 @@ class _MapPageState extends State<MapPage> {
           setState(() {
             _isMachinesFetched = true;
           });
+          loadSavedMachine();
         }
       });
+    } else if (_selectedMachine != null && _polylineCoordinates.isEmpty) {
+      _updatePolyline(LatLng(
+        _selectedMachine!.latitude,
+        _selectedMachine!.longitude,
+      ));
+    }
+  }
+
+  Future<void> loadSavedMachine() async {
+    final prefs = await SharedPreferences.getInstance();
+    final machineId = prefs.getInt('selectedMachineId');
+
+    if (machineId != null) {
+      final Store<AppState> store = StoreProvider.of<AppState>(context);
+      final List<Machine> machines = store.state.machines;
+
+      final savedMachine = machines.firstWhere((m) => m.id == machineId);
+
+      setState(() {
+        _selectedMachine = savedMachine;
+        _userSelected = true;
+      });
+
+      await _updatePolyline(
+          LatLng(savedMachine.latitude, savedMachine.longitude));
+      await _cameraToPosition(
+          LatLng(savedMachine.latitude, savedMachine.longitude));
+      setState(() {
+        _distance = "Fetching...";
+        _eta = "Fetching...";
+      });
+      await fetchThisDestination(savedMachine);
     }
   }
 
@@ -556,28 +590,29 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> fetchAndUpdateClosestDestination() async {
-    if (!_userSelected) {
-      final closest = await fetchClosestDestination();
-      if (closest.isNotEmpty) {
-        final Store<AppState> store = StoreProvider.of<AppState>(context);
-        final List<Machine> machines = store.state.machines;
+    if (_userSelected || _selectedMachine != null) {
+      return;
+    }
+    final closest = await fetchClosestDestination();
+    if (closest.isNotEmpty) {
+      final Store<AppState> store = StoreProvider.of<AppState>(context);
+      final List<Machine> machines = store.state.machines;
 
-        setState(() {
-          _selectedMachine = machines.firstWhere(
-            (machine) => machine.location == closest['name'],
-          );
-          _distance = closest['distance'];
-          _eta = closest['duration'];
-        });
-        await saveMachineId(_selectedMachine!.id);
+      setState(() {
+        _selectedMachine = machines.firstWhere(
+          (machine) => machine.location == closest['name'],
+        );
+        _distance = closest['distance'];
+        _eta = closest['duration'];
+      });
+      await saveMachineId(_selectedMachine!.id);
 
-        await _updatePolyline(
-          LatLng(_selectedMachine!.latitude, _selectedMachine!.longitude),
-        );
-        await _cameraToPosition(
-          LatLng(_selectedMachine!.latitude, _selectedMachine!.longitude),
-        );
-      }
+      await _updatePolyline(
+        LatLng(_selectedMachine!.latitude, _selectedMachine!.longitude),
+      );
+      await _cameraToPosition(
+        LatLng(_selectedMachine!.latitude, _selectedMachine!.longitude),
+      );
     }
   }
 
@@ -608,7 +643,7 @@ class _MapPageState extends State<MapPage> {
         });
 
         if (DateTime.now().difference(lastUpdate) >
-            const Duration(seconds: 5)) {
+            const Duration(seconds: 50)) {
           lastUpdate = DateTime.now();
 
           if (_selectedMachine != null) {

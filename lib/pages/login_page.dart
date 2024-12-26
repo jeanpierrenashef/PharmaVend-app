@@ -35,7 +35,7 @@ class LoginPage extends StatelessWidget {
             height: 80.0,
             width: 40.0,
           ),
-          SizedBox(width: 12),
+          const SizedBox(width: 12),
           Column(
             children: [
               Text(
@@ -60,7 +60,7 @@ class LoginPage extends StatelessWidget {
           )
         ],
       ),
-      SizedBox(
+      const SizedBox(
         height: 48,
       ),
       Column(

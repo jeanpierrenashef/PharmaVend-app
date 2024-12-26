@@ -4,7 +4,7 @@ import 'package:flutter_application/custom/app_bar.dart';
 class CheckoutPage extends StatelessWidget {
   final double total;
 
-  const CheckoutPage({super.key, required this.total});
+  const CheckoutPage({Key? key, required this.total}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
