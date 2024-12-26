@@ -12,7 +12,7 @@ class ProductService {
     store.dispatch(loadProductsAction());
 
     try {
-      final response = await http.get(
+      final response = await http.post(
         Uri.parse("http://192.168.1.7:800/api"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({"machine_id": machineId}),
