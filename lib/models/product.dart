@@ -13,7 +13,7 @@ class Product {
         description: json['description'],
         category: json['category'],
         price: double.parse(json['price']),
-        image: json['image']);
+        image: json['image_url']);
   }
   Product({
     required this.id,

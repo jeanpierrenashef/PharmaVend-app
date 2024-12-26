@@ -10,21 +10,23 @@ class ProductService {
   static Future<void> fetchProductsByMachineId(
       Store<AppState> store, int machineId) async {
     store.dispatch(loadProductsAction());
-
     try {
       final response = await http.get(
-        Uri.parse("http://192.168.1.7:800/api/${machineId}"),
+        Uri.parse("http://192.168.1.7:8000/api/${machineId}"),
         headers: {"Content-Type": "application/json"},
       );
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        final List<dynamic> productList = responseData['products'];
 
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final productList = responseData['products'] as List<dynamic>;
+        print("Products in API response: $productList");
         final products =
             productList.map((item) => Product.fromJson(item)).toList();
         store.dispatch(loadProductsSuccessAction(products));
+        print(
+            "Products in store after dispatch: ${store.state.products.map((p) => p.name).toList()}");
       } else {
-        store.dispatch(loadProductsFailureAction("Failed to load products"));
+        store.dispatch(loadProductsFailureAction("Failed"));
       }
     } catch (e) {
       store.dispatch(loadProductsFailureAction(e.toString()));

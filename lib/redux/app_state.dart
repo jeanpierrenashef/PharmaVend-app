@@ -19,7 +19,7 @@ class AppState {
       List<Machine>? machines,
       String? error}) {
     return AppState(
-      products: this.products,
+      products: products ?? this.products,
       cart: this.cart,
       machines: machines ?? this.machines,
       error: error ?? this.error,

@@ -1,5 +1,5 @@
-import 'package:flutter_application/redux/load_products_actions.dart';
 import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/redux/load_products_actions.dart';
 
 AppState loadProductsReducer(AppState state, dynamic action) {
   if (action is loadProductsAction) {
