@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/product_detail_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:localstorage/localstorage.dart';
 
 class ProductPage extends StatelessWidget {
   const ProductPage({super.key});
@@ -25,12 +27,23 @@ class ProductPage extends StatelessWidget {
           Center(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
-              child: const Text(
-                "Hamra V12",
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: StoreConnector<AppState, Machine?>(
+                converter: (store) {
+                  final machineId = localStorage.getItem('machineID');
+                  if (machineId == null) return null;
+                  return store.state.machines.firstWhere(
+                    (machine) => machine.id == int.parse(machineId),
+                  );
+                },
+                builder: (context, machine) {
+                  return Text(
+                    machine?.location ?? "Machine not found",
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
+                },
               ),
             ),
           ),
