@@ -16,6 +16,8 @@ import 'package:redux/redux.dart';
 import 'package:flutter_application/services/machine_service.dart';
 import 'package:localstorage/localstorage.dart';
 
+late final LocalStorage localStorage;
+
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
 
@@ -448,7 +450,8 @@ class _MapPageState extends State<MapPage> {
           _distance = distance;
           _eta = duration;
         });
-        localStorage.setItem('machineID', _selectedMachine!.id.toString());
+        //localStorage.setItem('machineID', _selectedMachine!.id.toString());
+        localStorage.setItem('machineID', "1");
 
         await _updatePolyline(
           LatLng(selectedMachine.latitude, selectedMachine.longitude),
@@ -554,6 +557,7 @@ class _MapPageState extends State<MapPage> {
           _eta = closest['duration'];
         });
         localStorage.setItem('machineID', _selectedMachine!.id.toString());
+
         await _updatePolyline(
           LatLng(_selectedMachine!.latitude, _selectedMachine!.longitude),
         );

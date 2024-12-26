@@ -8,7 +8,6 @@ import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/product_detail_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:localstorage/localstorage.dart';
 
 class ProductPage extends StatelessWidget {
   const ProductPage({super.key});

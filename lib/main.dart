@@ -8,11 +8,21 @@ import 'package:flutter_application/pages/map_page.dart';
 
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:localstorage/localstorage.dart';
 
 import 'package:redux/redux.dart';
 
+late final LocalStorage localStorage;
+
+Future<void> initLocalStorage() async {
+  localStorage = LocalStorage('app_data');
+  await localStorage.ready;
+}
+
 void main() async {
   await dotenv.load(fileName: ".env");
+  await initLocalStorage();
+
   runApp(MyApp());
 }
 
