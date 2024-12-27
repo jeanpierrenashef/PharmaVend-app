@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
 import 'package:flutter_application/pages/checkout_page.dart';
+import 'package:flutter_application/pages/history_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
@@ -222,7 +223,7 @@ class CartPage extends StatelessWidget {
             case 2:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => CartPage()),
+                MaterialPageRoute(builder: (context) => HistoryPage()),
               );
               break;
             case 3:

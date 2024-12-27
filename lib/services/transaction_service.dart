@@ -25,6 +25,8 @@ class TransactionService {
         final transactions =
             transactionsList.map((item) => Transaction.fromJson(item)).toList();
         store.dispatch(loadTransactionsSuccessAction(transactions));
+        print(
+            "Products in store after dispatch: ${store.state.transactions.map((p) => p.quantity).toList()}");
       } else {
         store.dispatch(
           loadTransactionsFailureAction("Failed to load transactions."),
