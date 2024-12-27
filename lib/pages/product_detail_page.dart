@@ -143,7 +143,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                 duration: const Duration(seconds: 1),
                                 behavior: SnackBarBehavior.floating,
                                 margin: const EdgeInsets.only(
-                                    bottom: 80, left: 20, right: 20),
+                                    bottom: 120, left: 86, right: 86),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),

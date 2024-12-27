@@ -25,7 +25,7 @@ class CartPage extends StatelessWidget {
             child: Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
-                "Hamra V12",
+                "Cart",
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
