@@ -1,22 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/models/machine.dart';
+import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/models/product.dart';
-import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/redux/cart_actions.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class ProductDetailPage extends StatelessWidget {
+class ProductDetailPage extends StatefulWidget {
   final int productId;
 
   const ProductDetailPage({Key? key, required this.productId})
       : super(key: key);
 
   @override
+  State<ProductDetailPage> createState() => _ProductDetailPageState();
+}
+
+class _ProductDetailPageState extends State<ProductDetailPage> {
+  Machine? _selectedMachine;
+
+  Future<void> loadMachineName() async {
+    final prefs = await SharedPreferences.getInstance();
+    final machineId = prefs.getInt('selectedMachineId');
+
+    if (machineId != null) {
+      final store = StoreProvider.of<AppState>(context);
+
+      setState(() {
+        _selectedMachine = store.state.machines.firstWhere(
+          (machine) => machine.id == machineId,
+        );
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadMachineName();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: CustomAppBar(),
+        title: const CustomAppBar(),
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         automaticallyImplyLeading: false,
       ),
@@ -37,7 +67,7 @@ class ProductDetailPage extends StatelessWidget {
                 Expanded(
                   child: Center(
                     child: Text(
-                      "Hamra V12",
+                      _selectedMachine?.location ?? "Loading...",
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -51,11 +81,9 @@ class ProductDetailPage extends StatelessWidget {
           ),
           Expanded(
             child: StoreConnector<AppState, Product?>(
-              converter: (store) {
-                return store.state.products.firstWhere(
-                  (product) => product.id == productId,
-                );
-              },
+              converter: (store) => store.state.products.firstWhere(
+                (product) => product.id == widget.productId,
+              ),
               builder: (context, product) {
                 if (product == null) {
                   return const Center(
@@ -103,20 +131,19 @@ class ProductDetailPage extends StatelessWidget {
                         child: ElevatedButton(
                           onPressed: () {
                             StoreProvider.of<AppState>(context)
-                                .dispatch(AddToCartAction(productId));
+                                .dispatch(AddToCartAction(widget.productId));
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Center(
-                                  child: Text(
-                                    "Added to cart!",
-                                    style: TextStyle(fontSize: 14),
-                                  ),
+                                content: const Text(
+                                  "Added to cart!",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 14),
                                 ),
                                 backgroundColor: Colors.grey,
-                                duration: Duration(seconds: 1),
+                                duration: const Duration(seconds: 1),
                                 behavior: SnackBarBehavior.floating,
                                 margin: const EdgeInsets.only(
-                                    bottom: 120, left: 86, right: 86),
+                                    bottom: 80, left: 20, right: 20),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
