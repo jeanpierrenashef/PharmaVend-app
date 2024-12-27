@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/models/machine.dart';
+import 'package:flutter_application/models/transaction.dart';
 import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
@@ -71,5 +73,23 @@ class _HistoryPageState extends State<HistoryPage> {
         }
       },
     ));
+  }
+
+  Map<String, List<Transaction>> _groupByDateAndLocation(
+    List<Transaction> transactions,
+    List<Machine> machines,
+  ) {
+    final grouped = <String, List<Transaction>>{};
+
+    for (var transaction in transactions) {
+      final machine = machines.firstWhere(
+        (m) => m.id == transaction.machineId,
+      );
+      final key =
+          "On ${transaction.updatedAt.split('T')[0]}, ${machine.location}";
+
+      grouped.putIfAbsent(key, () => []).add(transaction);
+    }
+    return grouped;
   }
 }
