@@ -20,11 +20,8 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   final Store<AppState> _store = Store<AppState>(
     rootReducer,
-    initialState: AppState(
-      products: [],
-      machines: [],
-      cart: [],
-    ),
+    initialState:
+        AppState(products: [], machines: [], cart: [], transactions: []),
   );
 
   MyApp({super.key});
