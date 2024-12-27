@@ -1,13 +1,13 @@
 import 'package:flutter_application/models/transaction.dart';
 
-class LoadTransactionsAction {}
+class loadTransactionsAction {}
 
-class LoadTransactionsSuccessAction {
+class loadTransactionsSuccessAction {
   final List<Transaction> transactions;
-  LoadTransactionsSuccessAction(this.transactions);
+  loadTransactionsSuccessAction(this.transactions);
 }
 
-class LoadTransactionsFailureAction {
+class loadTransactionsFailureAction {
   final String error;
-  LoadTransactionsFailureAction(this.error);
+  loadTransactionsFailureAction(this.error);
 }

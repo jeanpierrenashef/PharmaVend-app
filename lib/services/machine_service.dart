@@ -1,30 +1,37 @@
 import 'dart:convert';
-
-import 'package:flutter_application/models/machine.dart';
+import 'package:flutter_application/models/transaction.dart';
 import 'package:flutter_application/redux/app_state.dart';
-import 'package:flutter_application/redux/load_machines_actions.dart';
+import 'package:flutter_application/redux/load_transactions_actions.dart';
 import 'package:redux/redux.dart';
 import 'package:http/http.dart' as http;
 
-class MachineService {
-  static Future<void> fetchMachines(Store<AppState> store) async {
-    store.dispatch(loadMachinesAction());
+class TransactionService {
+  static Future<void> fetchTransactions(
+      Store<AppState> store, int userId) async {
+    store.dispatch(loadTransactionsAction());
 
     try {
-      final response =
-          await http.get(Uri.parse("http://192.168.1.7:8000/api/map"));
-      if (response.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(response.body);
-        final List<dynamic> machineList = responseData['machines'];
+      final response = await http.post(
+        Uri.parse("http://192.168.1.7:8000/api/history"),
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({"user_id": userId}),
+      );
 
-        final machines =
-            machineList.map((item) => Machine.fromJson(item)).toList();
-        store.dispatch(loadMachinesSuccessAction(machines));
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final transactionsList = responseData['transactions'] as List<dynamic>;
+        print("Transactions in API response: $transactionsList");
+
+        final transactions =
+            transactionsList.map((item) => Transaction.fromJson(item)).toList();
+        store.dispatch(loadTransactionsSuccessAction(transactions));
       } else {
-        store.dispatch(loadMachinesFailureAction('Failed to load machines.'));
+        store.dispatch(
+          loadTransactionsFailureAction("Failed to load transactions."),
+        );
       }
     } catch (e) {
-      store.dispatch(loadMachinesFailureAction(e.toString()));
+      store.dispatch(loadTransactionsFailureAction(e.toString()));
     }
   }
 }
