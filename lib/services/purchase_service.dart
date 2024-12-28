@@ -5,7 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:redux/redux.dart';
 import 'package:http/http.dart' as http;
 
-
 class PurchaseService {
   static Future<void> purchaseCartItems(
       Store<AppState> store, int userId) async {
@@ -32,14 +31,21 @@ class PurchaseService {
         'quantity': cartItem.quantity
       };
 
-      try{
+      try {
         final response = await http.post(
           Uri.parse("http://192.168.1.7:8000/api/purchase"),
           headers: {"ContentType": "application/json"},
           body: json.encode(requestBody),
         );
-      }catch{
-
+        if (response.statusCode == 200) {
+          final responseData = json.decode(response.body);
+          print(
+              "Purchase successful for product ${product.name}: $responseData");
+        } else {
+          print("Purchase unseccessful");
+        }
+      } catch (e) {
+        print("Error purchasing product , $e");
       }
     }
   }
