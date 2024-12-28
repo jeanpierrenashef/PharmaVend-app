@@ -36,6 +36,8 @@ AppState cartReducer(AppState state, dynamic action) {
     }
 
     return AppState(products: state.products, cart: updatedCart);
+  } else if (action is ClearCartAction) {
+    return state.copyWith(cart: []);
   }
 
   return state;
