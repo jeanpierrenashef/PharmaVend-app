@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/redux/cart_actions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:redux/redux.dart';
 import 'package:http/http.dart' as http;
@@ -20,6 +21,7 @@ class PurchaseService {
       print("No machine id found");
       return;
     }
+    bool allSuccessful = true;
 
     for (final cartItem in cartItems) {
       final product = cartItem.product;
@@ -42,11 +44,18 @@ class PurchaseService {
           print(
               "Purchase successful for product ${product.name}: $responseData");
         } else {
+          allSuccessful = false;
           print("Purchase unseccessful");
         }
       } catch (e) {
+        allSuccessful = false;
         print("Error purchasing product , $e");
       }
+    }
+    if (allSuccessful) {
+      store.dispatch(ClearCartAction());
+    } else {
+      print("Some purchases failed. Cart was not cleared.");
     }
   }
 }
