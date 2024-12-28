@@ -10,7 +10,7 @@ import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class DispensePage extends StatefulWidget {
-  const DispensePage({super.key});
+  const DispensePage({Key? key}) : super(key: key);
 
   @override
   State<DispensePage> createState() => _DispensePageState();
@@ -29,7 +29,6 @@ class _DispensePageState extends State<DispensePage> {
     final store = StoreProvider.of<AppState>(context);
     final transactions = store.state.transactions;
 
-    // Filter transactions where dispensed == 0
     setState(() {
       undispensedTransactions =
           transactions.where((t) => t.dispensed == 0).toList();
@@ -58,60 +57,71 @@ class _DispensePageState extends State<DispensePage> {
             const SizedBox(
               height: 16,
             ),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Colors.grey.shade300,
-                  width: 1,
-                ),
-                color: Colors.white,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Jouaiyya, Street 11 V82",
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            height: 2,
-                          ),
-                          Text(
-                            "Ordered at: 2024-12-09 22:10:01",
-                            style: TextStyle(
-                              fontSize: 13,
+            Expanded(
+              child: ListView.builder(
+                itemCount: undispensedTransactions.length,
+                itemBuilder: (context, index) {
+                  final transaction = undispensedTransactions[index];
+
+                  return Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: Colors.grey.shade300,
+                        width: 1,
+                      ),
+                      color: Colors.white,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  transaction.machineId.toString(),
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(
+                                  height: 2,
+                                ),
+                                Text(
+                                  "Ordered at: 2024-12-09 22:10:01",
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                  ),
+                                )
+                              ],
                             ),
-                          )
-                        ],
-                      ),
-                      ElevatedButton(
-                        onPressed: () async {
-                          //method
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromRGBO(32, 181, 115, 1),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 8),
+                            ElevatedButton(
+                              onPressed: () async {
+                                //method
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromRGBO(32, 181, 115, 1),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                              ),
+                              child: const Text(
+                                "Dispense",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
                         ),
-                        child: const Text(
-                          "Dispense",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
           ],
