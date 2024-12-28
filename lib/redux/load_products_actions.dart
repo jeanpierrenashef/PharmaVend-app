@@ -11,3 +11,9 @@ class loadProductsFailureAction {
   final String error;
   loadProductsFailureAction(this.error);
 }
+
+class AddProductAction {
+  final Product product;
+
+  AddProductAction(this.product);
+}

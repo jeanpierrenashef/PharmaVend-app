@@ -59,6 +59,9 @@ class _DispensePageState extends State<DispensePage> {
           store,
           transaction.productId,
         );
+        setState(() {
+          products = store.state.products;
+        });
       }
     }
   }
