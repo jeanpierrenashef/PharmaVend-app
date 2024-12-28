@@ -6,6 +6,8 @@ import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/history_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
+import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
 class DispensePage extends StatefulWidget {
   const DispensePage({super.key});
@@ -20,6 +22,18 @@ class _DispensePageState extends State<DispensePage> {
   @override
   void initState() {
     super.initState();
+    _fetchUndispensedTransactions();
+  }
+
+  void _fetchUndispensedTransactions() {
+    final store = StoreProvider.of<AppState>(context);
+    final transactions = store.state.transactions;
+
+    // Filter transactions where dispensed == 0
+    setState(() {
+      undispensedTransactions =
+          transactions.where((t) => t.dispensed == 0).toList();
+    });
   }
 
   @override
