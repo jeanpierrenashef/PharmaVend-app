@@ -106,25 +106,10 @@ class _DispensePageState extends State<DispensePage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  machine.location,
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const SizedBox(
-                                  height: 2,
-                                ),
-                                Text(
-                                  "Ordered at:  ${transaction.updatedAt.split('T')[0]}",
-                                  style: TextStyle(
-                                    fontSize: 13,
-                                  ),
-                                )
-                              ],
+                            Text(
+                              machine.location,
+                              style: TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             ElevatedButton(
                               onPressed: () async {
