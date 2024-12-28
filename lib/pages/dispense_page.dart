@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/models/transaction.dart';
 import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/history_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
@@ -14,6 +15,13 @@ class DispensePage extends StatefulWidget {
 }
 
 class _DispensePageState extends State<DispensePage> {
+  List<Transaction> undispensedTransactions = [];
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
