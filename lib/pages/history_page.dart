@@ -218,7 +218,15 @@ class _HistoryPageState extends State<HistoryPage> {
     for (var transaction in transactions) {
       final machine = machines.firstWhere(
         (m) => m.id == transaction.machineId,
+        orElse: () => Machine(
+          id: -1,
+          location: "Unknown Location",
+          latitude: 0.0,
+          longitude: 0.0,
+          status: '',
+        ),
       );
+
       final key =
           "On ${transaction.updatedAt.split('T')[0]}, ${machine.location}";
 
