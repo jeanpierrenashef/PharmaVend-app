@@ -8,6 +8,9 @@ AppState loadProductsReducer(AppState state, dynamic action) {
     return state.copyWith(products: action.products, error: null);
   } else if (action is loadProductsFailureAction) {
     return state.copyWith(error: action.error);
+  } else if (action is AddProductAction) {
+    final updatedProducts = [...state.products, action.product];
+    return state.copyWith(products: updatedProducts);
   }
   return state;
 }
