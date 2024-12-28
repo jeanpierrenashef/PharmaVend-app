@@ -10,6 +10,7 @@ import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/services/dispense_service.dart';
+import 'package:flutter_application/services/transaction_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class DispensePage extends StatefulWidget {
@@ -33,12 +34,26 @@ class _DispensePageState extends State<DispensePage> {
   void _fetchUndispensedTransactions() {
     final store = StoreProvider.of<AppState>(context);
     final transactions = store.state.transactions;
-    machines = store.state.machines;
 
-    setState(() {
-      undispensedTransactions =
-          transactions.where((t) => t.dispensed == 0).toList();
-    });
+    if (transactions.isEmpty) {
+      const userId = 1;
+      TransactionService.fetchTransactions(store, userId).then((_) {
+        setState(() {
+          final updatedTransactions = store.state.transactions;
+          undispensedTransactions =
+              updatedTransactions.where((t) => t.dispensed == 0).toList();
+          machines = store.state.machines;
+          products = store.state.products;
+        });
+      });
+    } else {
+      setState(() {
+        undispensedTransactions =
+            transactions.where((t) => t.dispensed == 0).toList();
+        machines = store.state.machines;
+        products = store.state.products;
+      });
+    }
   }
 
   @override
