@@ -33,14 +33,11 @@ class PurchaseService {
         'quantity': cartItem.quantity
       };
       print("Request Body: ${json.encode(requestBody)}");
-      print("Machine ID: $machineId");
-      print("User ID: $userId");
-      print("Product ID: ${product.id}, Quantity: ${cartItem.quantity}");
 
       try {
         final response = await http.post(
           Uri.parse("http://192.168.1.7:8000/api/purchase"),
-          headers: {"ContentType": "application/json"},
+          headers: {"Content-Type": "application/json"},
           body: json.encode(requestBody),
         );
         if (response.statusCode == 200) {
@@ -48,6 +45,7 @@ class PurchaseService {
           print(
               "Purchase successful for product ${product.name}: $responseData");
         } else {
+          print("Response Status Code: ${response.statusCode}");
           allSuccessful = false;
           print("Purchase unseccessful");
         }
