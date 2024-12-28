@@ -155,7 +155,7 @@ class _DispensePageState extends State<DispensePage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              product.image,
+                              product.name,
                               style: const TextStyle(fontSize: 14),
                             ),
                             Text(

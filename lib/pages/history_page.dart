@@ -62,7 +62,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 48), // Keeps text centered
+                const SizedBox(width: 48),
               ],
             ),
             const SizedBox(height: 16),
