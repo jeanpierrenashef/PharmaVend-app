@@ -99,16 +99,19 @@ class _DispensePageState extends State<DispensePage> {
                       status: "",
                     ),
                   );
-                  final product = products.firstWhere(
-                    (p) => p.id == transaction.productId,
-                    orElse: () => Product(
-                        id: 0,
-                        name: "Unknown",
-                        description: "Empty",
-                        category: "Unknown",
-                        price: 0.0,
-                        image: "null"),
-                  );
+                  final product = StoreProvider.of<AppState>(context)
+                      .state
+                      .products
+                      .firstWhere(
+                        (p) => p.id == transaction.productId,
+                        orElse: () => Product(
+                            id: 0,
+                            name: "Unknown",
+                            description: "Empty",
+                            category: "Unknown",
+                            price: 0.0,
+                            image: "null"),
+                      );
 
                   return Container(
                     margin:
