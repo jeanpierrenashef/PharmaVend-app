@@ -32,4 +32,24 @@ class ProductService {
       store.dispatch(loadProductsFailureAction(e.toString()));
     }
   }
+
+  static Future<void> fetchProductById(
+      Store<AppState> store, int productId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("http://192.168.1.7:8000/api/product/$productId"),
+        headers: {"Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final product = Product.fromJson(responseData['product']);
+        store.dispatch(AddProductAction(product));
+      } else {
+        print("Failed to fetch product: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("Error fetching product by ID: $e");
+    }
+  }
 }

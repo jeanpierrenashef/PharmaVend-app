@@ -46,8 +46,20 @@ class _DispensePageState extends State<DispensePage> {
       undispensedTransactions =
           updatedTransactions.where((t) => t.dispensed == 0).toList();
       machines = store.state.machines;
-      products = store.state.products;
     });
+
+    for (final transaction in undispensedTransactions) {
+      final productExists = store.state.products.any(
+        (product) => product.id == transaction.productId,
+      );
+
+      if (!productExists) {
+        await ProductService.fetchProductById(
+          store,
+          transaction.productId,
+        );
+      }
+    }
   }
 
   @override
