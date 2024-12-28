@@ -9,6 +9,7 @@ import 'package:flutter_application/pages/history_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/redux/load_transactions_actions.dart';
 import 'package:flutter_application/services/dispense_service.dart';
 import 'package:flutter_application/services/product_service.dart';
 import 'package:flutter_application/services/transaction_service.dart';
@@ -138,14 +139,26 @@ class _DispensePageState extends State<DispensePage> {
                             ),
                             ElevatedButton(
                               onPressed: () async {
+                                final store =
+                                    StoreProvider.of<AppState>(context);
+
                                 await DispenseService.dispenseTransaction(
                                     transaction.id);
 
+                                final updatedTransactions =
+                                    store.state.transactions.map((t) {
+                                  if (t.id == transaction.id) {
+                                    return t.copyWith(dispensed: 1);
+                                  }
+                                  return t;
+                                }).toList();
+                                store.dispatch(UpdateTransactionsAction(
+                                    updatedTransactions));
+
                                 setState(() {
-                                  undispensedTransactions =
-                                      undispensedTransactions
-                                          .where((t) => t.id != transaction.id)
-                                          .toList();
+                                  undispensedTransactions = updatedTransactions
+                                      .where((t) => t.dispensed == 0)
+                                      .toList();
                                 });
                               },
                               style: ElevatedButton.styleFrom(
