@@ -8,6 +8,8 @@ AppState loadTransactionsReducer(AppState state, dynamic action) {
     return state.copyWith(transactions: action.transactions, error: null);
   } else if (action is loadTransactionsFailureAction) {
     return state.copyWith(error: action.error);
+  } else if (action is UpdateTransactionsAction) {
+    return state.copyWith(transactions: action.updatedTransactions);
   }
   return state;
 }

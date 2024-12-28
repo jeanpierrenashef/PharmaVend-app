@@ -11,3 +11,9 @@ class loadTransactionsFailureAction {
   final String error;
   loadTransactionsFailureAction(this.error);
 }
+
+class UpdateTransactionsAction {
+  final List<Transaction> updatedTransactions;
+
+  UpdateTransactionsAction(this.updatedTransactions);
+}
