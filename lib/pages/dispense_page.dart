@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
 import 'package:flutter_application/models/machine.dart';
+import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/models/transaction.dart';
 import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/history_page.dart';
@@ -21,6 +22,7 @@ class DispensePage extends StatefulWidget {
 class _DispensePageState extends State<DispensePage> {
   List<Transaction> undispensedTransactions = [];
   List<Machine> machines = [];
+  List<Product> products = [];
 
   @override
   void didChangeDependencies() {
@@ -76,6 +78,15 @@ class _DispensePageState extends State<DispensePage> {
                       status: "",
                     ),
                   );
+                  final product = products.firstWhere(
+                      (p) => p.id == transaction.productId,
+                      orElse: () => Product(
+                          id: 0,
+                          name: "Unknown",
+                          description: "Empty",
+                          category: "Unknown",
+                          price: 0.0,
+                          image: "null"));
 
                   return Container(
                     margin:
@@ -137,6 +148,22 @@ class _DispensePageState extends State<DispensePage> {
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              product.image,
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            Text(
+                              "Ordered at:  ${transaction.updatedAt.split('T')[0]}",
+                              style: TextStyle(
+                                fontSize: 13,
+                              ),
+                            )
                           ],
                         ),
                       ],
