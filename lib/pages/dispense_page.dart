@@ -33,6 +33,9 @@ class _DispensePageState extends State<DispensePage> {
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
             ),
+            const SizedBox(
+              height: 16,
+            ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 5),
               padding: const EdgeInsets.all(16),
@@ -56,7 +59,7 @@ class _DispensePageState extends State<DispensePage> {
                           Text(
                             "Jouaiyya, Street 11 V82",
                             style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                                fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(
                             height: 2,
@@ -64,7 +67,7 @@ class _DispensePageState extends State<DispensePage> {
                           Text(
                             "Ordered at: 2024-12-09 22:10:01",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 13,
                             ),
                           )
                         ],
@@ -80,7 +83,7 @@ class _DispensePageState extends State<DispensePage> {
                               horizontal: 16, vertical: 8),
                         ),
                         child: const Text(
-                          "Select",
+                          "Dispense",
                           style: TextStyle(color: Colors.white),
                         ),
                       ),
