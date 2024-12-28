@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
+import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/services/purchase_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -206,6 +207,8 @@ class CheckoutPage extends StatelessWidget {
             final store = StoreProvider.of<AppState>(context);
             const userId = 1;
             await PurchaseService.purchaseCartItems(store, userId);
+            Navigator.pushReplacement(
+                context, MaterialPageRoute(builder: (context) => CartPage()));
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
