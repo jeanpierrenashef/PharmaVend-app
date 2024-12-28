@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/models/transaction.dart';
 import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/history_page.dart';
@@ -19,16 +20,18 @@ class DispensePage extends StatefulWidget {
 
 class _DispensePageState extends State<DispensePage> {
   List<Transaction> undispensedTransactions = [];
+  List<Machine> machines = [];
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _fetchUndispensedTransactions();
   }
 
   void _fetchUndispensedTransactions() {
     final store = StoreProvider.of<AppState>(context);
     final transactions = store.state.transactions;
+    machines = store.state.machines;
 
     setState(() {
       undispensedTransactions =
@@ -63,6 +66,16 @@ class _DispensePageState extends State<DispensePage> {
                 itemCount: undispensedTransactions.length,
                 itemBuilder: (context, index) {
                   final transaction = undispensedTransactions[index];
+                  final machine = machines.firstWhere(
+                    (m) => m.id == transaction.machineId,
+                    orElse: () => Machine(
+                      id: 0,
+                      location: "Unknown Machine",
+                      latitude: 0,
+                      longitude: 0,
+                      status: "",
+                    ),
+                  );
 
                   return Container(
                     margin:
@@ -86,7 +99,7 @@ class _DispensePageState extends State<DispensePage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(
-                                  transaction.machineId.toString(),
+                                  machine.location,
                                   style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold),
@@ -95,7 +108,7 @@ class _DispensePageState extends State<DispensePage> {
                                   height: 2,
                                 ),
                                 Text(
-                                  "Ordered at:  ${transaction.updatedAt}",
+                                  "Ordered at:  ${transaction.updatedAt.split('T')[0]}",
                                   style: TextStyle(
                                     fontSize: 13,
                                   ),
