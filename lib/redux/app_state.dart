@@ -24,7 +24,7 @@ class AppState {
       String? error}) {
     return AppState(
       products: products ?? this.products,
-      cart: this.cart,
+      cart: cart ?? this.cart,
       machines: machines ?? this.machines,
       transactions: transactions ?? this.transactions,
       error: error ?? this.error,
