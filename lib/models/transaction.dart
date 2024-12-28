@@ -6,16 +6,17 @@ class Transaction {
   final int machineId;
   final int productId;
   final String updatedAt;
+  final int dispensed;
 
-  Transaction({
-    required this.id,
-    required this.quantity,
-    required this.totalPrice,
-    required this.userId,
-    required this.machineId,
-    required this.productId,
-    required this.updatedAt,
-  });
+  Transaction(
+      {required this.id,
+      required this.quantity,
+      required this.totalPrice,
+      required this.userId,
+      required this.machineId,
+      required this.productId,
+      required this.updatedAt,
+      required this.dispensed});
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
@@ -26,6 +27,7 @@ class Transaction {
       machineId: json['machine_id'],
       productId: json['product_id'],
       updatedAt: json['updated_at'],
+      dispensed: json['dispensed'],
     );
   }
 }
