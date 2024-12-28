@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
 import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/pages/cart_page.dart';
+import 'package:flutter_application/pages/dispense_page.dart';
 import 'package:flutter_application/pages/history_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
@@ -439,7 +440,7 @@ class _MapPageState extends State<MapPage> {
                 case 4:
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => CartPage()),
+                    MaterialPageRoute(builder: (context) => DispensePage()),
                   );
                   break;
               }
