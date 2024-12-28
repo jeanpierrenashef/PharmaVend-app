@@ -10,6 +10,7 @@ import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/services/dispense_service.dart';
+import 'package:flutter_application/services/product_service.dart';
 import 'package:flutter_application/services/transaction_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -31,29 +32,22 @@ class _DispensePageState extends State<DispensePage> {
     _fetchUndispensedTransactions();
   }
 
-  void _fetchUndispensedTransactions() {
+  void _fetchUndispensedTransactions() async {
     final store = StoreProvider.of<AppState>(context);
     final transactions = store.state.transactions;
 
     if (transactions.isEmpty) {
       const userId = 1;
-      TransactionService.fetchTransactions(store, userId).then((_) {
-        setState(() {
-          final updatedTransactions = store.state.transactions;
-          undispensedTransactions =
-              updatedTransactions.where((t) => t.dispensed == 0).toList();
-          machines = store.state.machines;
-          products = store.state.products;
-        });
-      });
-    } else {
-      setState(() {
-        undispensedTransactions =
-            transactions.where((t) => t.dispensed == 0).toList();
-        machines = store.state.machines;
-        products = store.state.products;
-      });
+      await TransactionService.fetchTransactions(store, userId);
     }
+
+    setState(() {
+      final updatedTransactions = store.state.transactions;
+      undispensedTransactions =
+          updatedTransactions.where((t) => t.dispensed == 0).toList();
+      machines = store.state.machines;
+      products = store.state.products;
+    });
   }
 
   @override
@@ -94,14 +88,15 @@ class _DispensePageState extends State<DispensePage> {
                     ),
                   );
                   final product = products.firstWhere(
-                      (p) => p.id == transaction.productId,
-                      orElse: () => Product(
-                          id: 0,
-                          name: "Unknown",
-                          description: "Empty",
-                          category: "Unknown",
-                          price: 0.0,
-                          image: "null"));
+                    (p) => p.id == transaction.productId,
+                    orElse: () => Product(
+                        id: 0,
+                        name: "Unknown",
+                        description: "Empty",
+                        category: "Unknown",
+                        price: 0.0,
+                        image: "null"),
+                  );
 
                   return Container(
                     margin:
@@ -130,6 +125,7 @@ class _DispensePageState extends State<DispensePage> {
                               onPressed: () async {
                                 await DispenseService.dispenseTransaction(
                                     transaction.id);
+
                                 setState(() {
                                   undispensedTransactions =
                                       undispensedTransactions
