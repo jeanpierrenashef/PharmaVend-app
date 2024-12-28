@@ -32,6 +32,10 @@ class PurchaseService {
         'product_id': product.id,
         'quantity': cartItem.quantity
       };
+      print("Request Body: ${json.encode(requestBody)}");
+      print("Machine ID: $machineId");
+      print("User ID: $userId");
+      print("Product ID: ${product.id}, Quantity: ${cartItem.quantity}");
 
       try {
         final response = await http.post(
