@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter_application/models/transaction.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/redux/load_transactions_actions.dart';
+import 'package:flutter_application/services/machine_service.dart';
 import 'package:redux/redux.dart';
 import 'package:http/http.dart' as http;
 
@@ -27,6 +28,7 @@ class TransactionService {
         store.dispatch(loadTransactionsSuccessAction(transactions));
         print(
             "Products in store after dispatch: ${store.state.transactions.map((p) => p.quantity).toList()}");
+        await MachineService.fetchMachines(store);
       } else {
         store.dispatch(
           loadTransactionsFailureAction("Failed to load transactions."),
