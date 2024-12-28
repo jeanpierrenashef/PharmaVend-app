@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
+import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/services/purchase_service.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
 class CheckoutPage extends StatelessWidget {
   final double total;
@@ -199,8 +202,10 @@ class CheckoutPage extends StatelessWidget {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 62),
         child: ElevatedButton(
-          onPressed: () {
-            // Handle purchase action
+          onPressed: () async {
+            final store = StoreProvider.of<AppState>(context);
+            const userId = 1;
+            await PurchaseService.purchaseCartItems(store, userId);
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
