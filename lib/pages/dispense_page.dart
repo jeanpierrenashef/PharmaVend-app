@@ -7,6 +7,7 @@ import 'package:flutter_application/pages/history_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/services/dispense_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class DispensePage extends StatefulWidget {
@@ -94,7 +95,7 @@ class _DispensePageState extends State<DispensePage> {
                                   height: 2,
                                 ),
                                 Text(
-                                  "Ordered at: 2024-12-09 22:10:01",
+                                  "Ordered at:  ${transaction.updatedAt}",
                                   style: TextStyle(
                                     fontSize: 13,
                                   ),
@@ -103,7 +104,14 @@ class _DispensePageState extends State<DispensePage> {
                             ),
                             ElevatedButton(
                               onPressed: () async {
-                                //method
+                                await DispenseService.dispenseTransaction(
+                                    transaction.id);
+                                setState(() {
+                                  undispensedTransactions =
+                                      undispensedTransactions
+                                          .where((t) => t.id != transaction.id)
+                                          .toList();
+                                });
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
