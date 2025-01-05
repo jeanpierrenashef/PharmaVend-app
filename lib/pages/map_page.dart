@@ -358,6 +358,33 @@ class _MapPageState extends State<MapPage> {
                                           ),
                                           ElevatedButton(
                                             onPressed: () async {
+                                              final store =
+                                                  StoreProvider.of<AppState>(
+                                                      context);
+                                              if (store.state.cart.isNotEmpty) {
+                                                showDialog(
+                                                  context: context,
+                                                  builder: (context) =>
+                                                      AlertDialog(
+                                                    title: const Text(
+                                                        "Cart is not empty"),
+                                                    content: const Text(
+                                                      "You cannot change the machine location unless you clear the cart or checkout.",
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: const Text("OK"),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                                return;
+                                              }
+
                                               setState(() {
                                                 _userSelected = true;
                                               });
