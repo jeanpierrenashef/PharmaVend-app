@@ -5,6 +5,7 @@ import 'package:flutter_application/pages/login_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
 import 'package:flutter_application/services/machine_service.dart';
+import 'package:flutter_application/services/product_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -47,12 +48,23 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class Home extends StatelessWidget {
+class Home extends StatefulWidget {
   const Home({super.key});
 
-  Future<void> findClosestMachine(
-      BuildContext context, Store<AppState> store) async {
-    // Fetch current location
+  @override
+  State<Home> createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
+
+  Future<void> findMachine(BuildContext context, Store<AppState> store,
+      {String? productName}) async {
+    setState(() {
+      _isSearching = productName != null;
+    });
+
     final locationController = Location();
     final currentLocation = await locationController.getLocation();
     final LatLng currentPosition = LatLng(
@@ -65,6 +77,9 @@ class Home extends StatelessWidget {
       await MachineService.fetchMachines(store);
       if (store.state.machines.isEmpty) {
         print("No machines found even after fetching.");
+        setState(() {
+          _isSearching = false;
+        });
         return;
       }
     }
@@ -82,31 +97,94 @@ class Home extends StatelessWidget {
         final data = json.decode(response.body);
 
         List elements = data['rows'][0]['elements'];
-        int closestIndex = 0;
-        int shortestDistance = elements[0]['distance']['value'];
+        final List<int> sortedIndexes = List.generate(elements.length, (i) => i)
+          ..sort((a, b) => elements[a]['distance']['value']
+              .compareTo(elements[b]['distance']['value']));
 
-        for (int i = 1; i < elements.length; i++) {
-          if (elements[i]['distance']['value'] < shortestDistance) {
-            closestIndex = i;
-            shortestDistance = elements[i]['distance']['value'];
+        for (int index in sortedIndexes) {
+          final machine = machines[index];
+
+          if (productName != null) {
+            await ProductService.fetchProductsByMachineId(store, machine.id);
+            final products = store.state.products;
+
+            final foundProduct = products.any((product) =>
+                product.name.toLowerCase() == productName.toLowerCase());
+
+            if (foundProduct) {
+              final prefs = await SharedPreferences.getInstance();
+              await prefs.setInt('selectedMachineId', machine.id);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                      "Product '$productName' found in machine: ${machine.location}"),
+                  backgroundColor: Colors.grey,
+                  duration: const Duration(seconds: 3),
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              );
+
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const ProductPage()),
+              );
+              return;
+            } else {
+              print(
+                  "Product '$productName' not found in machine: ${machine.location}");
+            }
+          } else {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setInt('selectedMachineId', machine.id);
+
+            print("Closest machine: ${machine.location}");
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text("Closest machine: ${machine.location}"),
+                backgroundColor: Colors.grey,
+                duration: const Duration(seconds: 3),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            );
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const ProductPage()),
+            );
+            return;
           }
         }
 
-        final closestMachine = machines[closestIndex];
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('selectedMachineId', closestMachine.id);
-
-        print("Closest machine: ${closestMachine.location}");
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ProductPage()),
-        );
+        if (productName != null) {
+          print("Product '$productName' not found in any machine.");
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  "Medicine '$productName' not found in any of our machines."),
+              backgroundColor: Colors.grey,
+              duration: const Duration(seconds: 2),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          );
+        }
       } else {
         print("Failed to fetch distance matrix: ${response.statusCode}");
       }
     } catch (e) {
-      print("Error fetching closest machine: $e");
+      print("Error searching for product: $e");
+    } finally {
+      setState(() {
+        _isSearching = false;
+      });
     }
   }
 
@@ -117,59 +195,133 @@ class Home extends StatelessWidget {
         appBar:
             AppBar(backgroundColor: Colors.white, title: const CustomAppBar()),
         body: Center(
-          child: Column(children: [
-            Image(
-              image: AssetImage("assets/logo.png"),
-              height: 94.0,
-              width: 45.0,
-            ),
-            Text(
-              "PharmaVend",
-              style: TextStyle(
-                fontFamily: "Inter",
-                fontSize: 40,
-                fontWeight: FontWeight.w700,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image(
+                image: AssetImage("assets/logo.png"),
+                height: 94.0,
+                width: 45.0,
               ),
-            ),
-            Text(
-              "Your 24/7 Lifesaver in a Box.",
-              style: TextStyle(
-                fontFamily: "Inter",
-                fontSize: 24,
-                fontWeight: FontWeight.w500,
+              const Text(
+                "PharmaVend",
+                style: TextStyle(
+                  fontFamily: "Inter",
+                  fontSize: 40,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
-            SizedBox(height: 20.0),
-            Image(
-              image: AssetImage("assets/maps.png"),
-            ),
-            SizedBox(height: 20.0),
-            StoreConnector<AppState, Store<AppState>>(
-              converter: (store) => store,
-              builder: (context, store) {
-                return ElevatedButton(
-                  onPressed: () => findClosestMachine(context, store),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 24),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
-                  child: const Text(
-                    'Find a Machine',
-                    style: TextStyle(
-                      fontFamily: "Inter",
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                );
-              },
-            ),
-          ]),
+              const Text(
+                "Your 24/7 Lifesaver in a Box.",
+                style: TextStyle(
+                  fontFamily: "Inter",
+                  fontSize: 24,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 20.0),
+              Image(
+                image: AssetImage("assets/maps.png"),
+              ),
+              const SizedBox(height: 20.0),
+              StoreConnector<AppState, Store<AppState>>(
+                converter: (store) => store,
+                builder: (context, store) {
+                  return Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => findMachine(context, store),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor:
+                              const Color.fromRGBO(32, 181, 115, 1),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 24),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30.0),
+                          ),
+                        ),
+                        child: const Text(
+                          'Find Closest Machine',
+                          style: TextStyle(
+                            fontFamily: "Inter",
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 36,
+                                child: TextField(
+                                  controller: _searchController,
+                                  decoration: InputDecoration(
+                                    hintText: "Looking for a certain medicine?",
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                    prefixIcon: const Icon(Icons.search),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(8.0),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (_searchController.text.isNotEmpty) {
+                                  findMachine(context, store,
+                                      productName: _searchController.text);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromRGBO(32, 181, 115, 1),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 24),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                              ),
+                              child: _isSearching
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Search',
+                                      style: TextStyle(
+                                        fontFamily: "Inter",
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16.0),
+                    ],
+                  );
+                },
+              ),
+            ],
+          ),
         ));
   }
 }
