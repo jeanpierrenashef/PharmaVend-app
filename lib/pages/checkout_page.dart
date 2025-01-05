@@ -3,7 +3,6 @@ import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
-import 'package:flutter_application/services/product_service.dart';
 import 'package:flutter_application/services/purchase_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,37 +22,27 @@ class _CheckoutPageState extends State<CheckoutPage> {
   Future<void> loadSelectedMachine() async {
     final prefs = await SharedPreferences.getInstance();
     final machineId = prefs.getInt('selectedMachineId');
-    if (machineId == null) {
-      print("No selected machine ID found in SharedPreferences.");
-      return;
-    }
 
-    final store = StoreProvider.of<AppState>(context);
-    int retries = 0;
-    while (store.state.machines.isEmpty && retries < 10) {
-      print("Waiting for machines to load...");
-      await Future.delayed(const Duration(milliseconds: 500));
-      retries++;
-    }
+    if (machineId != null) {
+      final store = StoreProvider.of<AppState>(context);
 
-    if (store.state.machines.isEmpty) {
-      print("Machines not loaded after retries.");
-      return;
-    }
+      while (store.state.machines.isEmpty) {
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
 
-    setState(() {
-      _selectedMachine = store.state.machines.firstWhere(
-        (machine) => machine.id == machineId,
-        orElse: () => Machine(
-          id: 0,
-          location: "Unknown Machine",
-          latitude: 0.0,
-          longitude: 0.0,
-          status: "Unavailable",
-        ),
-      );
-    });
-    print("Selected Machine: ${_selectedMachine?.location}");
+      setState(() {
+        _selectedMachine = store.state.machines.firstWhere(
+          (machine) => machine.id == machineId,
+          orElse: () => Machine(
+            id: 0,
+            location: "Unknown Machine",
+            latitude: 0.0,
+            longitude: 0.0,
+            status: "Unavailable",
+          ),
+        );
+      });
+    }
   }
 
   @override
