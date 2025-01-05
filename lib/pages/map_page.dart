@@ -52,10 +52,18 @@ class _MapPageState extends State<MapPage> {
   final Map<int, String> _machineDistances = {};
   final Map<int, String> _machineETAs = {};
 
+  bool isAppRestarted = true;
+
   @override
   void initState() {
     super.initState();
     _polylinePoints = PolylinePoints();
+
+    if (isAppRestarted) {
+      _clearSharedPreferencesIfNeeded();
+      isAppRestarted = false; // Set to false after the initial clear
+    }
+
     getLocationUpdates();
     Future.delayed(const Duration(seconds: 2), () async {
       if (_currentP != null) {
@@ -64,6 +72,13 @@ class _MapPageState extends State<MapPage> {
         print("Current position (_currentP) is still null after delay.");
       }
     });
+  }
+
+  Future<void> _clearSharedPreferencesIfNeeded() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (prefs.containsKey('selectedMachineId')) {
+      await prefs.remove('selectedMachineId');
+    }
   }
 
   @override
