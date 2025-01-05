@@ -25,7 +25,7 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> {
+class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   Future<void> saveMachineId(int machineId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selectedMachineId', machineId);
@@ -52,17 +52,15 @@ class _MapPageState extends State<MapPage> {
   final Map<int, String> _machineDistances = {};
   final Map<int, String> _machineETAs = {};
 
-  bool isAppRestarted = true;
+  String _currentSessionId = "";
 
   @override
   void initState() {
     super.initState();
     _polylinePoints = PolylinePoints();
 
-    if (isAppRestarted) {
-      _clearSharedPreferencesIfNeeded();
-      isAppRestarted = false; // Set to false after the initial clear
-    }
+    WidgetsBinding.instance.addObserver(this);
+    _initializeSession();
 
     getLocationUpdates();
     Future.delayed(const Duration(seconds: 2), () async {
@@ -74,16 +72,37 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  Future<void> _clearSharedPreferencesIfNeeded() async {
-    final prefs = await SharedPreferences.getInstance();
-    if (prefs.containsKey('selectedMachineId')) {
-      await prefs.remove('selectedMachineId');
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.detached) {
+      SharedPreferences.getInstance().then((prefs) {
+        prefs.remove('sessionId');
+      });
     }
+  }
+
+  Future<void> _initializeSession() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String newSessionId =
+        DateTime.now().millisecondsSinceEpoch.toString();
+
+    final String? storedSessionId = prefs.getString('sessionId');
+
+    if (storedSessionId == null || storedSessionId != newSessionId) {
+      print("Detected app restart. Clearing SharedPreferences...");
+      await prefs.clear();
+      await prefs.setString('sessionId', newSessionId);
+    }
+
+    setState(() {
+      _currentSessionId = newSessionId;
+    });
   }
 
   @override
   void dispose() {
     _locationSubscription?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
