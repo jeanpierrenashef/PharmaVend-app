@@ -8,10 +8,12 @@ AppState cartReducer(AppState state, dynamic action) {
         .indexWhere((cartItem) => cartItem.product.id == action.productId);
 
     if (productIndex != -1) {
-      updatedCart[productIndex] = CartItem(
-        product: updatedCart[productIndex].product,
-        quantity: updatedCart[productIndex].quantity + 1,
-      );
+      if (updatedCart[productIndex].quantity < 2) {
+        updatedCart[productIndex] = CartItem(
+          product: updatedCart[productIndex].product,
+          quantity: updatedCart[productIndex].quantity + 1,
+        );
+      }
     } else {
       final product =
           state.products.firstWhere((p) => p.id == action.productId);

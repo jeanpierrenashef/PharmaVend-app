@@ -130,10 +130,39 @@ class CartPage extends StatelessWidget {
                                 const SizedBox(width: 4),
                                 IconButton(
                                   onPressed: () {
-                                    StoreProvider.of<AppState>(context)
-                                        .dispatch(
-                                      AddToCartAction(product.id),
+                                    final store =
+                                        StoreProvider.of<AppState>(context);
+                                    final cartItem =
+                                        store.state.cart.firstWhere(
+                                      (item) => item.product.id == product.id,
+                                      orElse: () => CartItem(
+                                          product: product, quantity: 0),
                                     );
+
+                                    if (cartItem.quantity >= 2) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: const Text(
+                                            "You cannot add more than 2 of this product!",
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                          backgroundColor: Colors.grey,
+                                          duration: const Duration(seconds: 1),
+                                          behavior: SnackBarBehavior.floating,
+                                          margin: const EdgeInsets.only(
+                                              bottom: 120, left: 56, right: 56),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      store.dispatch(
+                                          AddToCartAction(product.id));
+                                    }
                                   },
                                   icon: const Icon(
                                     Icons.add_circle_outline,

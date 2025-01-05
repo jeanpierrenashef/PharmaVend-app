@@ -52,6 +52,7 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   final Map<int, String> _machineDistances = {};
   final Map<int, String> _machineETAs = {};
 
+  // ignore: unused_field
   String _currentSessionId = "";
 
   @override
@@ -89,7 +90,6 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
     final String? storedSessionId = prefs.getString('sessionId');
 
     if (storedSessionId == null || storedSessionId != newSessionId) {
-      print("Detected app restart. Clearing SharedPreferences...");
       await prefs.clear();
       await prefs.setString('sessionId', newSessionId);
     }
