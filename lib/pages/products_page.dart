@@ -22,6 +22,7 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   Machine? _selectedMachine;
+  String _searchQuery = "";
 
   Future<void> loadSelectedMachine() async {
     final prefs = await SharedPreferences.getInstance();
@@ -92,12 +93,36 @@ class _ProductPageState extends State<ProductPage> {
               ),
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: TextField(
+              onChanged: (query) {
+                setState(() {
+                  _searchQuery = query;
+                });
+              },
+              decoration: InputDecoration(
+                hintText: "Search products...",
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
           Expanded(
             child: StoreConnector<AppState, List<Product>>(
               converter: (store) => store.state.products,
               builder: (context, products) {
+                final filteredProducts = products
+                    .where((product) => product.name
+                        .toLowerCase()
+                        .contains(_searchQuery.toLowerCase()))
+                    .toList();
+
                 final Map<String, List<Product>> productsByCategory = {};
-                for (var product in products) {
+                for (var product in filteredProducts) {
                   productsByCategory
                       .putIfAbsent(product.category, () => [])
                       .add(product);
