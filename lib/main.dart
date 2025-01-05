@@ -203,7 +203,6 @@ class _HomeState extends State<Home> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // First Section: Logo, Name, Slogan, and Map Image
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Column(
@@ -237,8 +236,6 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 ),
-
-                // Second Section: Find Closest Machine Button
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
                   child: Center(
@@ -267,8 +264,6 @@ class _HomeState extends State<Home> {
                 SizedBox(
                   height: 46.0,
                 ),
-
-                // Third Section: Search Bar
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: Row(
