@@ -8,7 +8,7 @@ import 'package:flutter_redux/flutter_redux.dart';
 class CheckoutPage extends StatelessWidget {
   final double total;
 
-  const CheckoutPage({Key? key, required this.total}) : super(key: key);
+  const CheckoutPage({super.key, required this.total});
 
   @override
   Widget build(BuildContext context) {

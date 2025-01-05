@@ -16,7 +16,7 @@ import 'package:flutter_application/services/transaction_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class DispensePage extends StatefulWidget {
-  const DispensePage({Key? key}) : super(key: key);
+  const DispensePage({super.key});
 
   @override
   State<DispensePage> createState() => _DispensePageState();

@@ -10,8 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class ProductDetailPage extends StatefulWidget {
   final int productId;
 
-  const ProductDetailPage({Key? key, required this.productId})
-      : super(key: key);
+  const ProductDetailPage({super.key, required this.productId});
 
   @override
   State<ProductDetailPage> createState() => _ProductDetailPageState();

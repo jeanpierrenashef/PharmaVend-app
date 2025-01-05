@@ -4,7 +4,7 @@ class DispenseService {
   static Future<void> dispenseTransaction(int transactionId) async {
     try {
       final response = await http.put(
-        Uri.parse("http://192.168.1.7:8000/api/dispense/${transactionId}"),
+        Uri.parse("http://192.168.1.7:8000/api/dispense/$transactionId"),
         headers: {"Content-Type": "application/json"},
       );
       if (response.statusCode == 200) {

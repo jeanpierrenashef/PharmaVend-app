@@ -6,8 +6,8 @@ import 'package:flutter_application/redux/load_transactions_reducer.dart';
 import 'package:redux/redux.dart';
 
 final rootReducer = combineReducers<AppState>([
-  TypedReducer<AppState, dynamic>(loadMachinesReducer),
-  TypedReducer<AppState, dynamic>(loadProductsReducer),
-  TypedReducer<AppState, dynamic>(cartReducer),
-  TypedReducer<AppState, dynamic>(loadTransactionsReducer),
+  TypedReducer<AppState, dynamic>(loadMachinesReducer).call,
+  TypedReducer<AppState, dynamic>(loadProductsReducer).call,
+  TypedReducer<AppState, dynamic>(cartReducer).call,
+  TypedReducer<AppState, dynamic>(loadTransactionsReducer).call,
 ]);

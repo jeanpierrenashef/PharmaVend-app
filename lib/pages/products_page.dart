@@ -75,6 +75,7 @@ class _ProductPageState extends State<ProductPage> {
       appBar: AppBar(
         title: const CustomAppBar(),
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

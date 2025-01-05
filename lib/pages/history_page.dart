@@ -13,7 +13,7 @@ import 'package:flutter_application/services/transaction_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({Key? key}) : super(key: key);
+  const HistoryPage({super.key});
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
