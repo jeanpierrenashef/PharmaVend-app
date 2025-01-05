@@ -25,7 +25,7 @@ class MapPage extends StatefulWidget {
   State<MapPage> createState() => _MapPageState();
 }
 
-class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
+class _MapPageState extends State<MapPage> {
   Future<void> saveMachineId(int machineId) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('selectedMachineId', machineId);
@@ -52,17 +52,10 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   final Map<int, String> _machineDistances = {};
   final Map<int, String> _machineETAs = {};
 
-  // ignore: unused_field
-  String _currentSessionId = "";
-
   @override
   void initState() {
     super.initState();
     _polylinePoints = PolylinePoints();
-
-    WidgetsBinding.instance.addObserver(this);
-    _initializeSession();
-
     getLocationUpdates();
     Future.delayed(const Duration(seconds: 2), () async {
       if (_currentP != null) {
@@ -74,35 +67,8 @@ class _MapPageState extends State<MapPage> with WidgetsBindingObserver {
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.detached) {
-      SharedPreferences.getInstance().then((prefs) {
-        prefs.remove('sessionId');
-      });
-    }
-  }
-
-  Future<void> _initializeSession() async {
-    final prefs = await SharedPreferences.getInstance();
-    final String newSessionId =
-        DateTime.now().millisecondsSinceEpoch.toString();
-
-    final String? storedSessionId = prefs.getString('sessionId');
-
-    if (storedSessionId == null || storedSessionId != newSessionId) {
-      await prefs.clear();
-      await prefs.setString('sessionId', newSessionId);
-    }
-
-    setState(() {
-      _currentSessionId = newSessionId;
-    });
-  }
-
-  @override
   void dispose() {
     _locationSubscription?.cancel();
-    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 

@@ -1,18 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
+import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/services/product_service.dart';
 import 'package:flutter_application/services/purchase_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class CheckoutPage extends StatelessWidget {
+class CheckoutPage extends StatefulWidget {
   final double total;
 
   const CheckoutPage({super.key, required this.total});
 
   @override
+  State<CheckoutPage> createState() => _CheckoutPageState();
+}
+
+class _CheckoutPageState extends State<CheckoutPage> {
+  Machine? _selectedMachine;
+
+  Future<void> loadSelectedMachine() async {
+    final prefs = await SharedPreferences.getInstance();
+    final machineId = prefs.getInt('selectedMachineId');
+    if (machineId == null) {
+      print("No selected machine ID found in SharedPreferences.");
+      return;
+    }
+
+    final store = StoreProvider.of<AppState>(context);
+    int retries = 0;
+    while (store.state.machines.isEmpty && retries < 10) {
+      print("Waiting for machines to load...");
+      await Future.delayed(const Duration(milliseconds: 500));
+      retries++;
+    }
+
+    if (store.state.machines.isEmpty) {
+      print("Machines not loaded after retries.");
+      return;
+    }
+
+    setState(() {
+      _selectedMachine = store.state.machines.firstWhere(
+        (machine) => machine.id == machineId,
+        orElse: () => Machine(
+          id: 0,
+          location: "Unknown Machine",
+          latitude: 0.0,
+          longitude: 0.0,
+          status: "Unavailable",
+        ),
+      );
+    });
+    print("Selected Machine: ${_selectedMachine?.location}");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadSelectedMachine();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: const CustomAppBar(),
         backgroundColor: Colors.white,
@@ -26,13 +79,14 @@ class CheckoutPage extends StatelessWidget {
             Row(
               children: [
                 IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                    )),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.black,
+                  ),
+                ),
                 Expanded(
                   child: Center(
                     child: Text(
@@ -44,7 +98,7 @@ class CheckoutPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 48)
+                const SizedBox(width: 48),
               ],
             ),
             const SizedBox(height: 24),
@@ -52,15 +106,14 @@ class CheckoutPage extends StatelessWidget {
               "Vending Machine",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(
-              height: 8.0,
-            ),
+            const SizedBox(height: 8.0),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8)),
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: Row(
                 children: [
                   Image.asset(
@@ -68,50 +121,41 @@ class CheckoutPage extends StatelessWidget {
                     height: 40,
                     width: 40,
                   ),
-                  const SizedBox(
-                    width: 8,
+                  const SizedBox(width: 8),
+                  Text(
+                    _selectedMachine?.location ?? "Loading...",
+                    style: const TextStyle(fontSize: 16),
                   ),
-                  const Text(
-                    "Hamra V12",
-                    style: TextStyle(
-                      fontSize: 16,
-                    ),
-                  )
                 ],
               ),
             ),
-            const SizedBox(
-              height: 24,
+            const SizedBox(height: 24),
+            const Text(
+              "Payment Method",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            const Text("Payment Method",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                )),
-            const SizedBox(
-              height: 8,
-            ),
+            const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8)),
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: RadioListTile(
                 value: "Card Payment",
                 groupValue: "Card Payment",
                 onChanged: (value) {},
                 title: const Text("Card Payment"),
-                secondary: Icon(Icons.credit_card, color: Colors.black),
+                secondary: const Icon(Icons.credit_card, color: Colors.black),
               ),
             ),
-            const SizedBox(
-              height: 2,
-            ),
+            const SizedBox(height: 2),
             Container(
               decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8)),
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
+              ),
               child: RadioListTile(
                 value: "Wish Money",
                 groupValue: "Card Payment",
@@ -133,19 +177,22 @@ class CheckoutPage extends StatelessWidget {
             Row(
               children: [
                 Expanded(
-                    child: SizedBox(
-                  height: 36,
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Add Promo code here",
-                      hintStyle:
-                          TextStyle(color: Colors.grey.shade800, fontSize: 13),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                  child: SizedBox(
+                    height: 36,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        hintText: "Add Promo code here",
+                        hintStyle: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 13,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
                   ),
-                )),
+                ),
                 const SizedBox(width: 8),
                 ElevatedButton(
                   onPressed: () {},
@@ -169,7 +216,7 @@ class CheckoutPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text("Subtotal (incl. VAT)"),
-                Text("${total.toStringAsFixed(2)} USD"),
+                Text("${widget.total.toStringAsFixed(2)} USD"),
               ],
             ),
             const SizedBox(height: 4),
@@ -189,7 +236,7 @@ class CheckoutPage extends StatelessWidget {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "${total.toStringAsFixed(2)} USD",
+                  "${widget.total.toStringAsFixed(2)} USD",
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -208,7 +255,9 @@ class CheckoutPage extends StatelessWidget {
             const userId = 1;
             await PurchaseService.purchaseCartItems(store, userId);
             Navigator.pushReplacement(
-                context, MaterialPageRoute(builder: (context) => CartPage()));
+              context,
+              MaterialPageRoute(builder: (context) => const CartPage()),
+            );
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
