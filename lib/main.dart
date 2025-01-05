@@ -191,46 +191,117 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
         backgroundColor: Colors.white,
-        appBar:
-            AppBar(backgroundColor: Colors.white, title: const CustomAppBar()),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image(
-                image: AssetImage("assets/logo.png"),
-                height: 94.0,
-                width: 45.0,
-              ),
-              const Text(
-                "PharmaVend",
-                style: TextStyle(
-                  fontFamily: "Inter",
-                  fontSize: 40,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const Text(
-                "Your 24/7 Lifesaver in a Box.",
-                style: TextStyle(
-                  fontFamily: "Inter",
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 20.0),
-              Image(
-                image: AssetImage("assets/maps.png"),
-              ),
-              const SizedBox(height: 20.0),
-              StoreConnector<AppState, Store<AppState>>(
-                converter: (store) => store,
-                builder: (context, store) {
-                  return Column(
+        title: const CustomAppBar(),
+      ),
+      body: StoreConnector<AppState, Store<AppState>>(
+        converter: (store) => store,
+        builder: (context, store) {
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // First Section: Logo, Name, Slogan, and Map Image
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      Image(
+                        image: AssetImage("assets/logo.png"),
+                        height: 94.0,
+                        width: 45.0,
+                      ),
+                      const Text(
+                        "PharmaVend",
+                        style: TextStyle(
+                          fontFamily: "Inter",
+                          fontSize: 40,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const Text(
+                        "Your 24/7 Lifesaver in a Box.",
+                        style: TextStyle(
+                          fontFamily: "Inter",
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
+                      Image(
+                        image: AssetImage("assets/maps.png"),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // Second Section: Find Closest Machine Button
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Center(
+                    child: ElevatedButton(
+                      onPressed: () => findMachine(context, store),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 24),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                      child: const Text(
+                        'Find Closest Machine',
+                        style: TextStyle(
+                          fontFamily: "Inter",
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 46.0,
+                ),
+
+                // Third Section: Search Bar
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: SizedBox(
+                          height: 36,
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              hintText: "Looking for a certain medicine?",
+                              hintStyle: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.normal,
+                              ),
+                              prefixIcon: const Icon(Icons.search),
+                              contentPadding:
+                                  const EdgeInsets.symmetric(vertical: 10),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
                       ElevatedButton(
-                        onPressed: () => findMachine(context, store),
+                        onPressed: () {
+                          if (_searchController.text.isNotEmpty) {
+                            findMachine(context, store,
+                                productName: _searchController.text);
+                          }
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor:
                               const Color.fromRGBO(32, 181, 115, 1),
@@ -240,88 +311,34 @@ class _HomeState extends State<Home> {
                             borderRadius: BorderRadius.circular(30.0),
                           ),
                         ),
-                        child: const Text(
-                          'Find Closest Machine',
-                          style: TextStyle(
-                            fontFamily: "Inter",
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: SizedBox(
-                                height: 36,
-                                child: TextField(
-                                  controller: _searchController,
-                                  decoration: InputDecoration(
-                                    hintText: "Looking for a certain medicine?",
-                                    hintStyle: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.normal,
-                                    ),
-                                    prefixIcon: const Icon(Icons.search),
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
-                                    ),
-                                  ),
+                        child: _isSearching
+                            ? const SizedBox(
+                                width: 20,
+                                height: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Text(
+                                'Search',
+                                style: TextStyle(
+                                  fontFamily: "Inter",
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: () {
-                                if (_searchController.text.isNotEmpty) {
-                                  findMachine(context, store,
-                                      productName: _searchController.text);
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromRGBO(32, 181, 115, 1),
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 12, horizontal: 24),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30.0),
-                                ),
-                              ),
-                              child: _isSearching
-                                  ? const SizedBox(
-                                      width: 20,
-                                      height: 20,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                        strokeWidth: 2,
-                                      ),
-                                    )
-                                  : const Text(
-                                      'Search',
-                                      style: TextStyle(
-                                        fontFamily: "Inter",
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                            ),
-                          ],
-                        ),
                       ),
-                      const SizedBox(height: 16.0),
                     ],
-                  );
-                },
-              ),
-            ],
-          ),
-        ));
+                  ),
+                ),
+                const SizedBox(height: 16.0),
+              ],
+            ),
+          );
+        },
+      ),
+    );
   }
 }
