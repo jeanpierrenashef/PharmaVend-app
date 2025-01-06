@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/main.dart';
 import 'package:flutter_application/pages/signup_page.dart';
+import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/services/login_service.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  LoginPage({super.key});
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -80,6 +85,7 @@ class LoginPage extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         TextField(
+          controller: _usernameController,
           decoration: InputDecoration(
               hintText: "Username",
               border: OutlineInputBorder(
@@ -91,6 +97,7 @@ class LoginPage extends StatelessWidget {
         ),
         const SizedBox(height: 10),
         TextField(
+          controller: _passwordController,
           decoration: InputDecoration(
             hintText: "Password",
             border: OutlineInputBorder(
@@ -103,21 +110,35 @@ class LoginPage extends StatelessWidget {
           obscureText: true,
         ),
         const SizedBox(height: 10),
-        ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => const Home()));
-          },
-          style: ElevatedButton.styleFrom(
-            shape: const StadiumBorder(),
-            padding: const EdgeInsets.symmetric(vertical: 16),
-            backgroundColor: Color.fromRGBO(32, 181, 115, 1),
+        Container(
+          padding: const EdgeInsets.only(top: 3, left: 3),
+          child: StoreConnector<AppState, dynamic>(
+            converter: (store) => store,
+            builder: (context, store) {
+              return ElevatedButton(
+                onPressed: () {
+                  LoginService.loginUser(
+                    store,
+                    _usernameController.text,
+                    _passwordController.text,
+                  );
+
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const Home()));
+                },
+                style: ElevatedButton.styleFrom(
+                  shape: const StadiumBorder(),
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
+                ),
+                child: const Text(
+                  "Login",
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              );
+            },
           ),
-          child: const Text(
-            "Login",
-            style: TextStyle(fontSize: 20, color: Colors.white),
-          ),
-        )
+        ),
       ],
     );
   }
