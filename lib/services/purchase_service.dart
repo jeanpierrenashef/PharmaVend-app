@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/redux/cart_actions.dart';
+import 'package:flutter_application/services/login_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:redux/redux.dart';
 import 'package:http/http.dart' as http;
@@ -35,9 +36,13 @@ class PurchaseService {
       print("Request Body: ${json.encode(requestBody)}");
 
       try {
+        final token = await LoginService.getToken();
         final response = await http.post(
           Uri.parse("http://192.168.1.7:8000/api/purchase"),
-          headers: {"Content-Type": "application/json"},
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer $token", // Include the token here
+          },
           body: json.encode(requestBody),
         );
         if (response.statusCode == 200) {
