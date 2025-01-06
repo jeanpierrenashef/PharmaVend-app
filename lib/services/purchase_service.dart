@@ -8,8 +8,7 @@ import 'package:redux/redux.dart';
 import 'package:http/http.dart' as http;
 
 class PurchaseService {
-  static Future<void> purchaseCartItems(
-      Store<AppState> store, int userId) async {
+  static Future<void> purchaseCartItems(Store<AppState> store) async {
     final cartItems = store.state.cart;
     if (cartItems.isEmpty) {
       print("Cart is Empty");
@@ -28,7 +27,7 @@ class PurchaseService {
       final product = cartItem.product;
 
       final requestBody = {
-        'user_id': userId,
+        //'user_id': userId,
         'machine_id': machineId,
         'product_id': product.id,
         'quantity': cartItem.quantity
@@ -41,7 +40,7 @@ class PurchaseService {
           Uri.parse("http://192.168.1.7:8000/api/purchase"),
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer $token", // Include the token here
+            "Authorization": "Bearer $token",
           },
           body: json.encode(requestBody),
         );

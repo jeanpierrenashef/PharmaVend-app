@@ -28,8 +28,8 @@ class _HistoryPageState extends State<HistoryPage> {
 
   void _fetchTransactions() {
     final store = StoreProvider.of<AppState>(context);
-    const userId = 1; // Replace with dynamic userId if needed
-    TransactionService.fetchTransactions(store, userId).then((_) {
+    //const userId = 1;
+    TransactionService.fetchTransactions(store).then((_) {
       final transactions = store.state.transactions;
       print(
           "Transactions fetched in HistoryPage: ${transactions.map((t) => t.id).toList()}");

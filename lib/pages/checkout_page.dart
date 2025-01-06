@@ -241,8 +241,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
         child: ElevatedButton(
           onPressed: () async {
             final store = StoreProvider.of<AppState>(context);
-            const userId = 1;
-            await PurchaseService.purchaseCartItems(store, userId);
+            //const userId = 1;
+            await PurchaseService.purchaseCartItems(store);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const CartPage()),

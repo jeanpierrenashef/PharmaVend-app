@@ -8,8 +8,7 @@ import 'package:redux/redux.dart';
 import 'package:http/http.dart' as http;
 
 class TransactionService {
-  static Future<void> fetchTransactions(
-      Store<AppState> store, int userId) async {
+  static Future<void> fetchTransactions(Store<AppState> store) async {
     store.dispatch(loadTransactionsAction());
 
     try {
@@ -20,7 +19,7 @@ class TransactionService {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
         },
-        body: json.encode({"user_id": userId}),
+        //body: json.encode({"user_id": userId}),
       );
 
       if (response.statusCode == 200) {

@@ -38,8 +38,8 @@ class _DispensePageState extends State<DispensePage> {
     final transactions = store.state.transactions;
 
     if (transactions.isEmpty) {
-      const userId = 1;
-      await TransactionService.fetchTransactions(store, userId);
+      //const userId = 1;
+      await TransactionService.fetchTransactions(store);
     }
 
     setState(() {
