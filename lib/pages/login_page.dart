@@ -116,15 +116,26 @@ class LoginPage extends StatelessWidget {
             converter: (store) => store,
             builder: (context, store) {
               return ElevatedButton(
-                onPressed: () {
-                  LoginService.loginUser(
+                onPressed: () async {
+                  final isSuccess = await LoginService.loginUser(
                     store,
                     _usernameController.text,
                     _passwordController.text,
                   );
-
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => const Home()));
+                  if (isSuccess) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Home()),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                            "Invalid username or password. Please try again."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   shape: const StadiumBorder(),

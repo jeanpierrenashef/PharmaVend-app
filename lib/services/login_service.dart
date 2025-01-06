@@ -6,7 +6,7 @@ import 'package:redux/redux.dart';
 import 'package:http/http.dart' as http;
 
 class LoginService {
-  static Future<void> loginUser(
+  static Future<bool> loginUser(
       Store<AppState> store, String username, String password) async {
     try {
       final response = await http.post(
@@ -26,11 +26,14 @@ class LoginService {
         store.dispatch(LoginSuccessAction(user, token));
 
         print("Login successful. User: ${user.username}, Token: $token");
+        return true;
       } else {
         print("Login failed with status code: ${response.statusCode}");
+        return false;
       }
     } catch (e) {
       print("Login error: $e");
+      return false;
     }
   }
 }
