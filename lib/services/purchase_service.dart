@@ -15,7 +15,10 @@ class PurchaseService {
     if (cartItems.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Cart is empty."),
+          content: Text(
+            "Cart is empty.",
+            textAlign: TextAlign.center,
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -52,6 +55,17 @@ class PurchaseService {
           final responseData = json.decode(response.body);
           print(
               "Purchase successful for product ${product.name}: $responseData");
+          store.dispatch(RemoveFromCartAction(product.id));
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "Successfully purchased ${product.name}.",
+                textAlign: TextAlign.center,
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
         } else {
           final errorResponse = json.decode(response.body);
           allSuccessful = false;
@@ -59,27 +73,27 @@ class PurchaseService {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(
-                errorResponse["message"] ?? "Purchase unsuccessful.",
+                "${errorResponse["message"]} of ${product.name}.",
+                textAlign: TextAlign.center,
               ),
               backgroundColor: Colors.red,
             ),
           );
         }
       } catch (e) {
-        print(e);
-      }
-
-      if (allSuccessful) {
-        store.dispatch(ClearCartAction());
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("All purchases were successful!"),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        print("Some purchases failed. Cart was not cleared.");
+        allSuccessful = false;
       }
     }
+    if (allSuccessful) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "All purchases were successful!",
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } else {}
   }
 }
