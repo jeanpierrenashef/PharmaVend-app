@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/redux/cart_actions.dart';
 import 'package:flutter_application/services/login_service.dart';
@@ -8,29 +9,31 @@ import 'package:redux/redux.dart';
 import 'package:http/http.dart' as http;
 
 class PurchaseService {
-  static Future<void> purchaseCartItems(Store<AppState> store) async {
+  static Future<void> purchaseCartItems(
+      Store<AppState> store, BuildContext context) async {
     final cartItems = store.state.cart;
     if (cartItems.isEmpty) {
-      print("Cart is Empty");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Cart is empty."),
+          backgroundColor: Colors.red,
+        ),
+      );
       return;
     }
+
     final prefs = await SharedPreferences.getInstance();
     final machineId = prefs.getInt('selectedMachineId');
 
-    if (machineId == null) {
-      print("No machine id found");
-      return;
-    }
     bool allSuccessful = true;
 
     for (final cartItem in cartItems) {
       final product = cartItem.product;
 
       final requestBody = {
-        //'user_id': userId,
         'machine_id': machineId,
         'product_id': product.id,
-        'quantity': cartItem.quantity
+        'quantity': cartItem.quantity,
       };
       print("Request Body: ${json.encode(requestBody)}");
 
@@ -44,24 +47,39 @@ class PurchaseService {
           },
           body: json.encode(requestBody),
         );
+
         if (response.statusCode == 200) {
           final responseData = json.decode(response.body);
           print(
               "Purchase successful for product ${product.name}: $responseData");
         } else {
-          print("Response Status Code: ${response.statusCode}");
+          final errorResponse = json.decode(response.body);
           allSuccessful = false;
-          print("Purchase unseccessful");
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                errorResponse["message"] ?? "Purchase unsuccessful.",
+              ),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       } catch (e) {
-        allSuccessful = false;
-        print("Error purchasing product , $e");
+        print(e);
       }
-    }
-    if (allSuccessful) {
-      store.dispatch(ClearCartAction());
-    } else {
-      print("Some purchases failed. Cart was not cleared.");
+
+      if (allSuccessful) {
+        store.dispatch(ClearCartAction());
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("All purchases were successful!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        print("Some purchases failed. Cart was not cleared.");
+      }
     }
   }
 }

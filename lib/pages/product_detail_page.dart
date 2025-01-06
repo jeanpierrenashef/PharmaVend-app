@@ -129,25 +129,48 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       Center(
                         child: ElevatedButton(
                           onPressed: () {
-                            StoreProvider.of<AppState>(context)
-                                .dispatch(AddToCartAction(widget.productId));
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: const Text(
-                                  "Added to cart!",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 14),
-                                ),
-                                backgroundColor: Colors.grey,
-                                duration: const Duration(seconds: 1),
-                                behavior: SnackBarBehavior.floating,
-                                margin: const EdgeInsets.only(
-                                    bottom: 120, left: 86, right: 86),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
+                            final store = StoreProvider.of<AppState>(context);
+                            final cartItem = store.state.cart.firstWhere(
+                              (item) => item.product.id == widget.productId,
+                              orElse: () =>
+                                  CartItem(product: product, quantity: 0),
                             );
+
+                            if (cartItem.quantity >= 2) {
+                              // Display red SnackBar if the user tries to add more than 2 of the product
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                    "You can't add more than 2 of this product!",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  backgroundColor:
+                                      Colors.red, // Red background for error
+                                  duration: const Duration(seconds: 1),
+                                ),
+                              );
+                            } else {
+                              // Add product to cart
+                              store.dispatch(AddToCartAction(widget.productId));
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                    "Added to cart!",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                  backgroundColor: Colors.grey,
+                                  duration: const Duration(seconds: 1),
+                                  behavior: SnackBarBehavior.floating,
+                                  margin: const EdgeInsets.only(
+                                      bottom: 120, left: 86, right: 86),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
+                              );
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor:

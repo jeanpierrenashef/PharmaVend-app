@@ -242,7 +242,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
           onPressed: () async {
             final store = StoreProvider.of<AppState>(context);
             //const userId = 1;
-            await PurchaseService.purchaseCartItems(store);
+            await PurchaseService.purchaseCartItems(store, context);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => const CartPage()),

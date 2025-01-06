@@ -148,15 +148,8 @@ class CartPage extends StatelessWidget {
                                             textAlign: TextAlign.center,
                                             style: TextStyle(fontSize: 14),
                                           ),
-                                          backgroundColor: Colors.grey,
+                                          backgroundColor: Colors.red,
                                           duration: const Duration(seconds: 1),
-                                          behavior: SnackBarBehavior.floating,
-                                          margin: const EdgeInsets.only(
-                                              bottom: 120, left: 56, right: 56),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
                                         ),
                                       );
                                     } else {
