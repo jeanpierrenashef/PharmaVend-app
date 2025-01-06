@@ -25,7 +25,7 @@ class SignupService {
         final user = User.fromJson(responseData['user']);
         final token = responseData['token'];
 
-        store.dispatch(signupSuccessAction(user, token));
+        store.dispatch(SignupSuccessAction(user, token));
 
         print("Signup successful. User: ${user.username}, Token: $token");
       } else {

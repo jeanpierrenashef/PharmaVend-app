@@ -1,8 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/pages/login_page.dart';
+import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/services/signup_service.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 
 class SignupPage extends StatelessWidget {
-  const SignupPage({super.key});
+  SignupPage({super.key});
+
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController =
+      TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -40,34 +49,42 @@ class SignupPage extends StatelessWidget {
                 Column(
                   children: <Widget>[
                     TextField(
+                      controller: _usernameController,
                       decoration: InputDecoration(
-                          hintText: "Username",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: BorderSide.none),
-                          fillColor: Color.fromRGBO(32, 181, 115, 0.1),
-                          filled: true,
-                          prefixIcon: const Icon(Icons.person)),
+                        hintText: "Username",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide.none,
+                        ),
+                        fillColor: const Color.fromRGBO(32, 181, 115, 0.1),
+                        filled: true,
+                        prefixIcon: const Icon(Icons.person),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     TextField(
+                      controller: _emailController,
                       decoration: InputDecoration(
-                          hintText: "Email",
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(18),
-                              borderSide: BorderSide.none),
-                          fillColor: Color.fromRGBO(32, 181, 115, 0.1),
-                          filled: true,
-                          prefixIcon: const Icon(Icons.email)),
+                        hintText: "Email",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide.none,
+                        ),
+                        fillColor: const Color.fromRGBO(32, 181, 115, 0.1),
+                        filled: true,
+                        prefixIcon: const Icon(Icons.email),
+                      ),
                     ),
                     const SizedBox(height: 20),
                     TextField(
+                      controller: _passwordController,
                       decoration: InputDecoration(
                         hintText: "Password",
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide: BorderSide.none),
-                        fillColor: Color.fromRGBO(32, 181, 115, 0.1),
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide.none,
+                        ),
+                        fillColor: const Color.fromRGBO(32, 181, 115, 0.1),
                         filled: true,
                         prefixIcon: const Icon(Icons.password),
                       ),
@@ -75,12 +92,14 @@ class SignupPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     TextField(
+                      controller: _confirmPasswordController,
                       decoration: InputDecoration(
                         hintText: "Confirm Password",
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
-                            borderSide: BorderSide.none),
-                        fillColor: Color.fromRGBO(32, 181, 115, 0.1),
+                          borderRadius: BorderRadius.circular(18),
+                          borderSide: BorderSide.none,
+                        ),
+                        fillColor: const Color.fromRGBO(32, 181, 115, 0.1),
                         filled: true,
                         prefixIcon: const Icon(Icons.password),
                       ),
@@ -89,42 +108,66 @@ class SignupPage extends StatelessWidget {
                   ],
                 ),
                 Container(
-                    padding: const EdgeInsets.only(top: 3, left: 3),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
+                  padding: const EdgeInsets.only(top: 3, left: 3),
+                  child: StoreConnector<AppState, dynamic>(
+                    converter: (store) => store,
+                    builder: (context, store) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          if (_passwordController.text ==
+                              _confirmPasswordController.text) {
+                            SignupService.registerUser(
+                              store,
+                              _usernameController.text,
+                              _emailController.text,
+                              _passwordController.text,
+                            );
+                          } else {
+                            print("Passwords do not match.");
+                          }
+                          Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => const LoginPage()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: const StadiumBorder(),
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        backgroundColor: Color.fromRGBO(32, 181, 115, 1),
-                      ),
-                      child: const Text(
-                        "Sign up",
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
-                    )),
+                              builder: (context) => const LoginPage(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          shape: const StadiumBorder(),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          backgroundColor:
+                              const Color.fromRGBO(32, 181, 115, 1),
+                        ),
+                        child: const Text(
+                          "Sign up",
+                          style: TextStyle(fontSize: 20, color: Colors.white),
+                        ),
+                      );
+                    },
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     const Text("Already have an account?"),
                     TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const LoginPage()));
-                        },
-                        child: const Text(
-                          "Login",
-                          style:
-                              TextStyle(color: Color.fromRGBO(32, 181, 115, 1)),
-                        ))
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginPage(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "Login",
+                        style: TextStyle(
+                          color: Color.fromRGBO(32, 181, 115, 1),
+                        ),
+                      ),
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),
