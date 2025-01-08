@@ -231,7 +231,7 @@ class CartPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: 3,
+        selectedIndex: 5,
         onItemTapped: (index) {
           switch (index) {
             case 0:

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
 import 'package:flutter_application/main.dart';
 import 'package:flutter_application/models/machine.dart';
-import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/dispense_page.dart';
 import 'package:flutter_application/pages/history_page.dart';
 import 'package:flutter_application/pages/products_page.dart';

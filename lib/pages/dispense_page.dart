@@ -5,7 +5,6 @@ import 'package:flutter_application/main.dart';
 import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/models/transaction.dart';
-import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/history_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
