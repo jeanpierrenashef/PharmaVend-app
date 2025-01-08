@@ -4,7 +4,6 @@ import 'package:flutter_application/custom/nav_bar.dart';
 import 'package:flutter_application/main.dart';
 import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/models/product.dart';
-import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/dispense_page.dart';
 import 'package:flutter_application/pages/history_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
@@ -96,19 +95,32 @@ class _ProductPageState extends State<ProductPage> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: TextField(
-              onChanged: (query) {
-                setState(() {
-                  _searchQuery = query;
-                });
-              },
-              decoration: InputDecoration(
-                hintText: "Search products...",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                ),
-              ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: SizedBox(
+                    height: 42,
+                    child: TextField(
+                      onChanged: (query) {
+                        setState(() {
+                          _searchQuery = query;
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: "Search products...",
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 10),
+                        fillColor: Color.fromRGBO(32, 181, 115, 0.05),
+                        filled: true,
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
           ),
           const SizedBox(height: 16),

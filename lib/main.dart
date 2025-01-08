@@ -59,6 +59,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
+  bool _showSearchBar = false;
 
   Future<void> findMachine(BuildContext context, Store<AppState> store,
       {String? productName}) async {
@@ -238,101 +239,132 @@ class _HomeState extends State<Home> {
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: () => findMachine(context, store),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12, horizontal: 24),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      child: const Text(
-                        'Find Closest Machine',
-                        style: TextStyle(
-                          fontFamily: "Inter",
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 46.0,
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Row(
+                if (!_showSearchBar)
+                  Column(
                     children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 42,
-                          child: TextField(
-                            controller: _searchController,
-                            decoration: InputDecoration(
-                              hintText: "Looking for a certain medicine?",
-                              hintStyle: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.normal,
-                              ),
-                              prefixIcon: const Icon(Icons.search),
-                              contentPadding:
-                                  const EdgeInsets.symmetric(vertical: 10),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12.0),
-                              ),
-                              fillColor: Color.fromRGBO(32, 181, 115, 0.1),
-                              filled: true,
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () => findMachine(context, store),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor:
+                                const Color.fromRGBO(32, 181, 115, 1),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 12, horizontal: 24),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                          ),
+                          child: const Text(
+                            'Find Closest Machine',
+                            style: TextStyle(
+                              fontFamily: "Inter",
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
                             ),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      ElevatedButton(
+                      TextButton(
                         onPressed: () {
-                          if (_searchController.text.isNotEmpty) {
-                            findMachine(context, store,
-                                productName: _searchController.text);
-                          }
+                          setState(() {
+                            _showSearchBar = true;
+                          });
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromRGBO(32, 181, 115, 1),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 24),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30.0),
+                        child: const Text(
+                          "Try another method",
+                          style: TextStyle(
+                            color: Color.fromRGBO(32, 181, 115, 1),
                           ),
                         ),
-                        child: _isSearching
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : const Text(
-                                'Search',
-                                style: TextStyle(
-                                  fontFamily: "Inter",
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
                       ),
                     ],
-                  ),
-                ),
-                const SizedBox(height: 16.0),
+                  )
+                else
+                  Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: SizedBox(
+                                height: 42,
+                                child: TextField(
+                                  controller: _searchController,
+                                  decoration: InputDecoration(
+                                    hintText: "Looking for a certain medicine?",
+                                    hintStyle: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                    prefixIcon: const Icon(Icons.search),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(12.0),
+                                    ),
+                                    fillColor:
+                                        Color.fromRGBO(32, 181, 115, 0.05),
+                                    filled: true,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (_searchController.text.isNotEmpty) {
+                                  findMachine(context, store,
+                                      productName: _searchController.text);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromRGBO(32, 181, 115, 1),
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 12, horizontal: 24),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                              ),
+                              child: _isSearching
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  : const Text(
+                                      'Search',
+                                      style: TextStyle(
+                                        fontFamily: "Inter",
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          setState(() {
+                            _showSearchBar = false;
+                          });
+                        },
+                        child: const Text(
+                          "Try another method",
+                          style: TextStyle(
+                            color: Color.fromRGBO(32, 181, 115, 1),
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
               ],
             ),
           );
