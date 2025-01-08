@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/main.dart';
 import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/dispense_page.dart';
@@ -455,13 +456,13 @@ class _MapPageState extends State<MapPage> {
                 case 2:
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => HistoryPage()),
+                    MaterialPageRoute(builder: (context) => Home()),
                   );
                   break;
                 case 3:
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => CartPage()),
+                    MaterialPageRoute(builder: (context) => HistoryPage()),
                   );
                   break;
                 case 4:

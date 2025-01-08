@@ -80,6 +80,7 @@ flutter:
     - assets/cart.png
     - assets/machine.png
     - assets/whish.png
+    - assets/search.png
 
   #- images/a_dot_ham.jpeg
 

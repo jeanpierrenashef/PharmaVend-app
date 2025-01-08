@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/main.dart';
 import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/models/transaction.dart';
@@ -162,7 +163,7 @@ class _HistoryPageState extends State<HistoryPage> {
         ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: 2,
+        selectedIndex: 3,
         onItemTapped: (index) {
           switch (index) {
             case 0:
@@ -180,13 +181,13 @@ class _HistoryPageState extends State<HistoryPage> {
             case 2:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HistoryPage()),
+                MaterialPageRoute(builder: (context) => Home()),
               );
               break;
             case 3:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => CartPage()),
+                MaterialPageRoute(builder: (context) => HistoryPage()),
               );
               break;
             case 4:

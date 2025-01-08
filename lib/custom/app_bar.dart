@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application/pages/cart_page.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({
@@ -19,9 +20,14 @@ class CustomAppBar extends StatelessWidget {
           ),
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const CartPage()),
+            );
+          },
           icon: Image.asset(
-            "assets/menu.png",
+            "assets/cart.png",
             height: 30,
             width: 30,
           ),

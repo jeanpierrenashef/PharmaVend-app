@@ -1,7 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
+import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/pages/cart_page.dart';
+import 'package:flutter_application/pages/dispense_page.dart';
+import 'package:flutter_application/pages/history_page.dart';
 import 'package:flutter_application/pages/login_page.dart';
+import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
 import 'package:flutter_application/services/machine_service.dart';
@@ -195,6 +200,7 @@ class _HomeState extends State<Home> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const CustomAppBar(),
+        automaticallyImplyLeading: false,
       ),
       body: StoreConnector<AppState, Store<AppState>>(
         converter: (store) => store,
@@ -270,7 +276,7 @@ class _HomeState extends State<Home> {
                     children: [
                       Expanded(
                         child: SizedBox(
-                          height: 36,
+                          height: 42,
                           child: TextField(
                             controller: _searchController,
                             decoration: InputDecoration(
@@ -283,8 +289,10 @@ class _HomeState extends State<Home> {
                               contentPadding:
                                   const EdgeInsets.symmetric(vertical: 10),
                               border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8.0),
+                                borderRadius: BorderRadius.circular(12.0),
                               ),
+                              fillColor: Color.fromRGBO(32, 181, 115, 0.1),
+                              filled: true,
                             ),
                           ),
                         ),
@@ -332,6 +340,43 @@ class _HomeState extends State<Home> {
               ],
             ),
           );
+        },
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        selectedIndex: 2,
+        onItemTapped: (index) {
+          // switch (index) {
+          //   case 0:
+          //     Navigator.pushReplacement(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => ProductPage()),
+          //     );
+          //     break;
+          //   case 1:
+          //     Navigator.pushReplacement(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => const MapPage()),
+          //     );
+          //     break;
+          //   case 2:
+          //     Navigator.pushReplacement(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => MyApp()),
+          //     );
+          //     break;
+          //   case 3:
+          //     Navigator.pushReplacement(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => HistoryPage()),
+          //     );
+          //     break;
+          //   case 4:
+          //     Navigator.pushReplacement(
+          //       context,
+          //       MaterialPageRoute(builder: (context) => DispensePage()),
+          //     );
+          //     break;
+          // }
         },
       ),
     );

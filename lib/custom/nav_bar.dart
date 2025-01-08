@@ -15,8 +15,8 @@ class CustomBottomNavBar extends StatelessWidget {
     final List<Map<String, dynamic>> navItems = [
       {"icon": "assets/home.png", "index": 0},
       {"icon": "assets/map.png", "index": 1},
-      {"icon": "assets/history.png", "index": 2},
-      {"icon": "assets/cart.png", "index": 3},
+      {"icon": "assets/search.png", "index": 2},
+      {"icon": "assets/history.png", "index": 3},
       {"icon": "assets/dispense.png", "index": 4},
     ];
 

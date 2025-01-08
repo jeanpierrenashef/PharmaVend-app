@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/main.dart';
 import 'package:flutter_application/models/machine.dart';
 import 'package:flutter_application/models/product.dart';
 import 'package:flutter_application/pages/cart_page.dart';
@@ -76,7 +77,7 @@ class _ProductPageState extends State<ProductPage> {
       appBar: AppBar(
         title: const CustomAppBar(),
         backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -221,13 +222,13 @@ class _ProductPageState extends State<ProductPage> {
             case 2:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => HistoryPage()),
+                MaterialPageRoute(builder: (context) => Home()),
               );
               break;
             case 3:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => CartPage()),
+                MaterialPageRoute(builder: (context) => HistoryPage()),
               );
               break;
             case 4:
