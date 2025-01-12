@@ -4,8 +4,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.1' // Update to at least 8.2.1
+        classpath 'com.android.tools.build:gradle:8.2.1' // Match the version used in plugins block
+        classpath 'com.google.gms:google-services:4.3.3'
     }
+}
+
+plugins {
+    id 'com.android.application' version '8.2.1' apply false // Ensure this matches the Gradle version above
+    id 'com.google.gms.google-services' version '4.4.2' apply false
 }
 
 allprojects {
@@ -19,10 +25,7 @@ rootProject.buildDir = "../build"
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
-subprojects {
-    project.evaluationDependsOn(":app")
-}
 
 tasks.register("clean", Delete) {
-    delete rootProject.buildDir
+    delete rootProject.buildDirs
 }

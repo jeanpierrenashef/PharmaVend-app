@@ -1,14 +1,78 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application/main.dart';
 import 'package:flutter_application/pages/signup_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/services/login_service.dart';
+import 'package:flutter_application/services/signup_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+
+  Future<void> _signInWithGoogle(BuildContext context, dynamic store) async {
+    try {
+      // Trigger Google Sign-In
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      if (googleUser == null) {
+        // User canceled the sign-in
+        return;
+      }
+
+      final GoogleSignInAuthentication? googleAuth =
+          await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+
+      // Sign in with Firebase
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      if (userCredential.user != null) {
+        // Extract user details
+        final user = userCredential.user!;
+        final String username = user.displayName ?? "GoogleUser";
+        final String email = user.email ?? "";
+
+        // Save user details to the database and token to SharedPreferences
+        final token = await user.getIdToken();
+        await SignupService.registerUser(
+          store,
+          username,
+          email,
+          "google_auth",
+          token: token, // Pass the token
+        );
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text("Google Sign-In Successful!"),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Navigate to the Home screen
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const Home()),
+        );
+      }
+    } catch (e) {
+      print("Google Sign-In error: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Google Sign-In Failed!"),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +86,8 @@ class LoginPage extends StatelessWidget {
             children: [
               _header(context),
               _inputField(context),
-              _signup(context)
+              _googleSignInButton(context),
+              _signup(context),
             ],
           ),
         ),
@@ -123,7 +188,7 @@ class LoginPage extends StatelessWidget {
                     _passwordController.text,
                   );
                   if (isSuccess) {
-                    Navigator.push(
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const Home()),
                     );
@@ -154,11 +219,47 @@ class LoginPage extends StatelessWidget {
     );
   }
 
+  _googleSignInButton(context) {
+    return StoreConnector<AppState, dynamic>(
+      converter: (store) => store,
+      builder: (context, store) {
+        return InkWell(
+          onTap: () async => await _signInWithGoogle(context, store),
+          child: Container(
+            height: 50,
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Image.asset(
+                  'assets/google_icon.png',
+                  height: 24,
+                  width: 24,
+                ),
+                const SizedBox(width: 12),
+                const Text(
+                  "Sign in with Google",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   _signup(context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text("Dont have an account? "),
+        const Text("Don't have an account? "),
         TextButton(
           onPressed: () {
             Navigator.push(

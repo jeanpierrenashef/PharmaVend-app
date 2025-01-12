@@ -42,6 +42,8 @@ dependencies:
   flutter_redux: ^0.10.0
   shared_preferences: ^2.0.15
   http: ^1.2.2
+  firebase_auth: ^5.4.0
+  google_sign_in: ^6.2.2
   
 
 dev_dependencies:
@@ -81,6 +83,7 @@ flutter:
     - assets/machine.png
     - assets/whish.png
     - assets/search.png
+    - assets/google_icon.png
 
   #- images/a_dot_ham.jpeg
 

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "517995116930",
+    "project_id": "pharmavend",
+    "storage_bucket": "pharmavend.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517995116930:android:ef330d4bc1d2f71113379b",
+        "android_client_info": {
+          "package_name": "com.example.flutter_application"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "517995116930-arrsbtvl08fms2cudc0pqg4buoddjriu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxOYqVhBgkb0OulF_0UtdX8nvbnPNAWDE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "517995116930-arrsbtvl08fms2cudc0pqg4buoddjriu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
