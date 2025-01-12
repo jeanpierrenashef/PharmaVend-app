@@ -4,7 +4,6 @@ import 'package:flutter_application/main.dart';
 import 'package:flutter_application/pages/signup_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/services/login_service.dart';
-import 'package:flutter_application/services/signup_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
@@ -13,64 +12,21 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  Future<void> _signInWithGoogle(BuildContext context, dynamic store) async {
+  Future<dynamic> signInWithGoogle() async {
     try {
-      // Trigger Google Sign-In
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      if (googleUser == null) {
-        // User canceled the sign-in
-        return;
-      }
 
       final GoogleSignInAuthentication? googleAuth =
-          await googleUser.authentication;
+          await googleUser?.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
 
-      // Sign in with Firebase
-      final userCredential =
-          await FirebaseAuth.instance.signInWithCredential(credential);
-
-      if (userCredential.user != null) {
-        // Extract user details
-        final user = userCredential.user!;
-        final String username = user.displayName ?? "GoogleUser";
-        final String email = user.email ?? "";
-
-        // Save user details to the database and token to SharedPreferences
-        final token = await user.getIdToken();
-        await SignupService.registerUser(
-          store,
-          username,
-          email,
-          "google_auth",
-          token: token, // Pass the token
-        );
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Google Sign-In Successful!"),
-            backgroundColor: Colors.green,
-          ),
-        );
-
-        // Navigate to the Home screen
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const Home()),
-        );
-      }
-    } catch (e) {
-      print("Google Sign-In error: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Google Sign-In Failed!"),
-          backgroundColor: Colors.red,
-        ),
-      );
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+    } on Exception catch (e) {
+      print('Google Sign-In error: $e');
     }
   }
 
@@ -188,7 +144,7 @@ class LoginPage extends StatelessWidget {
                     _passwordController.text,
                   );
                   if (isSuccess) {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const Home()),
                     );
@@ -220,38 +176,54 @@ class LoginPage extends StatelessWidget {
   }
 
   _googleSignInButton(context) {
-    return StoreConnector<AppState, dynamic>(
-      converter: (store) => store,
-      builder: (context, store) {
-        return InkWell(
-          onTap: () async => await _signInWithGoogle(context, store),
-          child: Container(
-            height: 50,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey),
-              borderRadius: BorderRadius.circular(12),
+    return InkWell(
+      onTap: () async {
+        final userCredential = await signInWithGoogle();
+        if (userCredential != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Google Sign-In Successful!"),
+              backgroundColor: Colors.green,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/google_icon.png',
-                  height: 24,
-                  width: 24,
-                ),
-                const SizedBox(width: 12),
-                const Text(
-                  "Sign in with Google",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
+          );
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const Home()),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Google Sign-In Failed!"),
+              backgroundColor: Colors.red,
             ),
-          ),
-        );
+          );
+        }
       },
+      child: Container(
+        height: 50,
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/google_icon.png',
+              height: 24,
+              width: 24,
+            ),
+            const SizedBox(width: 12),
+            const Text(
+              "Sign in with Google",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
