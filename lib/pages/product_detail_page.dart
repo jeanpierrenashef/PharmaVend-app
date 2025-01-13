@@ -95,12 +95,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Image.network(
-                        product.image,
-                        height: 200,
-                        fit: BoxFit.cover,
+                      Center(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(16),
+                          child: Image.network(
+                            product.image,
+                            height: 350,
+                            width: double.infinity,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 24),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -137,7 +143,6 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             );
 
                             if (cartItem.quantity >= 2) {
-                              // Display red SnackBar if the user tries to add more than 2 of the product
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: const Text(
@@ -145,13 +150,11 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                     textAlign: TextAlign.center,
                                     style: TextStyle(fontSize: 14),
                                   ),
-                                  backgroundColor:
-                                      Colors.red, // Red background for error
+                                  backgroundColor: Colors.red,
                                   duration: const Duration(seconds: 1),
                                 ),
                               );
                             } else {
-                              // Add product to cart
                               store.dispatch(AddToCartAction(widget.productId));
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
