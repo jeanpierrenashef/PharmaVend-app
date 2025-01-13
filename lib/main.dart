@@ -15,11 +15,12 @@ import 'package:flutter_redux/flutter_redux.dart';
 import 'package:location/location.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 
@@ -37,6 +38,7 @@ class MyApp extends StatelessWidget {
     return StoreProvider(
       store: _store,
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: "Demo",
         theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(
