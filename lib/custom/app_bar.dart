@@ -31,7 +31,6 @@ class CustomAppBar extends StatelessWidget {
           },
           icon: const Icon(
             Icons.logout,
-            color: Colors.red,
             size: 30,
           ),
         ),
