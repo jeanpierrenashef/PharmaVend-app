@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/pages/cart_page.dart';
+import 'package:flutter_application/pages/login_page.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomAppBar extends StatelessWidget {
   const CustomAppBar({
     super.key,
   });
+
+  Future<void> _logout(BuildContext context) async {
+    await GoogleSignIn().signOut();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginPage()),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +26,13 @@ class CustomAppBar extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         IconButton(
-          onPressed: () {},
-          icon: Image.asset(
-            "assets/info.png",
-            height: 30,
-            width: 30,
+          onPressed: () async {
+            await _logout(context);
+          },
+          icon: const Icon(
+            Icons.logout,
+            color: Colors.red,
+            size: 30,
           ),
         ),
         IconButton(

@@ -15,11 +15,10 @@ class LoginPage extends StatelessWidget {
 
   Future<void> _handleGoogleSignIn(BuildContext context, dynamic store) async {
     try {
-      // Trigger Google Sign-In
+      await GoogleSignIn().signOut();
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
       if (googleUser == null) {
-        // User canceled sign-in
         return;
       }
 
@@ -30,21 +29,15 @@ class LoginPage extends StatelessWidget {
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-
-      // Sign in with Firebase
       final userCredential =
           await FirebaseAuth.instance.signInWithCredential(credential);
 
       if (userCredential.user != null) {
-        // Extract user details
         final user = userCredential.user!;
         final String email = user.email ?? "";
         final String username = user.displayName ?? "GoogleUser";
-
-        // Handle Google user in backend (check/add user)
         await GoogleSignInService.handleGoogleUser(store, email, username, "");
 
-        // Navigate to Home
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("Google Sign-In Successful!"),
