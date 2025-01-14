@@ -16,11 +16,17 @@ import 'package:location/location.dart';
 import 'package:redux/redux.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  print("Handling a background message: ${message.messageId}");
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MyApp());
 }
 
@@ -62,6 +68,40 @@ class _HomeState extends State<Home> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
   bool _showSearchBar = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeFirebaseMessaging();
+  }
+
+  Future<void> _initializeFirebaseMessaging() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    NotificationSettings settings = await messaging.requestPermission();
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+      print('User granted permission');
+    } else {
+      print('User declined or has not accepted permission');
+      return;
+    }
+
+    String? fcmToken = await messaging.getToken();
+    if (fcmToken != null) {
+      print('FCM Token: $fcmToken');
+    } else {
+      print('Failed to retrieve FCM token');
+    }
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        print('Foreground message received: ${message.notification!.title}');
+      }
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      print('Message clicked: ${message.notification?.title}');
+    });
+  }
 
   Future<void> findMachine(BuildContext context, Store<AppState> store,
       {String? productName}) async {
@@ -374,40 +414,7 @@ class _HomeState extends State<Home> {
       ),
       bottomNavigationBar: CustomBottomNavBar(
         selectedIndex: 2,
-        onItemTapped: (index) {
-          // switch (index) {
-          //   case 0:
-          //     Navigator.pushReplacement(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => ProductPage()),
-          //     );
-          //     break;
-          //   case 1:
-          //     Navigator.pushReplacement(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => const MapPage()),
-          //     );
-          //     break;
-          //   case 2:
-          //     Navigator.pushReplacement(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => MyApp()),
-          //     );
-          //     break;
-          //   case 3:
-          //     Navigator.pushReplacement(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => HistoryPage()),
-          //     );
-          //     break;
-          //   case 4:
-          //     Navigator.pushReplacement(
-          //       context,
-          //       MaterialPageRoute(builder: (context) => DispensePage()),
-          //     );
-          //     break;
-          // }
-        },
+        onItemTapped: (index) {},
       ),
     );
   }
