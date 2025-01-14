@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
@@ -13,7 +15,11 @@ import 'package:flutter_application/redux/load_transactions_actions.dart';
 import 'package:flutter_application/services/dispense_service.dart';
 import 'package:flutter_application/services/product_service.dart';
 import 'package:flutter_application/services/transaction_service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart';
+import 'package:http/http.dart' as http;
 
 class DispensePage extends StatefulWidget {
   const DispensePage({super.key});
@@ -63,6 +69,41 @@ class _DispensePageState extends State<DispensePage> {
           products = store.state.products;
         });
       }
+    }
+  }
+
+  Future<bool> checkLocation(Machine machine) async {
+    final String apiKey = dotenv.env['GOOGLE_MAPS_API_KEY']!;
+    final locationController = Location();
+    final currentLocation = await locationController.getLocation();
+    final LatLng currentPosition = LatLng(
+      currentLocation.latitude ?? 0.0,
+      currentLocation.longitude ?? 0.0,
+    );
+
+    final LatLng machinePosition = LatLng(
+      machine.latitude,
+      machine.longitude,
+    );
+
+    final url =
+        'https://maps.googleapis.com/maps/api/distancematrix/json?origins=${currentPosition.latitude},${currentPosition.longitude}&destinations=${machinePosition.latitude},${machinePosition.longitude}&key=$apiKey&mode=walking';
+
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final distanceMeters =
+            data['rows'][0]['elements'][0]['distance']['value'] as int;
+
+        return distanceMeters <= 50;
+      } else {
+        print('Failed to fetch distance matrix: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Error checking location: $e');
+      return false;
     }
   }
 
