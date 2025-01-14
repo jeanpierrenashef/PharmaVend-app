@@ -186,24 +186,41 @@ class _DispensePageState extends State<DispensePage> {
                                 final store =
                                     StoreProvider.of<AppState>(context);
 
-                                await DispenseService.dispenseTransaction(
-                                    transaction.id);
+                                final isWithinProximity =
+                                    await checkLocation(machine);
 
-                                final updatedTransactions =
-                                    store.state.transactions.map((t) {
-                                  if (t.id == transaction.id) {
-                                    return t.copyWith(dispensed: 1);
-                                  }
-                                  return t;
-                                }).toList();
-                                store.dispatch(UpdateTransactionsAction(
-                                    updatedTransactions));
+                                if (isWithinProximity) {
+                                  await DispenseService.dispenseTransaction(
+                                      transaction.id);
 
-                                setState(() {
-                                  undispensedTransactions = updatedTransactions
-                                      .where((t) => t.dispensed == 0)
-                                      .toList();
-                                });
+                                  final updatedTransactions =
+                                      store.state.transactions.map((t) {
+                                    if (t.id == transaction.id) {
+                                      return t.copyWith(dispensed: 1);
+                                    }
+                                    return t;
+                                  }).toList();
+                                  store.dispatch(UpdateTransactionsAction(
+                                      updatedTransactions));
+                                  setState(() {
+                                    undispensedTransactions =
+                                        updatedTransactions
+                                            .where((t) => t.dispensed == 0)
+                                            .toList();
+                                  });
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: const Text(
+                                        "You need to be within 50 meters of the machine to dispense!",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      duration: const Duration(seconds: 2),
+                                    ),
+                                  );
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
