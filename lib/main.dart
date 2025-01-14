@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_application/api/firebase_api.dart';
 import 'package:flutter_application/custom/app_bar.dart';
 import 'package:flutter_application/custom/nav_bar.dart';
+import 'package:flutter_application/firebase_options.dart';
 import 'package:flutter_application/pages/login_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
@@ -18,15 +20,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  print("Handling a background message: ${message.messageId}");
-}
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  await Firebase.initializeApp();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FirebaseApi.instance.allowNotifications();
   runApp(MyApp());
 }
 
@@ -68,40 +66,6 @@ class _HomeState extends State<Home> {
   final TextEditingController _searchController = TextEditingController();
   bool _isSearching = false;
   bool _showSearchBar = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeFirebaseMessaging();
-  }
-
-  Future<void> _initializeFirebaseMessaging() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    NotificationSettings settings = await messaging.requestPermission();
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
-    } else {
-      print('User declined or has not accepted permission');
-      return;
-    }
-
-    String? fcmToken = await messaging.getToken();
-    if (fcmToken != null) {
-      print('FCM Token: $fcmToken');
-    } else {
-      print('Failed to retrieve FCM token');
-    }
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      if (message.notification != null) {
-        print('Foreground message received: ${message.notification!.title}');
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Message clicked: ${message.notification?.title}');
-    });
-  }
 
   Future<void> findMachine(BuildContext context, Store<AppState> store,
       {String? productName}) async {
