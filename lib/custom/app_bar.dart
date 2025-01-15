@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application/pages/cart_page.dart';
 import 'package:flutter_application/pages/login_page.dart';
+import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,20 +34,52 @@ class CustomAppBar extends StatelessWidget {
           icon: const Icon(
             Icons.logout,
             size: 30,
+            color: Color.fromRGBO(255, 0, 0, 0.5),
           ),
         ),
-        IconButton(
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const CartPage()),
+        StoreConnector<AppState, int>(
+          converter: (store) =>
+              store.state.cart.fold<int>(0, (sum, item) => sum + item.quantity),
+          builder: (context, cartCount) {
+            return IconButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CartPage()),
+                );
+              },
+              icon: Stack(
+                alignment: Alignment.topRight,
+                children: [
+                  Image.asset(
+                    "assets/cart.png",
+                    height: 30,
+                    width: 30,
+                  ),
+                  if (cartCount > 0)
+                    Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        '$cartCount',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                ],
+              ),
             );
           },
-          icon: Image.asset(
-            "assets/cart.png",
-            height: 30,
-            width: 30,
-          ),
         ),
       ],
     );

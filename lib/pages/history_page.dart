@@ -9,6 +9,7 @@ import 'package:flutter_application/pages/dispense_page.dart';
 import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
+import 'package:flutter_application/services/product_service.dart';
 import 'package:flutter_application/services/transaction_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
@@ -28,11 +29,18 @@ class _HistoryPageState extends State<HistoryPage> {
 
   void _fetchTransactions() {
     final store = StoreProvider.of<AppState>(context);
-    //const userId = 1;
     TransactionService.fetchTransactions(store).then((_) {
       final transactions = store.state.transactions;
       print(
           "Transactions fetched in HistoryPage: ${transactions.map((t) => t.id).toList()}");
+
+      transactions.forEach((transaction) {
+        final productExists =
+            store.state.products.any((p) => p.id == transaction.productId);
+        if (!productExists) {
+          ProductService.fetchProductById(store, transaction.productId);
+        }
+      });
     });
   }
 
