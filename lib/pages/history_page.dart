@@ -213,6 +213,8 @@ class _HistoryPageState extends State<HistoryPage> {
     List<Transaction> transactions,
     List<Machine> machines,
   ) {
+    transactions.sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
     final grouped = <String, List<Transaction>>{};
 
     for (var transaction in transactions) {
