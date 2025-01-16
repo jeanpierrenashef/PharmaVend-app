@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:motion_tab_bar/MotionTabBar.dart';
+import 'package:motion_tab_bar/MotionTabBarController.dart';
 
-class CustomBottomNavBar extends StatelessWidget {
+class CustomBottomNavBar extends StatefulWidget {
   final int selectedIndex;
   final Function(int) onItemTapped;
 
@@ -11,42 +13,75 @@ class CustomBottomNavBar extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final List<Map<String, dynamic>> navItems = [
-      {"icon": "assets/home.png", "index": 0},
-      {"icon": "assets/map.png", "index": 1},
-      {"icon": "assets/search.png", "index": 2},
-      {"icon": "assets/history.png", "index": 3},
-      {"icon": "assets/dispense.png", "index": 4},
-    ];
+  State<CustomBottomNavBar> createState() => _CustomBottomNavBarState();
+}
 
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border(top: BorderSide(color: Colors.grey.shade400, width: 1)),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: navItems.map((item) {
-          final isSelected = selectedIndex == item['index'];
-          return GestureDetector(
-            onTap: () => onItemTapped(item['index']),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(
-                  item['icon'],
-                  height: 30,
-                  width: 30,
-                  color: isSelected ? Colors.black : Colors.grey,
-                ),
-                const SizedBox(height: 4),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
+class _CustomBottomNavBarState extends State<CustomBottomNavBar>
+    with TickerProviderStateMixin {
+  late MotionTabBarController _motionTabBarController;
+
+  @override
+  void initState() {
+    super.initState();
+    _motionTabBarController = MotionTabBarController(
+      initialIndex: widget.selectedIndex,
+      length: 5,
+      vsync: this,
     );
+  }
+
+  @override
+  void dispose() {
+    _motionTabBarController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MotionTabBar(
+      controller: _motionTabBarController,
+      initialSelectedTab: _getTabName(widget.selectedIndex),
+      labels: const ["Home", "Map", "Search", "History", "Dispense"],
+      icons: const [
+        Icons.home,
+        Icons.map_outlined,
+        Icons.search,
+        Icons.history,
+        Icons.contactless_outlined,
+      ],
+      tabSize: 50,
+      tabBarHeight: 55,
+      textStyle: const TextStyle(
+        fontSize: 12,
+        color: Colors.black,
+        fontWeight: FontWeight.w500,
+      ),
+      tabIconColor: Colors.grey,
+      tabIconSize: 30,
+      tabIconSelectedSize: 30,
+      tabSelectedColor: const Color.fromARGB(255, 255, 255, 255),
+      tabIconSelectedColor: const Color.fromRGBO(32, 181, 115, 1),
+      tabBarColor: Colors.white,
+      onTabItemSelected: (int index) {
+        widget.onItemTapped(index);
+      },
+    );
+  }
+
+  String _getTabName(int index) {
+    switch (index) {
+      case 0:
+        return "Home";
+      case 1:
+        return "Map";
+      case 2:
+        return "Search";
+      case 3:
+        return "History";
+      case 4:
+        return "Dispense";
+      default:
+        return "Home";
+    }
   }
 }

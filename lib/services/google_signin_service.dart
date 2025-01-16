@@ -8,7 +8,12 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GoogleSignInService {
-  static Future<void> handleGoogleUser(Store<AppState> store, String email, String username, String token,) async {
+  static Future<void> handleGoogleUser(
+    Store<AppState> store,
+    String email,
+    String username,
+    String token,
+  ) async {
     try {
       final checkResponse = await http.post(
         Uri.parse("http://192.168.1.7:8000/api/check_user"),
@@ -27,7 +32,6 @@ class GoogleSignInService {
         store.dispatch(LoginSuccessAction(user, token));
 
         print("Login successful. User: ${user.username}, Token: $token");
-        
       } else if (checkResponse.statusCode == 404) {
         final addResponse = await http.post(
           Uri.parse("http://192.168.1.7:8000/api/register_google"),
