@@ -44,14 +44,17 @@ class _DispensePageState extends State<DispensePage> {
     final transactions = store.state.transactions;
 
     if (transactions.isEmpty) {
-      //const userId = 1;
       await TransactionService.fetchTransactions(store);
     }
 
     setState(() {
       final updatedTransactions = store.state.transactions;
-      undispensedTransactions =
-          updatedTransactions.where((t) => t.dispensed == 0).toList();
+
+      undispensedTransactions = updatedTransactions
+          .where((t) => t.dispensed == 0)
+          .toList()
+        ..sort((a, b) => b.updatedAt.compareTo(a.updatedAt));
+
       machines = store.state.machines;
     });
 

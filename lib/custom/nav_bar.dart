@@ -43,7 +43,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar>
       initialSelectedTab: _getTabName(widget.selectedIndex),
       labels: const ["Home", "Map", "Search", "History", "Dispense"],
       icons: const [
-        Icons.home,
+        Icons.home_outlined,
         Icons.map_outlined,
         Icons.search,
         Icons.history,
