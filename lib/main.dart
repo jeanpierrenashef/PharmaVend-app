@@ -10,6 +10,7 @@ import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
 import 'package:flutter_application/services/machine_service.dart';
 import 'package:flutter_application/services/product_service.dart';
+import 'package:flutter_application/services/stripe_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
@@ -31,6 +32,7 @@ Future<void> main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseApi.instance.allowNotifications();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  StripeService.init();
   runApp(MyApp());
 }
 

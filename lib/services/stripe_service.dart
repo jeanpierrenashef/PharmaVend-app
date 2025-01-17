@@ -1,30 +1,29 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:http/http.dart' as http;
 
 class StripeService {
   static String apiBase = 'https://api.stripe.com/v1';
   static String paymentApiUrl = '${StripeService.apiBase}/payment_intents';
-  static String secret =
-      "sk_test_51Qhjis2Ki09t4LEryF5w0WWGrbDOCPahLE0ltolNejsfEwC3OtKmCBpcZYZy8IK0gTYVJ26RKoxpEvlzy69ysjKv000DpDtIVg";
 
   static Map<String, String> headers = {
-    "Authorization": 'Bearer ${StripeService.secret}',
-    "Content-Type": 'application/x-www-form-urlencoded'
+    'Authorization': 'Bearer ${dotenv.env['STRIPE_SECRET']}',
+    'Content-Type': 'application/x-www-form-urlencoded'
   };
 
-  static init() {
+  static void init() {
     Stripe.publishableKey =
         "pk_test_51Qhjis2Ki09t4LErkg8T4s4JCvkGHhZ5RxQEZ9wAIrnHy7QUkbZDLj9VRQhcMJVsjvpN8MVrX6135ZDb3HxOHMZ6006ESRqKxr";
   }
 
+  // Updated to accept double
   static Future<Map<String, dynamic>> createPaymentIntent(
-      String amount, String currency) async {
+      double amount, String currency) async {
     try {
       Map<String, dynamic> body = {
-        'amount': amount,
+        'amount': (amount * 100).toInt().toString(),
         'currency': currency,
         'payment_method_types[]': 'card',
       };
@@ -34,6 +33,11 @@ class StripeService {
         body: body,
         headers: StripeService.headers,
       );
+      print("Response: ${response.body}");
+
+      if (response.statusCode != 200) {
+        throw Exception("Failed to create payment intent: ${response.body}");
+      }
 
       return jsonDecode(response.body);
     } catch (e) {
@@ -41,15 +45,15 @@ class StripeService {
     }
   }
 
-  static Future<void> initPaymentSheet(String amount, String currency) async {
+  static Future<void> initPaymentSheet(double amount, String currency) async {
     try {
       final paymentIntent = await createPaymentIntent(amount, currency);
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
-            paymentIntentClientSecret: paymentIntent[
-                'sk_test_51Qhjis2Ki09t4LEryF5w0WWGrbDOCPahLE0ltolNejsfEwC3OtKmCBpcZYZy8IK0gTYVJ26RKoxpEvlzy69ysjKv000DpDtIVg'],
-            merchantDisplayName: "Dear Programmer",
-            style: ThemeMode.system),
+          paymentIntentClientSecret: paymentIntent['client_secret'],
+          merchantDisplayName: "Dear Programmer",
+          style: ThemeMode.system,
+        ),
       );
     } catch (e) {
       throw Exception("Failed to initialize payment sheet");
