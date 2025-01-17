@@ -7,9 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomAppBar extends StatelessWidget {
-  const CustomAppBar({
-    super.key,
-  });
+  const CustomAppBar({super.key});
 
   Future<void> _logout(BuildContext context) async {
     await GoogleSignIn().signOut();
@@ -43,7 +41,7 @@ class CustomAppBar extends StatelessWidget {
           builder: (context, cartCount) {
             return IconButton(
               onPressed: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => const CartPage()),
                 );
@@ -59,7 +57,7 @@ class CustomAppBar extends StatelessWidget {
                   if (cartCount > 0)
                     Container(
                       padding: const EdgeInsets.all(2),
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: Colors.green,
                         shape: BoxShape.circle,
                       ),
@@ -69,7 +67,7 @@ class CustomAppBar extends StatelessWidget {
                       ),
                       child: Text(
                         '$cartCount',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 10,
                         ),

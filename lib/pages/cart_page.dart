@@ -231,7 +231,7 @@ class CartPage extends StatelessWidget {
         ],
       ),
       bottomNavigationBar: CustomBottomNavBar(
-        selectedIndex: 5,
+        selectedIndex: -1,
         onItemTapped: (index) {
           switch (index) {
             case 0:
@@ -243,7 +243,7 @@ class CartPage extends StatelessWidget {
             case 1:
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => const MapPage()),
+                MaterialPageRoute(builder: (context) => MapPage()),
               );
               break;
             case 2:

@@ -23,8 +23,9 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar>
   @override
   void initState() {
     super.initState();
+    final validIndex = widget.selectedIndex.clamp(0, 4);
     _motionTabBarController = MotionTabBarController(
-      initialIndex: widget.selectedIndex,
+      initialIndex: validIndex,
       length: 5,
       vsync: this,
     );
@@ -38,6 +39,39 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.selectedIndex == -1) {
+      return BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined, size: 30),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map_outlined, size: 30),
+            label: "Map",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.search, size: 30),
+            label: "Search",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.history, size: 30),
+            label: "History",
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.contactless_outlined, size: 30),
+            label: "Dispense",
+          ),
+        ],
+        onTap: (index) {
+          widget.onItemTapped(index);
+        },
+        currentIndex: 0,
+        selectedItemColor: Colors.grey,
+        unselectedItemColor: Colors.grey,
+      );
+    }
+
     return MotionTabBar(
       controller: _motionTabBarController,
       initialSelectedTab: _getTabName(widget.selectedIndex),

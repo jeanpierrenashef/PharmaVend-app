@@ -1,11 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application/custom/app_bar.dart';
-import 'package:flutter_application/models/machine.dart';
-import 'package:flutter_application/pages/cart_page.dart';
-import 'package:flutter_application/redux/app_state.dart';
-import 'package:flutter_application/services/purchase_service.dart';
-import 'package:flutter_redux/flutter_redux.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 
 class CheckoutPage extends StatefulWidget {
   final double total;
@@ -17,38 +11,63 @@ class CheckoutPage extends StatefulWidget {
 }
 
 class _CheckoutPageState extends State<CheckoutPage> {
-  Machine? _selectedMachine;
-
-  Future<void> loadSelectedMachine() async {
-    final prefs = await SharedPreferences.getInstance();
-    final machineId = prefs.getInt('selectedMachineId');
-
-    if (machineId != null) {
-      final store = StoreProvider.of<AppState>(context);
-
-      while (store.state.machines.isEmpty) {
-        await Future.delayed(const Duration(milliseconds: 100));
-      }
-
-      setState(() {
-        _selectedMachine = store.state.machines.firstWhere(
-          (machine) => machine.id == machineId,
-          orElse: () => Machine(
-            id: 0,
-            location: "Unknown Machine",
-            latitude: 0.0,
-            longitude: 0.0,
-            status: "Unavailable",
-          ),
-        );
-      });
-    }
-  }
+  Map<String, dynamic>? paymentIntentData;
 
   @override
   void initState() {
     super.initState();
-    loadSelectedMachine();
+
+    // Set your Stripe publishable key here
+    Stripe.publishableKey =
+        'pk_test_51Qhjis2Ki09t4LEryF5w0WWGrbDOCPahLE0ltolNejsfEwC3OtKmCBpcZYZy8IK0gTYVJ26RKoxpEvlzy69ysjKv000DpDtIVg';
+  }
+
+  Future<void> _initiatePaymentSheet() async {
+    try {
+      // Mocked PaymentIntent data (replace this with your actual backend integration in production)
+      paymentIntentData = {
+        'clientSecret':
+            'pi_test_client_secret_mock', // Replace with actual client secret
+      };
+
+      // Initialize the PaymentSheet
+      await Stripe.instance.initPaymentSheet(
+        paymentSheetParameters: SetupPaymentSheetParameters(
+          paymentIntentClientSecret: paymentIntentData!['clientSecret'],
+          merchantDisplayName: 'Your Store', // Display name in the UI
+          style: ThemeMode.light, // Light or dark theme
+        ),
+      );
+
+      // Present the PaymentSheet
+      await _displayPaymentSheet();
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+
+  Future<void> _displayPaymentSheet() async {
+    try {
+      // Present the PaymentSheet
+      await Stripe.instance.presentPaymentSheet();
+
+      // Handle payment success
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Payment successful!"),
+        ),
+      );
+
+      // Clear the mock PaymentIntent after success
+      paymentIntentData = null;
+    } catch (e) {
+      // Handle payment failure
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Payment failed: $e")),
+      );
+    }
   }
 
   @override
@@ -56,8 +75,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const CustomAppBar(),
+        title: const Text("Checkout"),
         backgroundColor: Colors.white,
+        elevation: 0,
         automaticallyImplyLeading: false,
       ),
       body: Padding(
@@ -92,34 +112,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
             const SizedBox(height: 24),
             const Text(
-              "Vending Machine",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8.0),
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Image.asset(
-                    "assets/machine.png",
-                    height: 40,
-                    width: 40,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _selectedMachine?.location ?? "Loading...",
-                    style: const TextStyle(fontSize: 16),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
               "Payment Method",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
@@ -137,63 +129,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
                 title: const Text("Card Payment"),
                 secondary: const Icon(Icons.credit_card, color: Colors.black),
               ),
-            ),
-            const SizedBox(height: 2),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: RadioListTile(
-                value: "Wish Money",
-                groupValue: "Card Payment",
-                onChanged: (value) {},
-                title: const Text("Wish Money"),
-                secondary: Image.asset(
-                  "assets/whish.png",
-                  height: 16,
-                  width: 41,
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              "Promo code",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 36,
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: "Add Promo code here",
-                        hintStyle: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontSize: 13,
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
-                  ),
-                  child: const Text(
-                    "Add",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                ),
-              ],
             ),
             const SizedBox(height: 24),
             const Text(
@@ -237,23 +172,15 @@ class _CheckoutPageState extends State<CheckoutPage> {
         ),
       ),
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 62),
+        padding: const EdgeInsets.all(16.0),
         child: ElevatedButton(
-          onPressed: () async {
-            final store = StoreProvider.of<AppState>(context);
-            //const userId = 1;
-            await PurchaseService.purchaseCartItems(store, context);
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const CartPage()),
-            );
-          },
+          onPressed: _initiatePaymentSheet, // Call PaymentSheet initialization
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromRGBO(32, 181, 115, 1),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(30),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: const EdgeInsets.symmetric(vertical: 16),
           ),
           child: const Text(
             "Purchase Now",
