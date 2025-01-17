@@ -1,4 +1,5 @@
 buildscript {
+    ext.kotlin_version = '1.8.0'
     repositories {
         google()
         mavenCentral()
@@ -6,6 +7,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:8.2.1' // Match the version used in plugins block
         classpath 'com.google.gms:google-services:4.3.3'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         
 
     }
