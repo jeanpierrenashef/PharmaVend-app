@@ -104,7 +104,25 @@ class _CartPageState extends State<CartPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                // Product Image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    product.image, // Assuming `product.image` contains the URL
+                    width: 80,
+                    height: 80,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.broken_image,
+                        size: 80,
+                        color: Colors.grey,
+                      );
+                    },
+                  ),
+                ),
                 const SizedBox(width: 16),
+                // Product Details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,12 +135,13 @@ class _CartPageState extends State<CartPage> {
                         ),
                       ),
                       Text(
-                        "${cartItem.quantity} x ${product.price.toStringAsFixed(2)} USD",
+                        "${cartItem.quantity} x \$${product.price.toStringAsFixed(2)}",
                         style: const TextStyle(fontSize: 14),
                       ),
                     ],
                   ),
                 ),
+                // Cart Item Actions (Add/Remove Buttons)
                 _buildCartItemActions(cartItem),
               ],
             ),
@@ -210,7 +229,7 @@ class _CartPageState extends State<CartPage> {
                 onPressed: () async {
                   try {
                     await StripeService.initPaymentSheet(total, currency);
-                    await StripeService.presentPaymentSheet();
+                    await StripeService.presentPaymentSheet(context);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text("Payment successful!"),

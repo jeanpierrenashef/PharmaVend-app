@@ -33,7 +33,6 @@ class StripeService {
         body: body,
         headers: StripeService.headers,
       );
-      print("Response: ${response.body}");
 
       if (response.statusCode != 200) {
         throw Exception("Failed to create payment intent: ${response.body}");
@@ -60,11 +59,17 @@ class StripeService {
     }
   }
 
-  static Future<void> presentPaymentSheet() async {
+  static Future<void> presentPaymentSheet(BuildContext context) async {
     try {
       await Stripe.instance.presentPaymentSheet();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Payment successful!")),
+      );
     } catch (e) {
-      throw Exception("Failed to present payment sheet");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Payment failed: ${e.toString()}")),
+      );
     }
   }
 }
