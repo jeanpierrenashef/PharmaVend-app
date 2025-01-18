@@ -34,13 +34,13 @@ class _HistoryPageState extends State<HistoryPage> {
       print(
           "Transactions fetched in HistoryPage: ${transactions.map((t) => t.id).toList()}");
 
-      transactions.forEach((transaction) {
+      for (var transaction in transactions) {
         final productExists =
             store.state.products.any((p) => p.id == transaction.productId);
         if (!productExists) {
           ProductService.fetchProductById(store, transaction.productId);
         }
-      });
+      }
     });
   }
 

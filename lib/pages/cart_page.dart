@@ -8,7 +8,8 @@ import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/redux/cart_actions.dart';
-import 'package:flutter_application/services/stripe_service.dart';
+
+import 'package:flutter_application/services/stripe_service1.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class CartPage extends StatefulWidget {
@@ -226,22 +227,23 @@ class _CartPageState extends State<CartPage> {
               ),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: () async {
-                  try {
-                    await StripeService.initPaymentSheet(total, currency);
-                    await StripeService.presentPaymentSheet(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Payment successful!"),
-                      ),
-                    );
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Error: ${e.toString()}"),
-                      ),
-                    );
-                  }
+                onPressed: () {
+                  StripeService1.instance.makePayment();
+                  // try {
+                  //   await StripeService.initPaymentSheet(total, currency);
+                  //   await StripeService.presentPaymentSheet(context);
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     const SnackBar(
+                  //       content: Text("Payment successful!"),
+                  //     ),
+                  //   );
+                  // } catch (e) {
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //     SnackBar(
+                  //       content: Text("Error: ${e.toString()}"),
+                  //     ),
+                  //   );
+                  // }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(32, 181, 115, 1),

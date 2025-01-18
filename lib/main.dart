@@ -10,8 +10,9 @@ import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/root_reducer.dart';
 import 'package:flutter_application/services/machine_service.dart';
 import 'package:flutter_application/services/product_service.dart';
-import 'package:flutter_application/services/stripe_service.dart';
+//import 'package:flutter_application/services/stripe_service.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_application/redux/app_state.dart';
@@ -27,13 +28,18 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseApi.instance.allowNotifications();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  StripeService.init();
+  await _setUp();
   runApp(MyApp());
+}
+
+Future<void> _setUp() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Stripe.publishableKey =
+      "pk_test_51Qhjis2Ki09t4LErkg8T4s4JCvkGHhZ5RxQEZ9wAIrnHy7QUkbZDLj9VRQhcMJVsjvpN8MVrX6135ZDb3HxOHMZ6006ESRqKxr";
 }
 
 class MyApp extends StatelessWidget {
