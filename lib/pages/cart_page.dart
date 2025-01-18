@@ -227,23 +227,18 @@ class _CartPageState extends State<CartPage> {
               ),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: () {
-                  StripeService1.instance.makePayment();
-                  // try {
-                  //   await StripeService.initPaymentSheet(total, currency);
-                  //   await StripeService.presentPaymentSheet(context);
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     const SnackBar(
-                  //       content: Text("Payment successful!"),
-                  //     ),
-                  //   );
-                  // } catch (e) {
-                  //   ScaffoldMessenger.of(context).showSnackBar(
-                  //     SnackBar(
-                  //       content: Text("Error: ${e.toString()}"),
-                  //     ),
-                  //   );
-                  // }
+                onPressed: () async {
+                  try {
+                    await StripeService1.instance.makePayment(total, currency);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Payment successful!")),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text("Payment failed: ${e.toString()}")),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(32, 181, 115, 1),

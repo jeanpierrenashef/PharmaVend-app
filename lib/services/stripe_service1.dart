@@ -1,29 +1,30 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class StripeService1 {
   StripeService1._();
   static final StripeService1 instance = StripeService1._();
 
-  Future<void> makePayment() async {
+  Future<void> makePayment(double totalAmount, String currency) async {
     try {
-      String? paymentIntentClientSecret = await _createPaymentIntent(10, "USD");
+      String? paymentIntentClientSecret =
+          await _createPaymentIntent(totalAmount, currency);
       if (paymentIntentClientSecret == null) return;
 
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: paymentIntentClientSecret,
-          merchantDisplayName: "Dear Developer",
+          merchantDisplayName: "Your Store Name",
         ),
       );
       await _processPayment();
     } catch (e) {
-      print(e);
+      print("Error in payment: $e");
     }
   }
 
-  Future<String?> _createPaymentIntent(int amount, String currency) async {
+  Future<String?> _createPaymentIntent(double amount, String currency) async {
     try {
       final Dio dio = Dio();
       Map<String, dynamic> data = {
@@ -37,22 +38,23 @@ class StripeService1 {
           contentType: Headers.formUrlEncodedContentType,
           headers: {
             'Authorization': 'Bearer ${dotenv.env['STRIPE_SECRET']}',
-            'Content-Type': 'application/x-www-form-urlencoded'
+            'Content-Type': 'application/x-www-form-urlencoded',
           },
         ),
       );
+
       if (response.data != null) {
         return response.data["client_secret"];
       }
       return null;
     } catch (e) {
-      print(e);
+      print("Error creating payment intent: $e");
     }
     return null;
   }
 
-  String _calculateAmount(int amount) {
-    final calculatedAmount = amount * 100;
+  String _calculateAmount(double amount) {
+    final calculatedAmount = (amount * 100).toInt();
     return calculatedAmount.toString();
   }
 
@@ -60,7 +62,7 @@ class StripeService1 {
     try {
       await Stripe.instance.presentPaymentSheet();
     } catch (e) {
-      print(e);
+      print("Error processing payment: $e");
     }
   }
 }
