@@ -153,9 +153,9 @@ class _MapPageState extends State<MapPage> {
                             _mapController.complete(controller),
                         initialCameraPosition: machines.isNotEmpty
                             ? CameraPosition(
-                                target: LatLng(machines[1].latitude,
-                                    machines[1].longitude),
-                                zoom: 9,
+                                target: LatLng(machines[5].latitude,
+                                    machines[5].longitude),
+                                zoom: 13,
                               )
                             : const CameraPosition(
                                 target: LatLng(0, 0), zoom: 1),
@@ -689,7 +689,7 @@ class _MapPageState extends State<MapPage> {
     final GoogleMapController controller = await _mapController.future;
     CameraPosition newCameraPosition = CameraPosition(
       target: pos,
-      zoom: 9,
+      zoom: 13,
     );
     await controller.animateCamera(
       CameraUpdate.newCameraPosition(newCameraPosition),

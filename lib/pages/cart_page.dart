@@ -8,8 +8,9 @@ import 'package:flutter_application/pages/map_page.dart';
 import 'package:flutter_application/pages/products_page.dart';
 import 'package:flutter_application/redux/app_state.dart';
 import 'package:flutter_application/redux/cart_actions.dart';
+import 'package:flutter_application/services/purchase_service.dart';
 
-import 'package:flutter_application/services/stripe_service1.dart';
+import 'package:flutter_application/services/stripe_service.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 
 class CartPage extends StatefulWidget {
@@ -105,11 +106,10 @@ class _CartPageState extends State<CartPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Product Image
                 ClipRRect(
                   borderRadius: BorderRadius.circular(8),
                   child: Image.network(
-                    product.image, // Assuming `product.image` contains the URL
+                    product.image,
                     width: 80,
                     height: 80,
                     fit: BoxFit.cover,
@@ -123,7 +123,6 @@ class _CartPageState extends State<CartPage> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                // Product Details
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +141,6 @@ class _CartPageState extends State<CartPage> {
                     ],
                   ),
                 ),
-                // Cart Item Actions (Add/Remove Buttons)
                 _buildCartItemActions(cartItem),
               ],
             ),
@@ -229,7 +227,16 @@ class _CartPageState extends State<CartPage> {
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    await StripeService1.instance.makePayment(total, currency);
+                    await StripeService.instance.makePayment(total, currency);
+
+                    final store = StoreProvider.of<AppState>(context);
+                    await PurchaseService.purchaseCartItems(store, context);
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const CartPage()),
+                    );
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Payment successful!")),
                     );

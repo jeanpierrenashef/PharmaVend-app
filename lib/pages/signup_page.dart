@@ -27,18 +27,48 @@ class SignupPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                SizedBox(height: 18),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image(
+                      image: AssetImage("assets/logo.png"),
+                      height: 80.0,
+                      width: 40.0,
+                    ),
+                    SizedBox(width: 12),
+                    Column(
+                      children: [
+                        Text(
+                          "PharmaVend",
+                          style: TextStyle(
+                            fontFamily: "Inter",
+                            fontSize: 36,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        Text(
+                          "Your 24/7 Lifesaver in a Box.",
+                          style: TextStyle(
+                            fontFamily: "Inter",
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.right,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
                 Column(
                   children: <Widget>[
-                    const SizedBox(height: 60.0),
                     const Text(
                       "Sign up",
                       style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 40,
                         fontWeight: FontWeight.bold,
                       ),
-                    ),
-                    const SizedBox(
-                      height: 20,
                     ),
                     Text(
                       "Create your account",

@@ -1,75 +1,68 @@
-import 'dart:convert';
-import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class StripeService {
-  static String apiBase = 'https://api.stripe.com/v1';
-  static String paymentApiUrl = '${StripeService.apiBase}/payment_intents';
+  StripeService._();
+  static final StripeService instance = StripeService._();
 
-  static Map<String, String> headers = {
-    'Authorization': 'Bearer ${dotenv.env['STRIPE_SECRET']}',
-    'Content-Type': 'application/x-www-form-urlencoded'
-  };
-
-  static void init() {
-    Stripe.publishableKey =
-        "pk_test_51Qhjis2Ki09t4LErkg8T4s4JCvkGHhZ5RxQEZ9wAIrnHy7QUkbZDLj9VRQhcMJVsjvpN8MVrX6135ZDb3HxOHMZ6006ESRqKxr";
-  }
-
-  // Updated to accept double
-  static Future<Map<String, dynamic>> createPaymentIntent(
-      double amount, String currency) async {
+  Future<void> makePayment(double totalAmount, String currency) async {
     try {
-      Map<String, dynamic> body = {
-        'amount': (amount * 100).toInt().toString(),
-        'currency': currency,
-        'payment_method_types[]': 'card',
-      };
+      String? paymentIntentClientSecret =
+          await _createPaymentIntent(totalAmount, currency);
+      if (paymentIntentClientSecret == null) return;
 
-      var response = await http.post(
-        Uri.parse(StripeService.paymentApiUrl),
-        body: body,
-        headers: StripeService.headers,
-      );
-
-      if (response.statusCode != 200) {
-        throw Exception("Failed to create payment intent: ${response.body}");
-      }
-
-      return jsonDecode(response.body);
-    } catch (e) {
-      throw Exception("Failed to create payment intent");
-    }
-  }
-
-  static Future<void> initPaymentSheet(double amount, String currency) async {
-    try {
-      final paymentIntent = await createPaymentIntent(amount, currency);
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
-          paymentIntentClientSecret: paymentIntent['client_secret'],
-          merchantDisplayName: "Dear Programmer",
-          style: ThemeMode.system,
+          paymentIntentClientSecret: paymentIntentClientSecret,
+          merchantDisplayName: "Your Store Name",
         ),
       );
+      await _processPayment();
     } catch (e) {
-      throw Exception("Failed to initialize payment sheet");
+      print("Error in payment: $e");
     }
   }
 
-  static Future<void> presentPaymentSheet(BuildContext context) async {
+  Future<String?> _createPaymentIntent(double amount, String currency) async {
+    try {
+      final Dio dio = Dio();
+      Map<String, dynamic> data = {
+        "amount": _calculateAmount(amount),
+        "currency": currency,
+      };
+      var response = await dio.post(
+        "https://api.stripe.com/v1/payment_intents",
+        data: data,
+        options: Options(
+          contentType: Headers.formUrlEncodedContentType,
+          headers: {
+            'Authorization': 'Bearer ${dotenv.env['STRIPE_SECRET']}',
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        ),
+      );
+
+      if (response.data != null) {
+        return response.data["client_secret"];
+      }
+      return null;
+    } catch (e) {
+      print("Error creating payment intent: $e");
+    }
+    return null;
+  }
+
+  String _calculateAmount(double amount) {
+    final calculatedAmount = (amount * 100).toInt();
+    return calculatedAmount.toString();
+  }
+
+  Future<void> _processPayment() async {
     try {
       await Stripe.instance.presentPaymentSheet();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Payment successful!")),
-      );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Payment failed: ${e.toString()}")),
-      );
+      print("Error processing payment: $e");
     }
   }
 }

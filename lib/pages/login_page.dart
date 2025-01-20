@@ -42,6 +42,8 @@ class LoginPage extends StatelessWidget {
           const SnackBar(
             content: Text("Google Sign-In Successful!"),
             backgroundColor: Colors.green,
+            behavior: SnackBarBehavior.floating,
+            margin: const EdgeInsets.only(bottom: 40),
           ),
         );
 

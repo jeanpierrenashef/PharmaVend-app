@@ -144,6 +144,7 @@ class _HomeState extends State<Home> {
                   backgroundColor: Colors.grey,
                   duration: const Duration(seconds: 3),
                   behavior: SnackBarBehavior.floating,
+                  margin: const EdgeInsets.only(bottom: 40),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
