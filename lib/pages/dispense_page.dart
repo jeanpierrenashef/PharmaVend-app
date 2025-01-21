@@ -193,6 +193,14 @@ class _DispensePageState extends State<DispensePage> {
                                     await checkLocation(machine);
 
                                 if (isWithinProximity) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("Dispensing right now!"),
+                                      backgroundColor: Colors.green,
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: const EdgeInsets.only(bottom: 40),
+                                    ),
+                                  );
                                   await DispenseService.dispenseTransaction(
                                       transaction.id);
 
@@ -221,6 +229,8 @@ class _DispensePageState extends State<DispensePage> {
                                       ),
                                       backgroundColor: Colors.red,
                                       duration: const Duration(seconds: 2),
+                                      behavior: SnackBarBehavior.floating,
+                                      margin: const EdgeInsets.only(bottom: 40),
                                     ),
                                   );
                                 }
